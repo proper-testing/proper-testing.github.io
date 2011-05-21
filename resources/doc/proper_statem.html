@@ -1,0 +1,431 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Module proper_statem</title>
+<link rel="stylesheet" type="text/css" href="stylesheet.css" title="EDoc">
+</head>
+<body bgcolor="white">
+<div class="navbar"><a name="#navbar_top"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<hr>
+
+<h1>Module proper_statem</h1>
+<ul class="index"><li><a href="#description">Description</a></li><li><a href="#types">Data Types</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>This module contains functions for testing stateful systems whose   
+side-effects are specified via an abstract state machine.
+<p>Copyright © 2010-2011 Manolis Papadakis &lt;manopapad@gmail.com&gt;,
+                        Eirini Arvaniti &lt;eirinibob@gmail.com&gt;
+                    and Kostis Sagonas &lt;kostis@cs.ntua.gr&gt;</p>
+
+<p><b>Version:</b> May 21 2011 16:58:45</p>
+<p><b>Authors:</b> Eirini Arvaniti (<a href="mailto:eirinibob@gmail.com"><tt>eirinibob@gmail.com</tt></a>).</p>
+
+<h2><a name="description">Description</a></h2><p>This module contains functions for testing stateful systems whose   
+side-effects are specified via an abstract state machine. Given a callback   
+module implementing the state machine, PropEr can generate random   
+symbolic command sequences subject to the constraints of the specification.   
+These command sequences model the operations in the system under test (SUT).   
+As a next step, symbolic command sequences are evaluated in order to check   
+that the system behaves as expected. Upon failure, the shrinking mechanism   
+attempts to find a minimal command sequence provoking the same error.</p>
+  
+   <p>When including the <code>"proper/include/proper.hrl"</code> header file,
+   all <a href="#index">API functions </a> of proper_statem are automatically
+   imported, unless <code>PROPER_NO_IMPORTS</code> is defined.</p>
+  
+   <h3><a name="Command_representation">Command representation</a></h3><p>
+   The testcases generated for stateful systems are lists of symbolic API
+   calls. Symbolic representation makes failing testcases easier to shrink
+   and also easier to read and understand.
+   Since the results of the symbolic calls are not known at generation time,
+   we use symbolic variables (<code><a href="#type-symb_var">symb_var()</a></code>) to refer to them.
+   A command (<code><a href="#type-command">command()</a></code>) is a symbolic term, used to bind a symbolic   
+variable to the result of a symbolic call. For example:</p>
+  
+   <pre>      [{set, {var,1}, {call,erlang,put,[a,42]}},
+       {set, {var,2}, {call,erlang,erase,[a]}},
+       {set, {var,3}, {call,erlang,put,[b,{var,2}]}}]</pre>
+  
+   <p>is a command sequence that could be used to test the process dictionary.
+   Initially, the pair <code>{a,42}</code> is stored in the process dictionary. Then, the
+   key <code>a</code> is deleted. Finally, a new pair <code>{b,{var,2}}</code> is stored. <code>{var,2}</code>
+   is a symbolic variable bound to the result of the <code>erlang:erase/1</code> call.
+   The expected result is that <code>{b,42}</code> will be finally stored in the process   
+dictionary.</p>
+  
+   <h3><a name="Testcase_state">Testcase state</a></h3>
+   In order to be able to test impure code, we need  a way to track its
+   internal state (at least the useful part of it). To this end,
+   we use an abstract state machine (asm) as a  model of the internal state of
+   the SUT. When referring to <i>testcase state</i>, we mean the state of the
+   asm. Testcase state can be either symbolic or dynamic:
+   <ul>
+   <li>During command generation, we use symbolic variables to bind the
+   results of symbolic calls. Therefore, the state of the asm might
+   (and usually does) contain symbolic variables and/or symbolic calls, which
+   are necessary to operate on symbolic variables. Thus, we refer to it as
+   symbolic state. For example, assuming that the internal state of the
+   process dictionary is modelled as a proplist, the testcase state after
+   generating the previous command sequence will be <code>[{b,{var,2}}]</code>.</li>
+   <li>During command execution, symbolic calls are evaluated and symbolic
+   variables are replaced by their corresponding real values. Now we refer to
+   the state as dynamic state. After running the previous command sequence,
+   the testcase state will be <code>[{b,42}]</code>.</li>
+   </ul>
+  
+   <h3><a name="Callback_functions">Callback functions</a></h3>
+   The following functions must be exported from the callback module
+   implementing the abstract state machine:
+   <ul>
+   <li> <code>initial_state() ::</code> <code><a href="#type-symbolic_state">symbolic_state()</a></code>
+     <p>Specifies the symbolic initial state of the state machine. This state
+     will be evaluated at command execution time to produce the actual initial
+     state. The function is not only called at command generation time, but
+     also in order to initialize the state every time the command sequence is
+     run (i.e. during normal execution, while shrinking and when checking a
+     counterexample). For this reason, it should be deterministic.</p></li>
+   <li> <code>command(S::</code><code><a href="#type-symbolic_state">symbolic_state()</a></code><code>) ::</code> <code><a href="proper_types.html#type-type">proper_types:type()</a></code>
+     <p>Generates a symbolic call to be included in the command sequence,
+     given the current state <code>S</code> of the abstract state machine. However,
+     before the call is actually included, a precondition is checked.</p></li>
+   <li> <code>precondition(S::</code><code><a href="#type-symbolic_state">symbolic_state()</a></code><code>,
+                      Call::</code><code><a href="#type-symb_call">symb_call()</a></code><code>) :: boolean()</code>
+     <p>Specifies the precondition that should hold so that <code>Call</code> can be
+     included in the command sequence, given the current state <code>S</code> of the
+     abstract state machine. In case precondition doesn't hold, a new call is
+     chosen using the <code>command/1</code> generator. If preconditions are very strict,
+     it will take a lot of tries for PropEr to randomly choose a valid command.
+     Testing will be stopped in case the 'constraint_tries' limit is reached
+     (see the 'Options' section).</p></li>
+   <li> <code>postcondition(S::</code><code><a href="#type-dynamic_state">dynamic_state()</a></code><code>,
+                       Call::</code><code><a href="#type-symbolic_call">symbolic_call()</a></code><code>,
+                       Res::term()) :: boolean()</code>
+     <p>Specifies the postcondition that should hold about the result <code>Res</code> of
+     performing <code>Call</code>, given the dynamic state <code>S</code> of the abstract state
+     machine prior to command execution. This function is called during
+     runtime, this is why the state is dynamic.</p></li>
+   <li> <code>next_state(S::</code><code><a href="#type-symbolic_state">symbolic_state()</a></code><code>|</code><code><a href="#type-dynamic_state">dynamic_state()</a></code><code>,
+                    Res::term(),
+                    Call::</code><code><a href="#type-symbolic_call">symbolic_call()</a></code><code>) ::</code>
+          <code><a href="#type-symbolic_state">symbolic_state()</a></code>
+     <p>Specifies the next state of the abstract state machine, given the
+     current state <code>S</code>, the symbolic <code>Call</code> chosen and its result <code>Res</code>. This
+     function is called both at command generation and command execution time
+     in order to update the testcase state, therefore the state <code>S</code> and the
+     result <code>Res</code> can be either symbolic or dynamic.</p></li>
+   </ul>
+  
+   <h3><a name="Property_for_testing_stateful_systems">Property for testing stateful systems</a></h3><p>   
+This is an example of a property to test the process dictionary:</p>
+  
+   <pre>      prop_pdict() -&gt;
+         ?FORALL(Cmds, commands(?MODULE),
+          begin
+           {H,S,Res} = run_commands(?MODULE, Cmds),
+           cleanup(),
+           ?WHENFAIL(io:format("History: ~w\nState: ~w\nRes: ~w\n",
+  	                        [H,S,Res]),
+  		      aggregate(command_names(Cmds), Res =:= ok))
+          end).</pre>
+  
+   <h3><a name="Parallel_testing">Parallel testing</a></h3><p>
+   After ensuring that a system's behaviour can be described via an abstract
+   state machine when commands are executed sequentially, it is possible to
+   move to parallel testing. The same state machine can be used to generate
+   command sequences that will be executed concurrently to test for race
+   conditions. A parallel testcase (<code><a href="#type-parallel_test_case">parallel_test_case()</a></code>) consists of   
+a sequential part and a list of concurrent tasks. The sequential part is   
+a command list that is run first to put the system in a random state. The   
+concurrent tasks are also command lists and they are executed in parallel,   
+each of them in a separate process. After running a parallel testcase,   
+PropEr uses the state machine specification to check if the results   
+observed could have been produced by a possible serialization of the   
+concurrent tasks. If no such serialization is possible, then an atomicity   
+violation is detected. Properties for parallel testing are very similar to   
+those used for sequential testing.</p>
+  
+   <pre>      prop_parallel_testing() -&gt;
+         ?FORALL(Testcase, parallel_commands(?MODULE),
+          begin
+           {Seq,Par,Res} = run_parallel_commands(?MODULE, Testcase),
+           cleanup(),
+           ?WHENFAIL(io:format("Sequential: ~w\nParallel: ~w\nRes: ~w\n",
+  	                        [Seq,Par,Res]),
+  		      Res =:= ok)
+          end).</pre>
+<h2><a name="types">Data Types</a></h2>
+
+<h3 class="typedecl"><a name="type-combination">combination()</a></h3>
+<p><pre>combination() = [{pos_integer(), <a href="#type-indices">indices()</a>}]</pre></p>
+
+
+<h3 class="typedecl"><a name="type-command">command()</a></h3>
+<p><pre>command() = {set, <a href="#type-symb_var">symb_var()</a>, <a href="#type-symb_call">symb_call()</a>}
+          | {init, <a href="#type-symbolic_state">symbolic_state()</a>}</pre></p>
+<p>Symbolic term used to bind the result of a symbolic call to a symbolic
+  variable or to initialize the state.</p>
+
+<h3 class="typedecl"><a name="type-command_history">command_history()</a></h3>
+<p><pre>command_history() = [{<a href="#type-command">command()</a>, term()}]</pre></p>
+<p>History of parallel command execution. Contains the commands that were
+  executed zipped with their results.</p>
+
+<h3 class="typedecl"><a name="type-command_list">command_list()</a></h3>
+<p><pre>command_list() = [<a href="#type-command">command()</a>]</pre></p>
+<p>List of symbolic commands.</p>
+
+<h3 class="typedecl"><a name="type-dynamic_state">dynamic_state()</a></h3>
+<p><b>abstract datatype</b>: <tt>dynamic_state()</tt></p>
+<p>State of the abstract state machine containing only real values, i.e. all
+  symbolic terms have been evaluated.</p>
+
+<h3 class="typedecl"><a name="type-history">history()</a></h3>
+<p><pre>history() = [{<a href="#type-dynamic_state">dynamic_state()</a>, term()}]</pre></p>
+<p>History of sequential command execution. Contains the dynamic state
+  prior to command execution and the actual result, for each command
+  that was executed without raising an exception.</p>
+
+<h3 class="typedecl"><a name="type-indices">indices()</a></h3>
+<p><pre>indices() = [pos_integer()]</pre></p>
+
+
+<h3 class="typedecl"><a name="type-lookup">lookup()</a></h3>
+<p><pre>lookup() = <a href="orddict.html#type-orddict">orddict:orddict()</a></pre></p>
+
+
+<h3 class="typedecl"><a name="type-mod_name">mod_name()</a></h3>
+<p><pre>mod_name() = atom()</pre></p>
+
+
+<h3 class="typedecl"><a name="type-parallel_test_case">parallel_test_case()</a></h3>
+<p><pre>parallel_test_case() = {<a href="#type-command_list">command_list()</a>, [<a href="#type-command_list">command_list()</a>]}</pre></p>
+<p>A parallel testcase, consisting of a sequential prefix and a list of
+  concurrent tasks.</p>
+
+<h3 class="typedecl"><a name="type-statem_result">statem_result()</a></h3>
+<p><pre>statem_result() = ok
+                | initialization_error
+                | {precondition,
+                   boolean() | <a href="proper.html#type-exception">proper:exception()</a>}
+                | {postcondition,
+                   boolean() | <a href="proper.html#type-exception">proper:exception()</a>}
+                | <a href="proper.html#type-exception">proper:exception()</a>
+                | no_possible_interleaving</pre></p>
+<p>Specifies the overall result of command execution. It can be one of
+  following:
+  <ul>
+   <li><b>ok</b>
+   <p>All commands were successfully run and all postconditions were true.</p>
+   </li>
+   <li><b>initialization_error</b>
+   <p>There was an error while evaluating the initial state.</p>
+   </li>
+   <li><b>postcondition</b>
+   <p>A postcondition was false or raised an exception.</p>
+   </li>
+   <li><b>precondition</b>
+   <p>A precondition was false or raised an exception.</p>
+   </li>
+   <li><b>exception</b>
+   <p>An exception was raised while running a command.</p>
+   </li>
+   <li><b>no_possible_interleaving</b>
+   <p>Occurs only in parallel testing and indicates an atomicity violation.</p>
+   </li>
+  </ul></p>
+
+<h3 class="typedecl"><a name="type-symb_call">symb_call()</a></h3>
+<p><pre>symb_call() = {call, <a href="#type-mod_name">mod_name()</a>, <a href="#type-fun_name">fun_name()</a>, [term()]}</pre></p>
+<p>Symbolic term which will be evaluated to a function call.</p>
+
+<h3 class="typedecl"><a name="type-symb_var">symb_var()</a></h3>
+<p><pre>symb_var() = {var, pos_integer()}</pre></p>
+<p>Symbolic term to which we bind the result of a command.</p>
+
+<h3 class="typedecl"><a name="type-symbolic_state">symbolic_state()</a></h3>
+<p><b>abstract datatype</b>: <tt>symbolic_state()</tt></p>
+<p>State of the abstract state machine, possibly containing symbolic variables
+  and/or symbolic calls.</p>
+
+<h2><a name="index">Function Index</a></h2>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#command_names-1">command_names/1</a></td><td>Extracts the names of the commands from a given command sequence, in
+  the form of MFAs.</td></tr>
+<tr><td valign="top"><a href="#commands-1">commands/1</a></td><td>A special PropEr type which generates random command sequences,
+  according to an absract state machine specification.</td></tr>
+<tr><td valign="top"><a href="#commands-2">commands/2</a></td><td>Similar to <a href="#commands-1"><code>commands/1</code></a>, but generated command sequences always
+  start at a given state.</td></tr>
+<tr><td valign="top"><a href="#fix_parallel-8">fix_parallel/8</a></td><td></td></tr>
+<tr><td valign="top"><a href="#more_commands-2">more_commands/2</a></td><td></td></tr>
+<tr><td valign="top"><a href="#parallel_commands-1">parallel_commands/1</a></td><td>A special PropEr type which generates parallel testcases,
+  according to an absract state machine specification.</td></tr>
+<tr><td valign="top"><a href="#parallel_commands-2">parallel_commands/2</a></td><td>Similar to <a href="#parallel_commands-1"><code>parallel_commands/1</code></a>, but generated command sequences
+  always start at a given state.</td></tr>
+<tr><td valign="top"><a href="#run-3">run/3</a></td><td></td></tr>
+<tr><td valign="top"><a href="#run_commands-2">run_commands/2</a></td><td>Evaluates a given symbolic command sequence <code>Cmds</code> according to the
+   state machine specified in <code>Mod</code>.</td></tr>
+<tr><td valign="top"><a href="#run_commands-3">run_commands/3</a></td><td> Similar to <a href="#run_commands-2"><code>run_commands/2</code></a>, but also accepts an environment,
+  used for symbolic variable evaluation during command execution.</td></tr>
+<tr><td valign="top"><a href="#run_parallel_commands-2">run_parallel_commands/2</a></td><td>Runs a given parallel testcase according to the state machine
+  specified in <code>Mod</code>.</td></tr>
+<tr><td valign="top"><a href="#run_parallel_commands-3">run_parallel_commands/3</a></td><td>Similar to <a href="#run_parallel_commands-2"><code>run_parallel_commands/2</code></a>, but also accepts an
+  environment used for symbolic variable evaluation, exactly as described in
+  <a href="#run_commands-3"><code>run_commands/3</code></a>.</td></tr>
+<tr><td valign="top"><a href="#state_after-2">state_after/2</a></td><td>Returns the symbolic state after running a given command sequence,
+  according to the state machine specification found in <code>Mod</code>.</td></tr>
+<tr><td valign="top"><a href="#zip-2">zip/2</a></td><td>Behaves like <code>lists:zip/2</code>, but the input lists do no not necessarily
+  have equal length.</td></tr>
+</table>
+
+<h2><a name="functions">Function Details</a></h2>
+
+<h3 class="function"><a name="command_names-1">command_names/1</a></h3>
+<div class="spec">
+<p><pre>command_names(Cmds :: <a href="#type-command_list">command_list()</a>) -&gt; [mfa()]</pre></p>
+</div><p>Extracts the names of the commands from a given command sequence, in
+  the form of MFAs. It is useful in combination with functions such as
+  <a href="proper.html#aggregate-2"><code>proper:aggregate/2</code></a> in order to collect statistics about command
+  execution.</p>
+
+<h3 class="function"><a name="commands-1">commands/1</a></h3>
+<div class="spec">
+<p><pre>commands(Mod :: <a href="#type-mod_name">mod_name()</a>) -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div><p>A special PropEr type which generates random command sequences,
+  according to an absract state machine specification. The function takes as
+  input the name of a callback module, which contains the state machine
+  specification. The initial state is computed by <code>Mod:initial_state/0</code>.</p>
+
+<h3 class="function"><a name="commands-2">commands/2</a></h3>
+<div class="spec">
+<p><pre>commands(Mod :: <a href="#type-mod_name">mod_name()</a>, InitialState :: <a href="#type-symbolic_state">symbolic_state()</a>) -&gt;
+            <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div><p>Similar to <a href="#commands-1"><code>commands/1</code></a>, but generated command sequences always
+  start at a given state. In this case, the first command is always
+  <code>{init,InitialState}</code> and is used to correctly initialize the state
+  every time the command sequence is run (i.e. during normal execution,
+  while shrinking and when checking a counterexample). In this case,
+  <code>Mod:initial_state/0</code> is never called.</p>
+
+<h3 class="function"><a name="fix_parallel-8">fix_parallel/8</a></h3>
+<div class="spec">
+<p><pre>fix_parallel(MaxIndex :: pos_integer(),
+             Len :: non_neg_integer(),
+             Comb :: <a href="#type-combination">combination()</a> | done,
+             LookUp :: <a href="#type-lookup">lookup()</a>,
+             Mod :: <a href="#type-mod_name">mod_name()</a>,
+             State :: <a href="#type-symbolic_state">symbolic_state()</a>,
+             SymbEnv :: [<a href="#type-symb_var">symb_var()</a>],
+             W :: pos_integer()) -&gt;
+                [<a href="#type-command_list">command_list()</a>]</pre></p>
+</div>
+
+<h3 class="function"><a name="more_commands-2">more_commands/2</a></h3>
+<div class="spec">
+<p><pre>more_commands(N :: pos_integer(), Type :: <a href="proper_types.html#type-type">proper_types:type()</a>) -&gt;
+                 <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="parallel_commands-1">parallel_commands/1</a></h3>
+<div class="spec">
+<p><pre>parallel_commands(Mod :: <a href="#type-mod_name">mod_name()</a>) -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div><p>A special PropEr type which generates parallel testcases,
+  according to an absract state machine specification. The function takes as
+  input the name of a callback module, which contains the state machine
+  specification. The initial state is computed by <code>Mod:initial_state/0</code>.</p>
+
+<h3 class="function"><a name="parallel_commands-2">parallel_commands/2</a></h3>
+<div class="spec">
+<p><pre>parallel_commands(Mod :: <a href="#type-mod_name">mod_name()</a>,
+                  InitialState :: <a href="#type-symbolic_state">symbolic_state()</a>) -&gt;
+                     <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div><p>Similar to <a href="#parallel_commands-1"><code>parallel_commands/1</code></a>, but generated command sequences
+  always start at a given state.</p>
+
+<h3 class="function"><a name="run-3">run/3</a></h3>
+<div class="spec">
+<p><pre>run(Mod :: <a href="#type-mod_name">mod_name()</a>,
+    Cmds :: <a href="#type-command_list">command_list()</a>,
+    Env :: <a href="proper_symb.html#type-var_values">proper_symb:var_values()</a>) -&gt;
+       {{<a href="#type-history">history()</a>, <a href="#type-dynamic_state">dynamic_state()</a>, <a href="#type-statem_result">statem_result()</a>},
+        <a href="proper_symb.html#type-var_values">proper_symb:var_values()</a>}</pre></p>
+</div>
+
+<h3 class="function"><a name="run_commands-2">run_commands/2</a></h3>
+<div class="spec">
+<p><pre>run_commands(Mod :: <a href="#type-mod_name">mod_name()</a>, Cmds :: <a href="#type-command_list">command_list()</a>) -&gt;
+                {<a href="#type-history">history()</a>, <a href="#type-dynamic_state">dynamic_state()</a>, <a href="#type-statem_result">statem_result()</a>}</pre></p>
+</div><p>Evaluates a given symbolic command sequence <code>Cmds</code> according to the
+   state machine specified in <code>Mod</code>. The result is a triple of the form<br>
+   <code>{History, DynamicState, Result}</code>, where:
+  <ul>
+  <li><code>History</code> contains the execution history of all commands that were
+    executed without raising an exception. It contains tuples of the form
+    {<code><a href="#type-dynamic_state">dynamic_state()</a></code>, <code>term()</code>}, specifying the state prior to
+    command execution and the actual result of the command.</li>
+  <li><code>DynamicState</code> contains the state of the abstract state machine at
+    the moment when execution stopped.</li>
+  <li><code>Result</code> specifies the outcome of command execution.</li>
+  </ul></p>
+
+<h3 class="function"><a name="run_commands-3">run_commands/3</a></h3>
+<div class="spec">
+<p><pre>run_commands(Mod :: <a href="#type-mod_name">mod_name()</a>,
+             Cmds :: <a href="#type-command_list">command_list()</a>,
+             Env :: <a href="proper_symb.html#type-var_values">proper_symb:var_values()</a>) -&gt;
+                {<a href="#type-history">history()</a>, <a href="#type-dynamic_state">dynamic_state()</a>, <a href="#type-statem_result">statem_result()</a>}</pre></p>
+</div><p> Similar to <a href="#run_commands-2"><code>run_commands/2</code></a>, but also accepts an environment,
+  used for symbolic variable evaluation during command execution. The
+  environment consists of <code>{Key::atom(), Value::term()}</code> pairs. Keys may be
+  used in symbolic variables (i.e. <code>{var,Key}</code>) whithin the command sequence
+  <code>Cmds</code>. These symbolic variables will be replaced by their corresponding
+  <code>Value</code> during command execution.</p>
+
+<h3 class="function"><a name="run_parallel_commands-2">run_parallel_commands/2</a></h3>
+<div class="spec">
+<p><pre>run_parallel_commands(Mod :: <a href="#type-mod_name">mod_name()</a>,
+                      Testcase :: <a href="#type-parallel_test_case">parallel_test_case()</a>) -&gt;
+                         {<a href="#type-history">history()</a>,
+                          [<a href="#type-command_history">command_history()</a>],
+                          <a href="#type-statem_result">statem_result()</a>}</pre></p>
+</div><p>Runs a given parallel testcase according to the state machine
+  specified in <code>Mod</code>. The result is a triple of the form<br>
+  <code>{Sequential_history, Parallel_history, Result}</code>, where:
+  <ul>
+  <li><code>Sequential_history</code> contains the execution history of the
+    sequential prefix.</li>
+  <li><code>Parallel_history</code> contains the execution history of each of the
+    concurrent tasks.</li>
+  <li><code>Result</code> specifies the outcome of the attemp to serialize command
+    execution, based on the results observed. It can be one of the following:
+    <ul><li> <code>ok</code> </li><li> <code>no_possible_interleaving</code> </li></ul> </li>
+  </ul></p>
+
+<h3 class="function"><a name="run_parallel_commands-3">run_parallel_commands/3</a></h3>
+<div class="spec">
+<p><pre>run_parallel_commands(Mod :: <a href="#type-mod_name">mod_name()</a>,
+                      Testcase :: <a href="#type-parallel_test_case">parallel_test_case()</a>,
+                      Env :: <a href="proper_symb.html#type-var_values">proper_symb:var_values()</a>) -&gt;
+                         {<a href="#type-history">history()</a>,
+                          [<a href="#type-command_history">command_history()</a>],
+                          <a href="#type-statem_result">statem_result()</a>}</pre></p>
+</div><p>Similar to <a href="#run_parallel_commands-2"><code>run_parallel_commands/2</code></a>, but also accepts an
+  environment used for symbolic variable evaluation, exactly as described in
+  <a href="#run_commands-3"><code>run_commands/3</code></a>.</p>
+
+<h3 class="function"><a name="state_after-2">state_after/2</a></h3>
+<div class="spec">
+<p><pre>state_after(Mod :: <a href="#type-mod_name">mod_name()</a>, Cmds :: <a href="#type-command_list">command_list()</a>) -&gt;
+               <a href="#type-symbolic_state">symbolic_state()</a></pre></p>
+</div><p>Returns the symbolic state after running a given command sequence,
+  according to the state machine specification found in <code>Mod</code>. The commands
+  are not actually executed.</p>
+
+<h3 class="function"><a name="zip-2">zip/2</a></h3>
+<div class="spec">
+<p><pre>zip(X :: [A], Y :: [B]) -&gt; [{A, B}]</pre></p>
+</div><p>Behaves like <code>lists:zip/2</code>, but the input lists do no not necessarily
+  have equal length. Zipping stops when the shortest list stops. This is
+  useful for zipping a command sequence with its (failing) execution history.</p>
+<hr>
+
+<div class="navbar"><a name="#navbar_bottom"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<p><i>Generated by EDoc, May 21 2011, 16:58:45.</i></p>
+</body>
+</html>

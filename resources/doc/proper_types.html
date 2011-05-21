@@ -1,0 +1,447 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Module proper_types</title>
+<link rel="stylesheet" type="text/css" href="stylesheet.css" title="EDoc">
+</head>
+<body bgcolor="white">
+<div class="navbar"><a name="#navbar_top"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<hr>
+
+<h1>Module proper_types</h1>
+<ul class="index"><li><a href="#description">Description</a></li><li><a href="#types">Data Types</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>Type manipulation functions and predefined types are contained in this
+  	 module.
+<p>Copyright © 2010-2011 Manolis Papadakis &lt;manopapad@gmail.com&gt;,
+                        Eirini Arvaniti &lt;eirinibob@gmail.com&gt;
+                    and Kostis Sagonas &lt;kostis@cs.ntua.gr&gt;</p>
+
+<p><b>Version:</b> May 21 2011 16:58:45</p>
+<p><b>Authors:</b> Manolis Papadakis (<a href="mailto:manopapad@gmail.com"><tt>manopapad@gmail.com</tt></a>).</p>
+
+<h2><a name="description">Description</a></h2>Type manipulation functions and predefined types are contained in this
+  	 module.
+<h2><a name="types">Data Types</a></h2>
+
+<h3 class="typedecl"><a name="type-frequency">frequency()</a></h3>
+<p><pre>frequency() = pos_integer()</pre></p>
+
+
+<h3 class="typedecl"><a name="type-length">length()</a></h3>
+<p><pre>length() = non_neg_integer()</pre></p>
+
+
+<h3 class="typedecl"><a name="type-raw_type">raw_type()</a></h3>
+<p><b>abstract datatype</b>: <tt>raw_type()</tt></p>
+
+
+<h3 class="typedecl"><a name="type-size">size()</a></h3>
+<p><pre>size() = non_neg_integer()</pre></p>
+
+
+<h3 class="typedecl"><a name="type-type">type()</a></h3>
+<p><b>abstract datatype</b>: <tt>type()</tt></p>
+
+
+<h2><a name="index">Function Index</a></h2>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#any-0">any/0</a></td><td></td></tr>
+<tr><td valign="top"><a href="#arity-0">arity/0</a></td><td></td></tr>
+<tr><td valign="top"><a href="#atom-0">atom/0</a></td><td></td></tr>
+<tr><td valign="top"><a href="#binary-0">binary/0</a></td><td></td></tr>
+<tr><td valign="top"><a href="#binary-1">binary/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#bitstring-0">bitstring/0</a></td><td></td></tr>
+<tr><td valign="top"><a href="#bitstring-1">bitstring/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#bool-0">bool/0</a></td><td></td></tr>
+<tr><td valign="top"><a href="#boolean-0">boolean/0</a></td><td></td></tr>
+<tr><td valign="top"><a href="#byte-0">byte/0</a></td><td></td></tr>
+<tr><td valign="top"><a href="#char-0">char/0</a></td><td></td></tr>
+<tr><td valign="top"><a href="#choose-2">choose/2</a></td><td></td></tr>
+<tr><td valign="top"><a href="#default-2">default/2</a></td><td></td></tr>
+<tr><td valign="top"><a href="#elements-1">elements/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#exactly-1">exactly/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#fixed_list-1">fixed_list/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#float-0">float/0</a></td><td></td></tr>
+<tr><td valign="top"><a href="#float-2">float/2</a></td><td></td></tr>
+<tr><td valign="top"><a href="#frequency-1">frequency/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#function-2">function/2</a></td><td></td></tr>
+<tr><td valign="top"><a href="#function0-1">function0/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#function1-1">function1/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#function2-1">function2/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#function3-1">function3/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#function4-1">function4/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#int-0">int/0</a></td><td></td></tr>
+<tr><td valign="top"><a href="#integer-0">integer/0</a></td><td></td></tr>
+<tr><td valign="top"><a href="#integer-2">integer/2</a></td><td></td></tr>
+<tr><td valign="top"><a href="#largeint-0">largeint/0</a></td><td></td></tr>
+<tr><td valign="top"><a href="#le-2">le/2</a></td><td></td></tr>
+<tr><td valign="top"><a href="#list-0">list/0</a></td><td></td></tr>
+<tr><td valign="top"><a href="#list-1">list/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#loose_tuple-1">loose_tuple/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#nat-0">nat/0</a></td><td></td></tr>
+<tr><td valign="top"><a href="#neg_integer-0">neg_integer/0</a></td><td></td></tr>
+<tr><td valign="top"><a href="#non_empty-1">non_empty/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#non_neg_float-0">non_neg_float/0</a></td><td></td></tr>
+<tr><td valign="top"><a href="#non_neg_integer-0">non_neg_integer/0</a></td><td></td></tr>
+<tr><td valign="top"><a href="#noshrink-1">noshrink/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#number-0">number/0</a></td><td></td></tr>
+<tr><td valign="top"><a href="#oneof-1">oneof/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#orderedlist-1">orderedlist/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#parameter-1">parameter/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#parameter-2">parameter/2</a></td><td></td></tr>
+<tr><td valign="top"><a href="#pos_integer-0">pos_integer/0</a></td><td></td></tr>
+<tr><td valign="top"><a href="#range-2">range/2</a></td><td></td></tr>
+<tr><td valign="top"><a href="#real-0">real/0</a></td><td></td></tr>
+<tr><td valign="top"><a href="#resize-2">resize/2</a></td><td></td></tr>
+<tr><td valign="top"><a href="#return-1">return/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#shrink_list-1">shrink_list/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#string-0">string/0</a></td><td></td></tr>
+<tr><td valign="top"><a href="#term-0">term/0</a></td><td></td></tr>
+<tr><td valign="top"><a href="#timeout-0">timeout/0</a></td><td></td></tr>
+<tr><td valign="top"><a href="#tuple-0">tuple/0</a></td><td></td></tr>
+<tr><td valign="top"><a href="#tuple-1">tuple/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#union-1">union/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#vector-2">vector/2</a></td><td></td></tr>
+<tr><td valign="top"><a href="#weighted_default-2">weighted_default/2</a></td><td></td></tr>
+<tr><td valign="top"><a href="#weighted_union-1">weighted_union/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#with_parameter-3">with_parameter/3</a></td><td></td></tr>
+<tr><td valign="top"><a href="#with_parameters-2">with_parameters/2</a></td><td></td></tr>
+<tr><td valign="top"><a href="#wunion-1">wunion/1</a></td><td></td></tr>
+</table>
+
+<h2><a name="functions">Function Details</a></h2>
+
+<h3 class="function"><a name="any-0">any/0</a></h3>
+<div class="spec">
+<p><pre>any() -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="arity-0">arity/0</a></h3>
+<div class="spec">
+<p><pre>arity() -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="atom-0">atom/0</a></h3>
+<div class="spec">
+<p><pre>atom() -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="binary-0">binary/0</a></h3>
+<div class="spec">
+<p><pre>binary() -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="binary-1">binary/1</a></h3>
+<div class="spec">
+<p><pre>binary(Len :: <a href="#type-length">length()</a>) -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="bitstring-0">bitstring/0</a></h3>
+<div class="spec">
+<p><pre>bitstring() -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="bitstring-1">bitstring/1</a></h3>
+<div class="spec">
+<p><pre>bitstring(Len :: <a href="#type-length">length()</a>) -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="bool-0">bool/0</a></h3>
+<div class="spec">
+<p><pre>bool() -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="boolean-0">boolean/0</a></h3>
+<div class="spec">
+<p><pre>boolean() -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="byte-0">byte/0</a></h3>
+<div class="spec">
+<p><pre>byte() -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="char-0">char/0</a></h3>
+<div class="spec">
+<p><pre>char() -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="choose-2">choose/2</a></h3>
+<div class="spec">
+<p><pre>choose(Low :: integer() | inf, High :: integer() | inf) -&gt;
+          <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="default-2">default/2</a></h3>
+<div class="spec">
+<p><pre>default(Default :: <a href="#type-raw_type">raw_type()</a>, OtherType :: <a href="#type-raw_type">raw_type()</a>) -&gt;
+           <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="elements-1">elements/1</a></h3>
+<div class="spec">
+<p><pre>elements(Choices :: [<a href="#type-raw_type">raw_type()</a>, ...]) -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="exactly-1">exactly/1</a></h3>
+<div class="spec">
+<p><pre>exactly(E :: term()) -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="fixed_list-1">fixed_list/1</a></h3>
+<div class="spec">
+<p><pre>fixed_list(MaybeImproperRawFields ::
+               maybe_improper_list(<a href="#type-raw_type">raw_type()</a>, <a href="#type-raw_type">raw_type()</a> | [])) -&gt;
+              <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="float-0">float/0</a></h3>
+<div class="spec">
+<p><pre>float() -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="float-2">float/2</a></h3>
+<div class="spec">
+<p><pre>float(Low :: number() | inf, High :: number() | inf) -&gt;
+         <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="frequency-1">frequency/1</a></h3>
+<div class="spec">
+<p><pre>frequency(FreqChoices :: [{<a href="#type-frequency">frequency()</a>, <a href="#type-raw_type">raw_type()</a>}, ...]) -&gt;
+             <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="function-2">function/2</a></h3>
+<div class="spec">
+<p><pre>function(Arity :: [<a href="#type-raw_type">raw_type()</a>] | arity(),
+         RawRetType :: <a href="#type-raw_type">raw_type()</a>) -&gt;
+            <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="function0-1">function0/1</a></h3>
+<div class="spec">
+<p><pre>function0(RawRetType :: <a href="#type-raw_type">raw_type()</a>) -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="function1-1">function1/1</a></h3>
+<div class="spec">
+<p><pre>function1(RawRetType :: <a href="#type-raw_type">raw_type()</a>) -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="function2-1">function2/1</a></h3>
+<div class="spec">
+<p><pre>function2(RawRetType :: <a href="#type-raw_type">raw_type()</a>) -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="function3-1">function3/1</a></h3>
+<div class="spec">
+<p><pre>function3(RawRetType :: <a href="#type-raw_type">raw_type()</a>) -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="function4-1">function4/1</a></h3>
+<div class="spec">
+<p><pre>function4(RawRetType :: <a href="#type-raw_type">raw_type()</a>) -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="int-0">int/0</a></h3>
+<div class="spec">
+<p><pre>int() -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="integer-0">integer/0</a></h3>
+<div class="spec">
+<p><pre>integer() -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="integer-2">integer/2</a></h3>
+<div class="spec">
+<p><pre>integer(Low :: integer() | inf, High :: integer() | inf) -&gt;
+           <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="largeint-0">largeint/0</a></h3>
+<div class="spec">
+<p><pre>largeint() -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="le-2">le/2</a></h3>
+<div class="spec">
+<p><pre>le(A :: number() | inf, B :: number() | inf) -&gt; boolean()</pre></p>
+</div>
+
+<h3 class="function"><a name="list-0">list/0</a></h3>
+<div class="spec">
+<p><pre>list() -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="list-1">list/1</a></h3>
+<div class="spec">
+<p><pre>list(RawElemType :: <a href="#type-raw_type">raw_type()</a>) -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="loose_tuple-1">loose_tuple/1</a></h3>
+<div class="spec">
+<p><pre>loose_tuple(RawElemType :: <a href="#type-raw_type">raw_type()</a>) -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="nat-0">nat/0</a></h3>
+<div class="spec">
+<p><pre>nat() -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="neg_integer-0">neg_integer/0</a></h3>
+<div class="spec">
+<p><pre>neg_integer() -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="non_empty-1">non_empty/1</a></h3>
+<div class="spec">
+<p><pre>non_empty(RawListType :: <a href="#type-raw_type">raw_type()</a>) -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="non_neg_float-0">non_neg_float/0</a></h3>
+<div class="spec">
+<p><pre>non_neg_float() -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="non_neg_integer-0">non_neg_integer/0</a></h3>
+<div class="spec">
+<p><pre>non_neg_integer() -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="noshrink-1">noshrink/1</a></h3>
+<div class="spec">
+<p><pre>noshrink(RawType :: <a href="#type-raw_type">raw_type()</a>) -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="number-0">number/0</a></h3>
+<div class="spec">
+<p><pre>number() -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="oneof-1">oneof/1</a></h3>
+<div class="spec">
+<p><pre>oneof(Choices :: [<a href="#type-raw_type">raw_type()</a>, ...]) -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="orderedlist-1">orderedlist/1</a></h3>
+<div class="spec">
+<p><pre>orderedlist(RawElemType :: <a href="#type-raw_type">raw_type()</a>) -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="parameter-1">parameter/1</a></h3>
+<div class="spec">
+<p><pre>parameter(Param :: atom()) -&gt; term()</pre></p>
+</div>
+
+<h3 class="function"><a name="parameter-2">parameter/2</a></h3>
+<div class="spec">
+<p><pre>parameter(Param :: atom(), Default :: term()) -&gt; term()</pre></p>
+</div>
+
+<h3 class="function"><a name="pos_integer-0">pos_integer/0</a></h3>
+<div class="spec">
+<p><pre>pos_integer() -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="range-2">range/2</a></h3>
+<div class="spec">
+<p><pre>range(Low :: integer() | inf, High :: integer() | inf) -&gt;
+         <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="real-0">real/0</a></h3>
+<div class="spec">
+<p><pre>real() -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="resize-2">resize/2</a></h3>
+<div class="spec">
+<p><pre>resize(Size :: <a href="#type-size">size()</a>, RawType :: <a href="#type-raw_type">raw_type()</a>) -&gt;
+          <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="return-1">return/1</a></h3>
+<div class="spec">
+<p><pre>return(X :: term()) -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="shrink_list-1">shrink_list/1</a></h3>
+<div class="spec">
+<p><pre>shrink_list(List :: [term()]) -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="string-0">string/0</a></h3>
+<div class="spec">
+<p><pre>string() -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="term-0">term/0</a></h3>
+<div class="spec">
+<p><pre>term() -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="timeout-0">timeout/0</a></h3>
+<div class="spec">
+<p><pre>timeout() -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="tuple-0">tuple/0</a></h3>
+<div class="spec">
+<p><pre>tuple() -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="tuple-1">tuple/1</a></h3>
+<div class="spec">
+<p><pre>tuple(RawFields :: [<a href="#type-raw_type">raw_type()</a>]) -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="union-1">union/1</a></h3>
+<div class="spec">
+<p><pre>union(RawChoices :: [<a href="#type-raw_type">raw_type()</a>, ...]) -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="vector-2">vector/2</a></h3>
+<div class="spec">
+<p><pre>vector(Len :: <a href="#type-length">length()</a>, RawElemType :: <a href="#type-raw_type">raw_type()</a>) -&gt;
+          <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="weighted_default-2">weighted_default/2</a></h3>
+<div class="spec">
+<p><pre>weighted_default(Default :: {<a href="#type-frequency">frequency()</a>, <a href="#type-raw_type">raw_type()</a>},
+                 OtherType :: {<a href="#type-frequency">frequency()</a>, <a href="#type-raw_type">raw_type()</a>}) -&gt;
+                    <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="weighted_union-1">weighted_union/1</a></h3>
+<div class="spec">
+<p><pre>weighted_union(RawFreqChoices :: [{<a href="#type-frequency">frequency()</a>, <a href="#type-raw_type">raw_type()</a>}, ...]) -&gt;
+                  <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="with_parameter-3">with_parameter/3</a></h3>
+<div class="spec">
+<p><pre>with_parameter(Param :: atom(),
+               Value :: term(),
+               RawType :: <a href="#type-raw_type">raw_type()</a>) -&gt;
+                  <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="with_parameters-2">with_parameters/2</a></h3>
+<div class="spec">
+<p><pre>with_parameters(PVlist :: [{atom(), term()}],
+                RawType :: <a href="#type-raw_type">raw_type()</a>) -&gt;
+                   <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="wunion-1">wunion/1</a></h3>
+<div class="spec">
+<p><pre>wunion(FreqChoices :: [{<a href="#type-frequency">frequency()</a>, <a href="#type-raw_type">raw_type()</a>}, ...]) -&gt;
+          <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+<hr>
+
+<div class="navbar"><a name="#navbar_bottom"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<p><i>Generated by EDoc, May 21 2011, 16:58:45.</i></p>
+</body>
+</html>

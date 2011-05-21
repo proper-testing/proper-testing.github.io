@@ -1,0 +1,115 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Module proper_gen</title>
+<link rel="stylesheet" type="text/css" href="stylesheet.css" title="EDoc">
+</head>
+<body bgcolor="white">
+<div class="navbar"><a name="#navbar_top"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<hr>
+
+<h1>Module proper_gen</h1>
+<ul class="index"><li><a href="#description">Description</a></li><li><a href="#types">Data Types</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>The generator subsystem and generators for basic types are contained
+  	 in this module.
+<p>Copyright © 2010-2011 Manolis Papadakis &lt;manopapad@gmail.com&gt;,
+                        Eirini Arvaniti &lt;eirinibob@gmail.com&gt;
+                    and Kostis Sagonas &lt;kostis@cs.ntua.gr&gt;</p>
+
+<p><b>Version:</b> May 21 2011 16:58:45</p>
+<p><b>Authors:</b> Manolis Papadakis (<a href="mailto:manopapad@gmail.com"><tt>manopapad@gmail.com</tt></a>).</p>
+
+<h2><a name="description">Description</a></h2>The generator subsystem and generators for basic types are contained
+  	 in this module.
+<h2><a name="types">Data Types</a></h2>
+
+<h3 class="typedecl"><a name="type-alt_gens">alt_gens()</a></h3>
+<p><pre>alt_gens() = fun(() -&gt; [<a href="#type-imm_instance">imm_instance()</a>])</pre></p>
+
+
+<h3 class="typedecl"><a name="type-combine_fun">combine_fun()</a></h3>
+<p><pre>combine_fun() = fun((<a href="#type-instance">instance()</a>) -&gt; <a href="#type-imm_instance">imm_instance()</a>)</pre></p>
+
+
+<h3 class="typedecl"><a name="type-generator">generator()</a></h3>
+<p><pre>generator() = <a href="#type-sized_generator">sized_generator()</a> | <a href="#type-nosize_generator">nosize_generator()</a></pre></p>
+
+
+<h3 class="typedecl"><a name="type-imm_instance">imm_instance()</a></h3>
+<p><pre>imm_instance() = <a href="proper_types.html#type-raw_type">proper_types:raw_type()</a>
+               | <a href="#type-instance">instance()</a>
+               | {'$used', <a href="#type-imm_instance">imm_instance()</a>, <a href="#type-imm_instance">imm_instance()</a>}
+               | {'$to_part', <a href="#type-imm_instance">imm_instance()</a>}</pre></p>
+
+
+<h3 class="typedecl"><a name="type-instance">instance()</a></h3>
+<p><pre>instance() = term()</pre></p>
+
+
+<h3 class="typedecl"><a name="type-nosize_generator">nosize_generator()</a></h3>
+<p><pre>nosize_generator() = fun(() -&gt; <a href="#type-imm_instance">imm_instance()</a>)</pre></p>
+
+
+<h3 class="typedecl"><a name="type-reverse_gen">reverse_gen()</a></h3>
+<p><pre>reverse_gen() = fun((<a href="#type-instance">instance()</a>) -&gt; <a href="#type-imm_instance">imm_instance()</a>)</pre></p>
+
+
+<h3 class="typedecl"><a name="type-size">size()</a></h3>
+<p><pre>size() = non_neg_integer()</pre></p>
+
+
+<h3 class="typedecl"><a name="type-sized_generator">sized_generator()</a></h3>
+<p><pre>sized_generator() = fun((<a href="#type-size">size()</a>) -&gt; <a href="#type-imm_instance">imm_instance()</a>)</pre></p>
+
+
+<h2><a name="index">Function Index</a></h2>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#pick-1">pick/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#pick-2">pick/2</a></td><td></td></tr>
+<tr><td valign="top"><a href="#sample-1">sample/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#sample-3">sample/3</a></td><td></td></tr>
+<tr><td valign="top"><a href="#sampleshrink-1">sampleshrink/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#sampleshrink-2">sampleshrink/2</a></td><td></td></tr>
+</table>
+
+<h2><a name="functions">Function Details</a></h2>
+
+<h3 class="function"><a name="pick-1">pick/1</a></h3>
+<div class="spec">
+<p><pre>pick(RawType :: <a href="proper_types.html#type-raw_type">proper_types:raw_type()</a>) -&gt;
+        {ok, <a href="#type-instance">instance()</a>} | error</pre></p>
+</div>
+
+<h3 class="function"><a name="pick-2">pick/2</a></h3>
+<div class="spec">
+<p><pre>pick(RawType :: <a href="proper_types.html#type-raw_type">proper_types:raw_type()</a>, Size :: <a href="#type-size">size()</a>) -&gt;
+        {ok, <a href="#type-instance">instance()</a>} | error</pre></p>
+</div>
+
+<h3 class="function"><a name="sample-1">sample/1</a></h3>
+<div class="spec">
+<p><pre>sample(RawType :: <a href="proper_types.html#type-raw_type">proper_types:raw_type()</a>) -&gt; ok</pre></p>
+</div>
+
+<h3 class="function"><a name="sample-3">sample/3</a></h3>
+<div class="spec">
+<p><pre>sample(RawType :: <a href="proper_types.html#type-raw_type">proper_types:raw_type()</a>,
+       StartSize :: <a href="#type-size">size()</a>,
+       EndSize :: <a href="#type-size">size()</a>) -&gt;
+          ok</pre></p>
+</div>
+
+<h3 class="function"><a name="sampleshrink-1">sampleshrink/1</a></h3>
+<div class="spec">
+<p><pre>sampleshrink(RawType :: <a href="proper_types.html#type-raw_type">proper_types:raw_type()</a>) -&gt; ok</pre></p>
+</div>
+
+<h3 class="function"><a name="sampleshrink-2">sampleshrink/2</a></h3>
+<div class="spec">
+<p><pre>sampleshrink(RawType :: <a href="proper_types.html#type-raw_type">proper_types:raw_type()</a>, Size :: <a href="#type-size">size()</a>) -&gt;
+                ok</pre></p>
+</div>
+<hr>
+
+<div class="navbar"><a name="#navbar_bottom"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<p><i>Generated by EDoc, May 21 2011, 16:58:45.</i></p>
+</body>
+</html>

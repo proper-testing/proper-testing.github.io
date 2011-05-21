@@ -1,0 +1,282 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Module proper_fsm</title>
+<link rel="stylesheet" type="text/css" href="stylesheet.css" title="EDoc">
+</head>
+<body bgcolor="white">
+<div class="navbar"><a name="#navbar_top"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<hr>
+
+<h1>Module proper_fsm</h1>
+<ul class="index"><li><a href="#description">Description</a></li><li><a href="#types">Data Types</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>This module contains functions for testing stateful systems that
+   can be modeled as a finite state machine.
+<p>Copyright © 2010-2011 Manolis Papadakis &lt;manopapad@gmail.com&gt;,
+                        Eirini Arvaniti &lt;eirinibob@gmail.com&gt;
+                    and Kostis Sagonas &lt;kostis@cs.ntua.gr&gt;</p>
+
+<p><b>Version:</b> May 21 2011 16:58:45</p>
+<p><b>Authors:</b> Eirini Arvaniti (<a href="mailto:eirinibob@gmail.com"><tt>eirinibob@gmail.com</tt></a>).</p>
+
+<h2><a name="description">Description</a></h2><p>This module contains functions for testing stateful systems that
+   can be modeled as a finite state machine. That is, a finite collection
+   of named states and transitions between them. <code>proper_fsm</code> is closely related
+   to <a href="proper_statem.html"><code>proper_statem</code></a> and, in fact, implemented in terms of that. Test
+   cases generated using <code>proper_fsm</code> will be on precisely the same form as
+   test cases generated using <a href="proper_statem.html"><code>proper_statem</code></a>. The difference lies
+   in the way the callback modules are specified. On the whole, the relation
+   between <a href="proper_statem.html"><code>proper_statem</code></a> and <code>proper_fsm</code> can be considered similar
+   to the one between <code>gen_server</code> and <code>gen_fsm</code> in OTP libraries.</p>
+  
+   <p>Due to name conflicts with functions automatically imported from
+   <a href="proper_statem.html"><code>proper_statem</code></a>, a fully qualified call is needed in order to
+   use the  <a href="#index">API functions </a> of <code>proper_fsm</code>.</p>
+  
+   <h3><a name="State_representation">State representation</a></h3><p>
+   Following the convention used in <code>gen_fsm behaviour</code>, the state is
+   separated into a <code>StateName::</code><code><a href="#type-state_name">state_name()</a></code> and some
+   <code>StateData::</code><code><a href="#type-state_data">state_data()</a></code>. <code>StateName</code> is used to denote a state
+   of the finite state machine and <code>StateData</code> is any relevant information
+   that has to be stored in the testcase state. States are fully
+   represented as tuples <code>{StateName, StateData}</code>.</p>
+  
+   <p><code>StateName</code> is usually an atom (i.e. the name of the state), but can also
+   be a tuple. In the latter case, the first element of the tuple must be an
+   atom specifying the name of the state, whereas the rest of the elements can
+   be arbitrary terms specifying state attributes. For example, when
+   implementing the fsm of an elevator which can reach N different floors, the
+   <code>StateName</code> for each floor could be <code>{floor,K}, 1 &lt;= K &lt;= N</code>.<br>
+   <code>StateData</code> can be an arbitrary term, but is usually a record.</p>
+  
+   <h3><a name="Transition_represantation">Transition represantation</a></h3><p>
+   A transition (<code><a href="#type-transition">transition()</a></code>) is represented as a tuple
+   <code>{TargetState, {call,M,F,A}}</code>. This means that performing the specified
+   symbolic call at the current state of the fsm will lead to <code>TargetState</code>.
+   The atom <code>history</code> can be used as <code>TargetState</code> to denote that a transition   
+does not change the current state of the fsm.</p>
+  
+   <h3><a name="Callback_functions">Callback functions</a></h3>
+   The following functions must be exported from the callback module
+   implementing the finite state machine:
+   <ul>
+   <li> <code>initial_state() ::</code> <code><a href="#type-state_name">state_name()</a></code>
+     <p>Specifies the initial state of the finite state machine. As with
+     <code>proper_statem:initial_state/0</code>, its result should be deterministic.
+     </p></li>
+   <li> <code>initial_state_data() ::</code> <code><a href="#type-state_data">state_data()</a></code>
+     <p>Specifies what the state data should initially contain. Its result
+     should be deterministic.</p></li>
+   <li> <code>StateName(S::</code><code><a href="#type-state_data">state_data()</a></code><code>) ::</code>
+          <code>[</code><code><a href="#type-transition">transition()</a></code><code>]</code>
+     <p>There should be one instance of this function for each reachable
+     state <code>StateName</code> of the finite state machine. In case <code>StateName</code> is a
+     tuple the function takes a different form, described just below. The
+     function returns a list of possible transitions from the current state.
+     At command generation time, the instance of this function with the same
+     name as the current state's name is called to return the list of possible
+     transitions. Then, PropEr will randomly choose a transition and,
+     according to that, generate the next symbolic call to be included in the
+     command sequence. However, before the call is actually included, a
+     precondition that might impose constraints on <code>StateData</code> is checked.<br>
+     Note also that PropEr detects transitions that would raise an exception
+     of class <code>&lt;error&gt;</code> at generation time (not earlier) and does not choose
+     them. This feature can be used to include conditional transitions that
+     depend on the <code>StateData</code>.</p></li>
+   <li> <code>StateName(Attr1::term(), ..., AttrN::term(),
+                   S::</code><code><a href="#type-state_data">state_data()</a></code><code>) ::</code>
+          <code>[</code><code><a href="#type-transition">transition()</a></code><code>]</code>
+     <p>There should be one instance of this function for each reachable state
+     <code>{StateName,Attr1,...,AttrN}</code> of the finite state machine. The function
+     has similar beaviour to <code>StateName/1</code>, described above.</p></li>
+   <li> <code>weight(From::</code><code><a href="#type-state_name">state_name()</a></code><code>,
+                Target::</code><code><a href="#type-state_name">state_name()</a></code><code>,
+                Call::</code><code><a href="#type-symb_call">symb_call()</a></code><code>) :: integer()</code>
+     <p>This is an optional callback. When it is not defined (or not exported),
+     transitions are chosen with equal probability. When it is defined, it
+     assigns an integer weight to transitions from <code>From</code> to <code>Target</code>
+     triggered by symbolic call <code>Call</code>. In this case, each transition is chosen
+     with probability proportional to the weight assigned.</p></li>
+   <li> <code>precondition(From::</code><code><a href="#type-state_name">state_name()</a></code><code>,
+                      Target::</code><code><a href="#type-state_name">state_name()</a></code><code>,
+                      StateData::</code><code><a href="#type-state_data">state_data()</a></code><code>,
+                      Call::</code><code><a href="#type-symb_call">symb_call()</a></code><code>) :: boolean()</code>
+     <p>Similar to <code>proper_statem:precondition/2</code>. Specifies the
+     precondition that should hold about <code>StateData</code> so that <code>Call</code> can be
+     included in the command sequence. In case precondition doesn't hold, a
+     new transition is chosen using the appropriate <code>StateName/1</code> generator.
+     It is possible for more than one transitions to be triggered by the same
+     symbolic call and lead to different target states. In this case, at most
+     one of the target states may have a true precondition. Otherwise, PropEr
+     will not be able to detect which transition was chosen and an exception
+     will be raised.<br>
+     Preconditions are also very important for the shrinking procedure. When
+     shrinking command sequences, we try to eliminate commands that do not
+     contribute to failure, ensuring that all preconditions still hold.</p>
+     </li>
+   <li> <code>postcondition(From::</code><code><a href="#type-state_name">state_name()</a></code><code>,
+                       Target::</code><code><a href="#type-state_name">state_name()</a></code><code>,
+                       StateData::</code><code><a href="#type-state_data">state_data()</a></code><code>,
+                       Call::</code><code><a href="#type-symb_call">symb_call()</a></code><code>,
+                       Res::</code><code><a href="#type-result">result()</a></code><code>) :: boolean()</code>
+     <p>Similar to <code>proper_statem:postcondition/3</code>. Specifies the
+     postcondition that should hold about the result <code>Res</code> of the evaluation
+     of <code>Call</code>.</p></li>
+   <li> <code>next_state_data(From::</code><code><a href="#type-state_name">state_name()</a></code><code>,
+                         Target::</code><code><a href="#type-state_name">state_name()</a></code><code>,
+                         StateData::</code><code><a href="#type-state_data">state_data()</a></code><code>,
+                         Res::</code><code><a href="#type-result">result()</a></code><code>,
+                         Call::</code><code><a href="#type-symb_call">symb_call()</a></code><code>) ::</code>
+          <code><a href="#type-state_data">state_data()</a></code>
+     <p>Similar to <code>proper_statem:next_state/3</code>. Specifies how the
+     transition from <code>FromState</code> to <code>Target</code> triggered by <code>Call</code> affects the
+     <code>StateData</code>. <code>Res</code> refers to the result of <code>Call</code> and can be either
+     symbolic or dynamic.</p></li>
+   </ul>
+  
+   <h3><a name="Property_for_testing_finite_state_machines">Property for testing finite state machines</a></h3><p>   
+This is an example of a property to test an fsm specification:</p>
+  
+   <pre>      prop_fsm() -&gt;
+         ?FORALL(Cmds, proper_fsm:commands(?MODULE),
+          begin
+           {H,S,Res} = proper_fsm:run_commands(?MODULE, Cmds),
+           cleanup(),
+           ?WHENFAIL(io:format("History: ~w\nState: ~w\nRes: ~w\n",
+  	                        [H,S,Res]),
+  		      aggregate(zip(proper_fsm:state_names(H),
+  				    command_names(Cmds)),
+  			        Res =:= ok))
+          end).</pre>
+<h2><a name="types">Data Types</a></h2>
+
+<h3 class="typedecl"><a name="type-command">command()</a></h3>
+<p><pre>command() = {init, <a href="#type-fsm_state">fsm_state()</a>}
+          | {set, <a href="#type-symb_var">symb_var()</a>, <a href="#type-symb_call">symb_call()</a>}</pre></p>
+<p>Symbolic term used to bind the result of a symbolic call to a symbolic
+  variable or to initialize the state.</p>
+
+<h3 class="typedecl"><a name="type-command_list">command_list()</a></h3>
+<p><pre>command_list() = [<a href="#type-command">command()</a>]</pre></p>
+<p>List of symbolic commands.</p>
+
+<h3 class="typedecl"><a name="type-fsm_result">fsm_result()</a></h3>
+<p><pre>fsm_result() = <a href="proper_statem.html#type-statem_result">proper_statem:statem_result()</a></pre></p>
+<p>Specifies the overall result of command execution. It can be one of following:
+  <ul>
+   <li><b>ok</b>
+     <p>All commands were successfully run and all postconditions were true</p>
+   </li>
+   <li><b>initialization_error</b>
+     <p>There was an error while evaluating the initial state.</p>
+   </li>
+   <li><b>postcondition</b>
+     <p>A postcondition was false or raised an exception.</p>
+   </li>
+   <li><b>precondition</b>
+     <p>A precondition was false or raised an exception.</p>
+   </li>
+   <li><b>exception</b>
+     <p>An exception was raised while running a command.</p>
+   </li>
+  </ul></p>
+
+<h3 class="typedecl"><a name="type-fsm_state">fsm_state()</a></h3>
+<p><pre>fsm_state() = {<a href="#type-state_name">state_name()</a>, <a href="#type-state_data">state_data()</a>}</pre></p>
+<p>Full specification of fsm state.</p>
+
+<h3 class="typedecl"><a name="type-history">history()</a></h3>
+<p><pre>history() = [{<a href="#type-fsm_state">fsm_state()</a>, <a href="#type-result">result()</a>}]</pre></p>
+<p>History of command execution. Contains the dynamic state prior to command
+  execution and the actual result, for each command that was executed without
+  raising an exception.</p>
+
+<h3 class="typedecl"><a name="type-result">result()</a></h3>
+<p><pre>result() = term()</pre></p>
+<p>The actual result of executing a command.</p>
+
+<h3 class="typedecl"><a name="type-state_data">state_data()</a></h3>
+<p><pre>state_data() = term()</pre></p>
+<p>Internal state of the fsm.</p>
+
+<h3 class="typedecl"><a name="type-state_name">state_name()</a></h3>
+<p><pre>state_name() = atom() | tuple()</pre></p>
+<p>A named state of the fsm.</p>
+
+<h3 class="typedecl"><a name="type-symb_call">symb_call()</a></h3>
+<p><pre>symb_call() = <a href="proper_statem.html#type-symb_call">proper_statem:symb_call()</a></pre></p>
+<p>Symbolic term which will be evaluated to a function call.</p>
+
+<h3 class="typedecl"><a name="type-symb_var">symb_var()</a></h3>
+<p><pre>symb_var() = <a href="proper_statem.html#type-symb_var">proper_statem:symb_var()</a></pre></p>
+<p>Symbolic term to which we bind the result of a command.</p>
+
+<h3 class="typedecl"><a name="type-transition">transition()</a></h3>
+<p><pre>transition() = {<a href="#type-state_name">state_name()</a>, <a href="#type-symb_call">symb_call()</a>}</pre></p>
+<p>The target state of a transition zipped with the call triggering it.</p>
+
+<h2><a name="index">Function Index</a></h2>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#commands-1">commands/1</a></td><td>A special PropEr type which generates random command sequences,
+  according to an finite state machine specification.</td></tr>
+<tr><td valign="top"><a href="#commands-2">commands/2</a></td><td>Similar to <a href="#commands-1"><code>commands/1</code></a>, but generated command sequences always
+  start at a given state.</td></tr>
+<tr><td valign="top"><a href="#run_commands-2">run_commands/2</a></td><td>Evaluates a given symbolic command sequence <code>Cmds</code> according to the
+  finite state machine specified in <code>Mod</code>.</td></tr>
+<tr><td valign="top"><a href="#run_commands-3">run_commands/3</a></td><td>Similar to <a href="#run_commands-2"><code>run_commands/2</code></a>, but also accepts an environment
+  used for symbolic variable evaluation, exactly as described in
+  <a href="proper_statem.html#run_commands-3"><code>proper_statem:run_commands/3</code></a>.</td></tr>
+<tr><td valign="top"><a href="#state_names-1">state_names/1</a></td><td>Extracts the names of the states from a given command execution history.</td></tr>
+</table>
+
+<h2><a name="functions">Function Details</a></h2>
+
+<h3 class="function"><a name="commands-1">commands/1</a></h3>
+<div class="spec">
+<p><pre>commands(Mod :: <a href="#type-mod_name">mod_name()</a>) -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div><p>A special PropEr type which generates random command sequences,
+  according to an finite state machine specification. The function takes as
+  input the name of a callback module, which contains the fsm specification.
+  The initial state is computed by <br>
+  <code>{Mod:initial_state/0, Mod:initial_state_data/0}</code>.</p>
+
+<h3 class="function"><a name="commands-2">commands/2</a></h3>
+<div class="spec">
+<p><pre>commands(Mod :: <a href="#type-mod_name">mod_name()</a>, InitialState :: <a href="#type-fsm_state">fsm_state()</a>) -&gt;
+            <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div><p>Similar to <a href="#commands-1"><code>commands/1</code></a>, but generated command sequences always
+  start at a given state. In this case, the first command is always <br>
+  <code>{init, InitialState = {Name,Data}}</code> and is used to correctly initialize the
+  state every time the command sequence is run (i.e. during normal execution,
+  while shrinking and when checking a counterexample).</p>
+
+<h3 class="function"><a name="run_commands-2">run_commands/2</a></h3>
+<div class="spec">
+<p><pre>run_commands(Mod :: <a href="#type-mod_name">mod_name()</a>, Cmds :: <a href="#type-command_list">command_list()</a>) -&gt;
+                {<a href="#type-history">history()</a>, <a href="#type-fsm_state">fsm_state()</a>, <a href="#type-fsm_result">fsm_result()</a>}</pre></p>
+</div><p>Evaluates a given symbolic command sequence <code>Cmds</code> according to the
+  finite state machine specified in <code>Mod</code>. The result is a triple of the
+  form<br> <code>{History, FsmState, Result}</code>, similar to
+  <a href="proper_statem.html#run_commands-2"><code>proper_statem:run_commands/2</code></a>.</p>
+
+<h3 class="function"><a name="run_commands-3">run_commands/3</a></h3>
+<div class="spec">
+<p><pre>run_commands(Mod :: <a href="#type-mod_name">mod_name()</a>,
+             Cmds :: <a href="#type-command_list">command_list()</a>,
+             Env :: <a href="proper_symb.html#type-var_values">proper_symb:var_values()</a>) -&gt;
+                {<a href="#type-history">history()</a>, <a href="#type-fsm_state">fsm_state()</a>, <a href="#type-fsm_result">fsm_result()</a>}</pre></p>
+</div><p>Similar to <a href="#run_commands-2"><code>run_commands/2</code></a>, but also accepts an environment
+  used for symbolic variable evaluation, exactly as described in
+  <a href="proper_statem.html#run_commands-3"><code>proper_statem:run_commands/3</code></a>.</p>
+
+<h3 class="function"><a name="state_names-1">state_names/1</a></h3>
+<div class="spec">
+<p><pre>state_names(History :: <a href="#type-history">history()</a>) -&gt; [<a href="#type-state_name">state_name()</a>]</pre></p>
+</div><p>Extracts the names of the states from a given command execution history.
+  It is useful in combination with functions such as <a href="proper.html#aggregate-2"><code>proper:aggregate/2</code></a>
+  in order to collect statistics about state transitions during command
+  execution.</p>
+<hr>
+
+<div class="navbar"><a name="#navbar_bottom"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<p><i>Generated by EDoc, May 21 2011, 16:58:45.</i></p>
+</body>
+</html>

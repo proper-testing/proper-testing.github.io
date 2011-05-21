@@ -1,0 +1,346 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Module proper</title>
+<link rel="stylesheet" type="text/css" href="stylesheet.css" title="EDoc">
+</head>
+<body bgcolor="white">
+<div class="navbar"><a name="#navbar_top"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<hr>
+
+<h1>Module proper</h1>
+<ul class="index"><li><a href="#description">Description</a></li><li><a href="#types">Data Types</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>This is the main PropEr module.
+<p>Copyright © 2010-2011 Manolis Papadakis &lt;manopapad@gmail.com&gt;,
+                        Eirini Arvaniti &lt;eirinibob@gmail.com&gt;
+                    and Kostis Sagonas &lt;kostis@cs.ntua.gr&gt;</p>
+
+<p><b>Version:</b> May 21 2011 16:58:45</p>
+<p><b>Authors:</b> Manolis Papadakis (<a href="mailto:manopapad@gmail.com"><tt>manopapad@gmail.com</tt></a>).</p>
+
+<h2><a name="description">Description</a></h2>This is the main PropEr module.
+<h2><a name="types">Data Types</a></h2>
+
+<h3 class="typedecl"><a name="type-counterexample">counterexample()</a></h3>
+<p><pre>counterexample() = 
+    [<a href="proper_gen.html#type-instance">proper_gen:instance()</a> | [{<a href="#type-tag">tag()</a>, <a href="#type-counterexample">counterexample()</a>}]]</pre></p>
+
+
+<h3 class="typedecl"><a name="type-error">error()</a></h3>
+<p><pre>error() = {error, <a href="#type-error_reason">error_reason()</a>}</pre></p>
+
+
+<h3 class="typedecl"><a name="type-error_reason">error_reason()</a></h3>
+<p><pre>error_reason() = arity_limit
+               | cant_generate
+               | cant_satisfy
+               | non_boolean_result
+               | rejected
+               | too_many_instances
+               | type_mismatch
+               | wrong_type
+               | {typeserver, term()}
+               | {unexpected, any()}
+               | {unrecognized_option, term()}</pre></p>
+
+
+<h3 class="typedecl"><a name="type-long_module_result">long_module_result()</a></h3>
+<p><pre>long_module_result() = [{mfa(), <a href="#type-counterexample">counterexample()</a>}] | <a href="#type-error">error()</a></pre></p>
+
+
+<h3 class="typedecl"><a name="type-long_result">long_result()</a></h3>
+<p><pre>long_result() = true | <a href="#type-counterexample">counterexample()</a> | <a href="#type-error">error()</a></pre></p>
+
+
+<h3 class="typedecl"><a name="type-mod_name">mod_name()</a></h3>
+<p><pre>mod_name() = atom()</pre></p>
+
+
+<h3 class="typedecl"><a name="type-module_result">module_result()</a></h3>
+<p><pre>module_result() = <a href="#type-long_module_result">long_module_result()</a> | <a href="#type-short_module_result">short_module_result()</a></pre></p>
+
+
+<h3 class="typedecl"><a name="type-outer_test">outer_test()</a></h3>
+<p><b>abstract datatype</b>: <tt>outer_test()</tt></p>
+
+
+<h3 class="typedecl"><a name="type-output_fun">output_fun()</a></h3>
+<p><pre>output_fun() = fun((string(), [term()]) -&gt; ok)</pre></p>
+
+
+<h3 class="typedecl"><a name="type-result">result()</a></h3>
+<p><pre>result() = <a href="#type-long_result">long_result()</a> | <a href="#type-short_result">short_result()</a></pre></p>
+
+
+<h3 class="typedecl"><a name="type-sample">sample()</a></h3>
+<p><pre>sample() = [term()]</pre></p>
+
+
+<h3 class="typedecl"><a name="type-short_module_result">short_module_result()</a></h3>
+<p><pre>short_module_result() = [mfa()] | <a href="#type-error">error()</a></pre></p>
+
+
+<h3 class="typedecl"><a name="type-short_result">short_result()</a></h3>
+<p><pre>short_result() = boolean() | <a href="#type-error">error()</a></pre></p>
+
+
+<h3 class="typedecl"><a name="type-size">size()</a></h3>
+<p><pre>size() = non_neg_integer()</pre></p>
+
+
+<h3 class="typedecl"><a name="type-stats_printer">stats_printer()</a></h3>
+<p><pre>stats_printer() = fun((<a href="#type-sample">sample()</a>) -&gt; ok)
+                | fun((<a href="#type-sample">sample()</a>, <a href="#type-output_fun">output_fun()</a>) -&gt; ok)</pre></p>
+
+
+<h3 class="typedecl"><a name="type-tag">tag()</a></h3>
+<p><pre>tag() = atom()</pre></p>
+
+
+<h3 class="typedecl"><a name="type-test">test()</a></h3>
+<p><b>abstract datatype</b>: <tt>test()</tt></p>
+
+
+<h3 class="typedecl"><a name="type-title">title()</a></h3>
+<p><pre>title() = atom() | string()</pre></p>
+
+
+<h3 class="typedecl"><a name="type-user_opt">user_opt()</a></h3>
+<p><pre>user_opt() = quiet
+           | verbose
+           | {to_file, <a href="file.html#type-io_device">file:io_device()</a>}
+           | {on_output, <a href="#type-output_fun">output_fun()</a>}
+           | long_result
+           | {numtests, pos_integer()}
+           | pos_integer()
+           | {start_size, <a href="#type-size">size()</a>}
+           | {max_size, <a href="#type-size">size()</a>}
+           | {max_shrinks, non_neg_integer()}
+           | noshrink
+           | {constraint_tries, pos_integer()}
+           | fails
+           | any_to_integer
+           | {spec_timeout, timeout()}</pre></p>
+
+
+<h3 class="typedecl"><a name="type-user_opts">user_opts()</a></h3>
+<p><pre>user_opts() = [<a href="#type-user_opt">user_opt()</a>] | <a href="#type-user_opt">user_opt()</a></pre></p>
+
+
+<h2><a name="index">Function Index</a></h2>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#aggregate-2">aggregate/2</a></td><td></td></tr>
+<tr><td valign="top"><a href="#aggregate-3">aggregate/3</a></td><td></td></tr>
+<tr><td valign="top"><a href="#check-2">check/2</a></td><td></td></tr>
+<tr><td valign="top"><a href="#check-3">check/3</a></td><td></td></tr>
+<tr><td valign="top"><a href="#check_spec-1">check_spec/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#check_spec-2">check_spec/2</a></td><td></td></tr>
+<tr><td valign="top"><a href="#check_specs-1">check_specs/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#check_specs-2">check_specs/2</a></td><td></td></tr>
+<tr><td valign="top"><a href="#classify-3">classify/3</a></td><td></td></tr>
+<tr><td valign="top"><a href="#clean_garbage-0">clean_garbage/0</a></td><td></td></tr>
+<tr><td valign="top"><a href="#collect-2">collect/2</a></td><td></td></tr>
+<tr><td valign="top"><a href="#collect-3">collect/3</a></td><td></td></tr>
+<tr><td valign="top"><a href="#conjunction-1">conjunction/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#counterexample-0">counterexample/0</a></td><td></td></tr>
+<tr><td valign="top"><a href="#counterexample-1">counterexample/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#counterexample-2">counterexample/2</a></td><td></td></tr>
+<tr><td valign="top"><a href="#counterexamples-0">counterexamples/0</a></td><td></td></tr>
+<tr><td valign="top"><a href="#equals-2">equals/2</a></td><td></td></tr>
+<tr><td valign="top"><a href="#fails-1">fails/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#global_state_erase-0">global_state_erase/0</a></td><td></td></tr>
+<tr><td valign="top"><a href="#measure-3">measure/3</a></td><td></td></tr>
+<tr><td valign="top"><a href="#module-1">module/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#module-2">module/2</a></td><td></td></tr>
+<tr><td valign="top"><a href="#numtests-2">numtests/2</a></td><td></td></tr>
+<tr><td valign="top"><a href="#on_output-2">on_output/2</a></td><td></td></tr>
+<tr><td valign="top"><a href="#pure_check-1">pure_check/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#pure_check-2">pure_check/2</a></td><td></td></tr>
+<tr><td valign="top"><a href="#quickcheck-1">quickcheck/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#quickcheck-2">quickcheck/2</a></td><td></td></tr>
+<tr><td valign="top"><a href="#spawn_link_migrate-1">spawn_link_migrate/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#with_title-1">with_title/1</a></td><td></td></tr>
+</table>
+
+<h2><a name="functions">Function Details</a></h2>
+
+<h3 class="function"><a name="aggregate-2">aggregate/2</a></h3>
+<div class="spec">
+<p><pre>aggregate(Sample :: <a href="#type-sample">sample()</a>, Test :: <a href="#type-test">test()</a>) -&gt; <a href="#type-test">test()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="aggregate-3">aggregate/3</a></h3>
+<div class="spec">
+<p><pre>aggregate(Printer :: <a href="#type-stats_printer">stats_printer()</a>,
+          Sample :: <a href="#type-sample">sample()</a>,
+          Test :: <a href="#type-test">test()</a>) -&gt;
+             <a href="#type-test">test()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="check-2">check/2</a></h3>
+<div class="spec">
+<p><pre>check(OuterTest :: <a href="#type-outer_test">outer_test()</a>, CExm :: <a href="#type-counterexample">counterexample()</a>) -&gt;
+         <a href="#type-short_result">short_result()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="check-3">check/3</a></h3>
+<div class="spec">
+<p><pre>check(OuterTest :: <a href="#type-outer_test">outer_test()</a>,
+      CExm :: <a href="#type-counterexample">counterexample()</a>,
+      UserOpts :: <a href="#type-user_opts">user_opts()</a>) -&gt;
+         <a href="#type-short_result">short_result()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="check_spec-1">check_spec/1</a></h3>
+<div class="spec">
+<p><pre>check_spec(MFA :: mfa()) -&gt; <a href="#type-result">result()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="check_spec-2">check_spec/2</a></h3>
+<div class="spec">
+<p><pre>check_spec(MFA :: mfa(), UserOpts :: <a href="#type-user_opts">user_opts()</a>) -&gt; <a href="#type-result">result()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="check_specs-1">check_specs/1</a></h3>
+<div class="spec">
+<p><pre>check_specs(Mod :: <a href="#type-mod_name">mod_name()</a>) -&gt; <a href="#type-module_result">module_result()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="check_specs-2">check_specs/2</a></h3>
+<div class="spec">
+<p><pre>check_specs(Mod :: <a href="#type-mod_name">mod_name()</a>, UserOpts :: <a href="#type-user_opts">user_opts()</a>) -&gt;
+               <a href="#type-module_result">module_result()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="classify-3">classify/3</a></h3>
+<div class="spec">
+<p><pre>classify(X1 :: boolean(),
+         TermOrSample :: term() | <a href="#type-sample">sample()</a>,
+         Test :: <a href="#type-test">test()</a>) -&gt;
+            <a href="#type-test">test()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="clean_garbage-0">clean_garbage/0</a></h3>
+<div class="spec">
+<p><pre>clean_garbage() -&gt; ok</pre></p>
+</div>
+
+<h3 class="function"><a name="collect-2">collect/2</a></h3>
+<div class="spec">
+<p><pre>collect(Term :: term(), Test :: <a href="#type-test">test()</a>) -&gt; <a href="#type-test">test()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="collect-3">collect/3</a></h3>
+<div class="spec">
+<p><pre>collect(Printer :: <a href="#type-stats_printer">stats_printer()</a>,
+        Term :: term(),
+        Test :: <a href="#type-test">test()</a>) -&gt;
+           <a href="#type-test">test()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="conjunction-1">conjunction/1</a></h3>
+<div class="spec">
+<p><pre>conjunction(SubProps :: [{<a href="#type-tag">tag()</a>, <a href="#type-test">test()</a>}]) -&gt; <a href="#type-test">test()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="counterexample-0">counterexample/0</a></h3>
+<div class="spec">
+<p><pre>counterexample() -&gt; <a href="#type-counterexample">counterexample()</a> | undefined</pre></p>
+</div>
+
+<h3 class="function"><a name="counterexample-1">counterexample/1</a></h3>
+<div class="spec">
+<p><pre>counterexample(OuterTest :: <a href="#type-outer_test">outer_test()</a>) -&gt; <a href="#type-long_result">long_result()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="counterexample-2">counterexample/2</a></h3>
+<div class="spec">
+<p><pre>counterexample(OuterTest :: <a href="#type-outer_test">outer_test()</a>, UserOpts :: <a href="#type-user_opts">user_opts()</a>) -&gt;
+                  <a href="#type-long_result">long_result()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="counterexamples-0">counterexamples/0</a></h3>
+<div class="spec">
+<p><pre>counterexamples() -&gt; [{mfa(), <a href="#type-counterexample">counterexample()</a>}] | undefined</pre></p>
+</div>
+
+<h3 class="function"><a name="equals-2">equals/2</a></h3>
+<div class="spec">
+<p><pre>equals(A :: term(), B :: term()) -&gt; <a href="#type-test">test()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="fails-1">fails/1</a></h3>
+<div class="spec">
+<p><pre>fails(Test :: <a href="#type-outer_test">outer_test()</a>) -&gt; <a href="#type-outer_test">outer_test()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="global_state_erase-0">global_state_erase/0</a></h3>
+<div class="spec">
+<p><pre>global_state_erase() -&gt; ok</pre></p>
+</div>
+
+<h3 class="function"><a name="measure-3">measure/3</a></h3>
+<div class="spec">
+<p><pre>measure(Title :: <a href="#type-title">title()</a>,
+        Sample :: number() | [number()],
+        Test :: <a href="#type-test">test()</a>) -&gt;
+           <a href="#type-test">test()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="module-1">module/1</a></h3>
+<div class="spec">
+<p><pre>module(Mod :: <a href="#type-mod_name">mod_name()</a>) -&gt; <a href="#type-module_result">module_result()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="module-2">module/2</a></h3>
+<div class="spec">
+<p><pre>module(Mod :: <a href="#type-mod_name">mod_name()</a>, UserOpts :: <a href="#type-user_opts">user_opts()</a>) -&gt;
+          <a href="#type-module_result">module_result()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="numtests-2">numtests/2</a></h3>
+<div class="spec">
+<p><pre>numtests(N :: pos_integer(), Test :: <a href="#type-outer_test">outer_test()</a>) -&gt; <a href="#type-outer_test">outer_test()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="on_output-2">on_output/2</a></h3>
+<div class="spec">
+<p><pre>on_output(Print :: <a href="#type-output_fun">output_fun()</a>, Test :: <a href="#type-outer_test">outer_test()</a>) -&gt;
+             <a href="#type-outer_test">outer_test()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="pure_check-1">pure_check/1</a></h3>
+<div class="spec">
+<p><pre>pure_check(OuterTest :: <a href="#type-outer_test">outer_test()</a>) -&gt; <a href="#type-result">result()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="pure_check-2">pure_check/2</a></h3>
+<div class="spec">
+<p><pre>pure_check(OuterTest :: <a href="#type-outer_test">outer_test()</a>, ImmUserOpts :: <a href="#type-user_opts">user_opts()</a>) -&gt;
+              <a href="#type-result">result()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="quickcheck-1">quickcheck/1</a></h3>
+<div class="spec">
+<p><pre>quickcheck(OuterTest :: <a href="#type-outer_test">outer_test()</a>) -&gt; <a href="#type-result">result()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="quickcheck-2">quickcheck/2</a></h3>
+<div class="spec">
+<p><pre>quickcheck(OuterTest :: <a href="#type-outer_test">outer_test()</a>, UserOpts :: <a href="#type-user_opts">user_opts()</a>) -&gt;
+              <a href="#type-result">result()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="spawn_link_migrate-1">spawn_link_migrate/1</a></h3>
+<div class="spec">
+<p><pre>spawn_link_migrate(ActualFun :: fun(() -&gt; term())) -&gt; pid()</pre></p>
+</div>
+
+<h3 class="function"><a name="with_title-1">with_title/1</a></h3>
+<div class="spec">
+<p><pre>with_title(Title :: <a href="#type-title">title()</a>) -&gt; <a href="#type-stats_printer">stats_printer()</a></pre></p>
+</div>
+<hr>
+
+<div class="navbar"><a name="#navbar_bottom"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<p><i>Generated by EDoc, May 21 2011, 16:58:45.</i></p>
+</body>
+</html>
