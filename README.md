@@ -142,3 +142,4 @@ Infrastructure
 *   Setup code highlighting with pygments, also other extesions.
 *   Restore the copying of README.md from proper.
 *   Work on the stylesheet (bigger text on navbars?).
+*   make header.png non-transparent?

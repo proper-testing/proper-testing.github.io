@@ -13,6 +13,11 @@ body{
     margin-right: auto;
 }
 
+#header img{
+    border: 0px;
+    width: 100%;
+}
+
 #nav ul{
     list-style-type: none;
     margin: 0px;
@@ -51,12 +56,12 @@ body{
 }
 
 #nav, #header{
-    width: 800px;
+    max-width: 800px;
     padding: 0px;
 }
 
 #content, #footer{
-    width: 780px;
+    max-width: 780px;
     padding: 3px 10px 3px 10px;
 }
 
@@ -84,8 +89,4 @@ body{
 
 #footer a{
     color: white;
-}
-
-img{
-    border: 0;
 }
