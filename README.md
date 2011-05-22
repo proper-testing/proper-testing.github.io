@@ -19,15 +19,17 @@ Editing the site
 
 *   Add or edit pages in the 'pages_src' directory.
 *   Pages are written in Markdown. For help on Markdown, see [the official
-    syntax guide][1] and [a list of available extensions][2].
+    syntax guide][1] and [a list of available extensions][2] (extensions must be
+    enabled separately, inside compile_pages.py). This README is actually
+    written in Markdown.
 *   Page names must be alphanumeric, in mixed case, with underscores instead of
     spaces, and must have the extension '.md'.
 *   The site's structure is reflected in the directory hierarchy.
 *   Support/User_Guide.md is copied from PropEr's README file. Do not edit this
     file directly: any changes you make will be overwritten.
 *   Headers and footers will be added to each page automatically. The template
-    for these can be found in the 'page_base.src' file.
-*   A title will be added to each page, according to its file name.
+    for these can be found in the 'template.html' file.
+*   A title and heading will be added to each page, according to its file name.
 *   Every directory must contain an 'index.md' file. The contents of that file
     will be automatically appended with a list of the pages and sub-directories
     inside that directory.
@@ -37,8 +39,8 @@ Editing the site
     sub-directory will be the value of the 'Summary' attribute of that
     directory's index page.
 *   EDoc-generated documentation must be copied manually to 'resources/doc'
-    periodically, by running 'make update_proper_docs' on a system that has a
-    recent version of EDoc.
+    periodically, by running 'make update_docs' on a system that has a recent
+    version of EDoc.
 *   Other resources (images, stylesheets, pdfs etc.) can be found in the
     'resources' directory.
 
@@ -83,6 +85,7 @@ Footer
 ------
 
 *   "Copyright ..."
+*   license
 *   "Powered by ..."
 *   "Valid HTML ..."
 *   "This page was last edited on ..."
@@ -128,3 +131,14 @@ About
     - personal webpage
 *   PropEr's users
 *   (Humorous) reviews
+
+
+Infrastructure
+--------------
+
+*   Add a title to each navbar link (the corresponding summary for normal links,
+    or simply "Back to main page" for home links).
+*   Test for broken links, set up automatic check.
+*   Setup code highlighting with pygments, also other extesions.
+*   Restore the copying of README.md from proper.
+*   Work on the stylesheet (bigger text on navbars?).

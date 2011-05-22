@@ -1,10 +1,10 @@
 include username.mk
 
-.PHONY: default update_proper_docs clean distclean build test upload
+.PHONY: default update_docs clean distclean build test upload
 
 default: build
 
-update_proper_docs:
+update_docs:
 	if ! test -d proper; then git clone https://github.com/manopapad/proper.git; fi
 	cd proper; git pull origin master
 	$(MAKE) -C proper distclean doc
@@ -18,17 +18,13 @@ distclean: clean
 	rm -rf build/*
 
 build: distclean
-	ifdef USERNAME
 	cp -r resources/* build
-	wget --no-check-certificate -O pages_src/Support/User_Guide.md \
-		https://github.com/manopapad/proper/raw/master/README.md
-	python build_pages.py
-	else
-	@echo "Please read the instructions first."
-	endif
+	#wget --no-check-certificate -O pages_src/Support/User_Guide.md \
+	#	https://github.com/manopapad/proper/raw/master/README.md
+	python compile_pages.py
 
 test:
-	python webserver.py
+	python start_webserver.py
 
 upload: clean
 	rsync --archive --delete build/* $(USERNAME)@greedy.softlab.ntua.gr:/home/proper

@@ -11,7 +11,7 @@ try:
     HandlerClass = SimpleHTTPServer.SimpleHTTPRequestHandler
     ServerClass = BaseHTTPServer.HTTPServer
     HandlerClass.protocol_version = "HTTP/1.0"
-    httpd = ServerClass(('', 8000), HandlerClass)
+    httpd = ServerClass(("", 8000), HandlerClass)
     print "Serving on http://localhost:8000"
     print "Press Ctrl+C to quit."
     httpd.serve_forever()

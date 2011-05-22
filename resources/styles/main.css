@@ -1,0 +1,91 @@
+body{
+    margin: 0px;
+    padding: 0px;
+    background-color: #696969; /*dimgray*/
+    font-family: sans-serif;
+}
+
+#header, #nav, #content, #footer{
+    background-color: white;
+    margin-top: 0px;
+    margin-left: auto;
+    margin-bottom: 0px;
+    margin-right: auto;
+}
+
+#nav ul{
+    list-style-type: none;
+    margin: 0px;
+    padding: 0px;
+    background-color: red;
+    background-image: url('/images/gradient.jpg');
+}
+
+#nav li{
+    display: inline;
+}
+
+#nav a{
+    display: inline-block;
+    border-right: 2px solid black;
+    padding: 5px;
+    color: white;
+    text-decoration: none;
+}
+
+#nav li.current a{
+    background-color: white;
+    color: black;
+}
+
+#nav a:active{
+    color: black;
+}
+
+#pri_navbar{
+    font-size: large;
+}
+
+#sec_navbar{
+    font-size: small;
+}
+
+#nav, #header{
+    width: 800px;
+    padding: 0px;
+}
+
+#content, #footer{
+    width: 780px;
+    padding: 3px 10px 3px 10px;
+}
+
+#content a{
+    color: #B22222; /*firebrick*/
+}
+
+#content a:active{
+    color: white;
+}
+
+#footer{
+    border-top: 1px solid black;
+    font-size: x-small;
+    background-color: red;
+    background-image: url('/images/gradient.jpg');
+    color: white;
+}
+
+#footer ul{
+    list-style-type: none;
+    margin: 0px;
+    padding: 0px;
+}
+
+#footer a{
+    color: white;
+}
+
+img{
+    border: 0;
+}
