@@ -7,10 +7,10 @@ Preparation
 *   Only members of the 'proper' group on greedy have commit and upload access.
 *   To clone the PropEr site sources, run:
 	git clone ssh://me@greedy.softlab.ntua.gr/home/nonlocal/manopapad/proper_site.git
-    where 'me' is your username on greedy.
+    where 'me' is your user name on greedy.
 *   Add a file named 'username.mk' to the project's main directory. This file
     should contain a single line of the form 'USERNAME=me', where 'me' is your
-    username on greedy. git will ignore this file.
+    user name on greedy. git will ignore this file.
 *   You are going to need a working python interpreter.
 
 
@@ -41,7 +41,7 @@ Editing the site
 *   EDoc-generated documentation must be copied manually to 'resources/doc'
     periodically, by running 'make update_docs' on a system that has a recent
     version of EDoc.
-*   Other resources (images, stylesheets, pdfs etc.) can be found in the
+*   Other resources (images, style sheets, pdfs etc.) can be found in the
     'resources' directory.
 
 [1]: http://daringfireball.net/projects/markdown/
@@ -103,7 +103,7 @@ Help/Support
 *   EDoc-powered documentation
 *   FAQ, How-To
 *   Tips, Common mistakes/blunders
-*   Tutorials (e.g. simple lists properties, re2, proc_dict statem, comining
+*   Tutorials (e.g. simple lists properties, re2, proc_dict statem, combining
     PropEr and EUnit ...)
 *   Demos, Sample Properties, showcase of QC-mode and PropEr-exclusive features
     (various demos from presentations, Kresten's properties, ec_dictionary, from
@@ -139,7 +139,7 @@ Infrastructure
 *   Add a title to each navbar link (the corresponding summary for normal links,
     or simply "Back to main page" for home links).
 *   Test for broken links, set up automatic check.
-*   Setup code highlighting with pygments, also other extesions.
+*   Setup code highlighting with pygments, also other extensions.
 *   Restore the copying of README.md from proper.
 *   Work on the stylesheet (bigger text on navbars?).
 *   make header.png non-transparent?
