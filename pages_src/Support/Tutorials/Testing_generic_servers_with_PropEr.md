@@ -1,13 +1,12 @@
 Summary: PropEr statem tutorial
 
 Testing purely functional code is usually not enough for industrial erlang
-applications like telecom software or database management systems. In this
-tutorial, we will see how PropEr can be used for automated random testing of
-stateful systems.  
+applications like telecom software or http servers. In this tutorial, we
+describe how to use PropEr for automated random testing of stateful systems.  
 
 Undoubtedly, automated random testing of a stateful API would require some
 magic, unless some additional information is provided. Since we're not
-magicians but erlang programmers, we decided to describe the side-effects of
+magicians but erlang programmers, we choose to describe the side-effects of
 the system under test via an abstract state machine and then, let PropEr do
 some magic for us.
 
@@ -172,7 +171,7 @@ In order to get an idea of what testcases look like, you can try:
 The story here is quite simple. Ben creates an account at the dvd-club and
 then decides to rent some movies. How do we know it's Ben who wants to
 rent the movies? That's because we bind the result of each symbolic call to a
-symbolic variable. Therefore, {var,1} is Ben's password and, in this way,
+symbolic variable. Therefore, `{var,1}` is Ben's password and, in this way,
 it can be used in subsequent commands/requests. After watching the Lion King,
 Ben returns it to the dvd club. Then, Alice creates an account, someone
 comes in to buy pop-corn and life goes on... As we cannot test every possible
@@ -193,11 +192,11 @@ into account the model state. In our example, we are not sure yet if this is
 necessary. Let us make a first attempt. What about...?
 
     command(_S) ->
-       oneof([{call, ?MODULE, create_account, [name()]},
-	      {call, ?MODULE, delete_account, [password()]},
-	      {call, ?MODULE, rent_dvd, [password(), movie()]},
-	      {call, ?MODULE, return_dvd, [password(), movie()]},
-              {call, ?MODULE, ask_for_popcorn, []}]).
+        oneof([{call, ?MODULE, create_account, [name()]},
+               {call, ?MODULE, delete_account, [password()]},
+               {call, ?MODULE, rent_dvd, [password(), movie()]},
+               {call, ?MODULE, return_dvd, [password(), movie()]},
+               {call, ?MODULE, ask_for_popcorn, []}]).
 
 where `name()` generates a random name for a new client at the dvd club,
 `movie()` generates a random movie name and `password()` a random password.
@@ -261,25 +260,25 @@ but in a rather unusual way:
 
     command(S) ->
        oneof([{call, ?MODULE, create_account, [name()]},
-	      {call, ?MODULE, ask_for_popcorn, []}] ++
-	     [{call, ?MODULE, delete_account, [password(S)]}
-	      || S#model_state.users =/= []] ++
-	     [{call, ?MODULE, rent_dvd, [password(S), movie()]}
-	      || S#model_state.users =/= []] ++
-	     [{call, ?MODULE, return_dvd, [password(S), movie()]}
-	      || S#model_state.users =/= []]).
+              {call, ?MODULE, ask_for_popcorn, []}] ++
+             [{call, ?MODULE, delete_account, [password(S)]}
+              || S#model_state.users =/= []] ++
+             [{call, ?MODULE, rent_dvd, [password(S), movie()]}
+              || S#model_state.users =/= []] ++
+             [{call, ?MODULE, return_dvd, [password(S), movie()]}
+              || S#model_state.users =/= []]).
 
 So, that's it! Our generator is ready. Now it's time to talk in more detail
 about the model state, which was so useful for password generation.
 
 
-### Changing the state ###
+### Updating the state ###
 
 The model state is initialized via the callback function `initial_state/0`.
 
     initial_state() ->
-       #model_state{users     = [],
-		    rented    = []}.
+       #model_state{users  = [],
+                    rented = []}.
 
 Since each command might change the state, we need a way to keep track of these
 changes. This is the role of the `next_state/3` callback function. It takes as
