@@ -5,50 +5,48 @@
 	 terminate/2, code_change/3]).
 -export([start_link/0, stop/0, add_player/1, remove_player/1,
 	 get_score/1, ping/1]).
--export([play_ping_pong/1, play_tennis/1, play_football/1, cast_ping_pong/1]).
+-export([play_ping_pong/1, play_tennis/1, play_football/1]).
 -export([ping_pong_player/1]).
 
+-define(MASTER, ?MODULE).
+-define(PLAYER, ?MODULE).
 
-%% Master's API
+
+%%--------------------------------------------------------------------
+%%% Master's API
+%%--------------------------------------------------------------------
 
 start_link() ->
-    gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).
+    gen_server:start_link({local, ?MASTER}, ?MASTER, [], []).
 
 stop() -> 
-    gen_server:cast(?MODULE, stop).
+    gen_server:cast(?MASTER, stop).
 
 add_player(Name) ->
-    gen_server:call(?MODULE, {add_player,Name}).
+    gen_server:call(?MASTER, {add_player,Name}).
 
 remove_player(Name) ->
-    gen_server:call(?MODULE, {remove_player,Name}).
+    gen_server:call(?MASTER, {remove_player,Name}).
 
 get_score(Name) ->
-    gen_server:call(?MODULE, {get_score,Name}).
+    gen_server:call(?MASTER, {get_score,Name}).
 
 ping(FromName) ->
-    gen_server:call(?MODULE, {ping, FromName}).
+    gen_server:call(?MASTER, {ping, FromName}).
 
 
-%% Player's API
-
-cast_ping_pong(Player) ->
-    Player ! ping_pong.
+%%--------------------------------------------------------------------
+%%% Player's API
+%%--------------------------------------------------------------------
 
 play_ping_pong(Player) ->
-    Player ! {ping_pong, self()},
-    receive
-        Reply -> Reply
-    %% after
-    %% 	1000 -> {removed,Player}
-    end.
+    Player ! ping_pong,
+    ok.
 
 play_tennis(Player) ->
     Player ! {tennis, self()},
     receive
-        Reply -> Reply
-    %% after
-    %% 	1000 -> {removed,Player}
+	Reply -> Reply
     end.
 
 play_football(Player) ->
@@ -59,20 +57,17 @@ play_football(Player) ->
 
 
 %%--------------------------------------------------------------------
-%%% Player's loop
+%%% Player's internal loop
 %%--------------------------------------------------------------------
 
 ping_pong_player(Name) ->
     receive
-	{ping_pong,From} ->
-	    From ! ping(Name); 
+	ping_pong ->
+	    ping(Name); 
 	{tennis,From} ->
-	    %% ping(Name),
 	    From ! maybe_later;
 	{football,From} ->
-	    From ! no_way;
-	ping_pong ->
-	    ping(Name)
+	    From ! no_way
     end,
     ping_pong_player(Name).
 
@@ -87,23 +82,23 @@ init([]) ->
 handle_call({add_player,Name}, _From, Dict) ->
     case whereis(Name) of
 	undefined ->
-	    Pid = spawn(?MODULE, ping_pong_player, [Name]),
-	    register(Name, Pid);
+	    Pid = spawn(?PLAYER, ping_pong_player, [Name]),
+	    true = register(Name, Pid),
+	    {reply, ok, dict:store(Name, 0, Dict)};		
 	Pid when is_pid(Pid) ->
-	    ok
-    end,
-    {reply, ok, dict:store(Name, 0, Dict)};
+	    {reply, ok, Dict}
+    end;
 handle_call({remove_player,Name}, _From, Dict) ->
     Pid = whereis(Name),
     exit(Pid, kill),
     {reply, {removed,Name}, dict:erase(Name, Dict)};
 handle_call({ping,FromName}, _From, Dict) ->
-    %% case dict:is_key(FromName, Dict) of
-    %% 	true ->
+    case dict:is_key(FromName, Dict) of
+    	true ->
 	    {reply, pong, dict:update_counter(FromName, 1, Dict)};
-    	%% false ->
-    %% 	    {reply, invalid_player, Dict}
-    %% end;
+    	false ->
+    	    {reply, {removed,FromName}, Dict}
+    end;
 handle_call({get_score,Name}, _From, Dict) ->
     Score = dict:fetch(Name, Dict),
     {reply, Score, Dict}.
@@ -113,8 +108,7 @@ handle_cast(stop, Dict) ->
 
 terminate(_Reason, Dict) ->
     Players = dict:fetch_keys(Dict),
-    [exit(whereis(Name), kill) || Name <- Players,
-				  whereis(Name) =/= undefined],
+    [exit(whereis(Name), kill) || Name <- Players],
     ok.
 
 handle_info(_Info, S) ->

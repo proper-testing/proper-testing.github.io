@@ -33,6 +33,7 @@ prop_ping_pong_works() ->
 		 aggregate(command_names(Cmds), Res =:= ok))
 	  end)).
 
+
 %%% Statem Callbacks
 
 initial_state() ->  #state{}.
@@ -44,22 +45,17 @@ command(S) ->
 	   {call,?MASTER,remove_player,[name(S)]},
 	   {call,?MASTER,get_score,[name(S)]},
 	   {call,?PLAYER,play_ping_pong,[name(S)]},
-	   {call,?PLAYER,cast_ping_pong,[name(S)]},
 	   {call,?PLAYER,play_tennis,[name(S)]}]).
  
 name() -> elements(?NAMES).
 
 name(S) -> elements(S#state.players).
 
-precondition(S, {call,_,add_player,[Name]}) ->
-    not lists:member(Name, S#state.players);
 precondition(S, {call,_,remove_player,[Name]}) ->
     lists:member(Name, S#state.players);
 precondition(S, {call,_,get_score,[Name]}) ->
     lists:member(Name, S#state.players);
 precondition(S, {call,_,play_ping_pong,[Name]}) ->
-    lists:member(Name, S#state.players);
-precondition(S, {call,_,cast_ping_pong,[Name]}) ->
     lists:member(Name, S#state.players);
 precondition(S, {call,_,play_tennis,[Name]}) ->
     lists:member(Name, S#state.players);
@@ -67,18 +63,20 @@ precondition(_, _) ->
     true.
 
 next_state(S, _V, {call,_,add_player,[Name]}) ->
-    S#state{players = [Name|S#state.players],
-	    scores = [{Name,0}|S#state.scores]};
+    case lists:member(Name, S#state.players) of
+	false ->
+	    S#state{players = [Name|S#state.players],
+		    scores = [{Name,0}|S#state.scores]};
+	true ->
+	    S
+    end;
 next_state(S, _V, {call,_,remove_player,[Name]}) ->
     S#state{players = lists:delete(Name, S#state.players),
 	    scores = proplists:delete(Name, S#state.scores)};
 next_state(S = #state{scores = Sc}, _V, {call,_,play_ping_pong,[Name]}) ->
     Score = proplists:get_value(Name, Sc),
     S#state{scores = [{Name,Score+1}|proplists:delete(Name, Sc)]};
-next_state(S = #state{scores = Sc}, _V, {call,_,cast_ping_pong,[Name]}) ->
-    Score = proplists:get_value(Name, Sc),
-    S#state{scores = [{Name,Score+1}|proplists:delete(Name, Sc)]};
-next_state(S, _, _) ->    
+next_state(S, _, _) ->
     S.
 
 postcondition(_S, {call,_,add_player,[_Name]}, Res) ->
@@ -89,9 +87,6 @@ postcondition(S, {call,_,get_score,[Name]}, Res) ->
     %% Res =:= proplists:get_value(Name, S#state.scores);
     Res =< proplists:get_value(Name, S#state.scores);
 postcondition(_S, {call,_,play_ping_pong,[_Name]}, Res) ->
-    Res =:= pong;
-postcondition(_S, {call,_,cast_ping_pong,[_Name]}, Res) ->
-    Res =:= ping_pong;
+    Res =:= ok;
 postcondition(_S, {call,_,play_tennis,[_Name]}, Res) ->
     Res =:= maybe_later.
-
