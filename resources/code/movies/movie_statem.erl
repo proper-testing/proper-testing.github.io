@@ -61,14 +61,15 @@ initial_state() ->
 	   rented = []}.
 
 command(S) ->
-    frequency([{1, {call, ?SERVER, create_account, [name()]}},
-	       {1, {call, ?SERVER, ask_for_popcorn, []}}] ++
-	      [{1, {call, ?SERVER, delete_account, [password(S)]}}
+    frequency([{1, {call,?SERVER,create_account,[name()]}},
+	       {1, {call,?SERVER,ask_for_popcorn,[]}}] ++
+	      [{1, {call,?SERVER,delete_account,[password(S)]}}
 	       || S#state.users =/= []] ++
-	      [{1, {call, ?SERVER, rent_dvd, [password(S), movie()]}}
+	      [{5, {call,?SERVER,rent_dvd,[password(S), movie()]}}
 	       || S#state.users =/= []] ++
-	      [{1, {call, ?SERVER, return_dvd, [password(S), movie()]}}
-	       || S#state.users =/= []]).
+	      [{5, ?LET({Pass,Movie}, elements(S#state.rented),
+			{call,?SERVER,return_dvd,[Pass, Movie]})}
+	       || S#state.rented =/= []]).
 
 name() ->
     elements(?NAMES).
@@ -79,56 +80,56 @@ movie() ->
 password(#state{users = Passwords}) ->
     elements(Passwords).
 
-precondition(S, {call, _, return_dvd, [Pass,Movie]}) ->
+precondition(S, {call,_,return_dvd,[Pass,Movie]}) ->
     lists:member({Pass,Movie}, S#state.rented);
-precondition(S, {call, _, rent_dvd, [Pass,_Movie]}) ->
+precondition(S, {call,_,rent_dvd,[Pass,_Movie]}) ->
     not lists:member({Pass,_Movie}, S#state.rented) andalso
 	lists:member(Pass, S#state.users);
-precondition(S, {call, _, delete_account, [Pass]}) ->
+precondition(S, {call,_,delete_account,[Pass]}) ->
     lists:member(Pass, S#state.users);
 precondition(_, _) ->
     true.
 
-next_state(S, V, {call, _, create_account, [_Name]}) ->
+next_state(S, V, {call,_,create_account,[_Name]}) ->
     S#state{users = [V|S#state.users]};
-next_state(S, _V, {call, _, delete_account, [Pass]}) ->
+next_state(S, _V, {call,_,delete_account,[Pass]}) ->
     case proplists:is_defined(Pass, S#state.rented) of
     	false ->
     	    S#state{users = lists:delete(Pass, S#state.users)};
     	true ->
     	    S
     end;
-next_state(S, _V, {call, _, rent_dvd, [Pass,Movie]}) ->
+next_state(S, _V, {call,_,rent_dvd,[Pass,Movie]}) ->
     case is_available(Movie, S) of
 	true  ->
 	    S#state{rented = [{Pass,Movie}|S#state.rented]};
 	false ->
 	    S
     end;
-next_state(S, _V, {call, _, return_dvd, [Pass,Movie]}) ->
+next_state(S, _V, {call,_,return_dvd,[Pass,Movie]}) ->
     S#state{rented = lists:delete({Pass,Movie}, S#state.rented)};
-next_state(S, _V, {call, _, ask_for_popcorn, []}) ->
+next_state(S, _V, {call,_,ask_for_popcorn,[]}) ->
     S.
 
-postcondition(S, {call, _, create_account, [_Name]}, Res) ->
+postcondition(S, {call,_,create_account,[_Name]}, Res) ->
     not lists:member(Res, S#state.users);
-postcondition(S, {call, _, delete_account, [Pass]}, Res) ->
+postcondition(S, {call,_,delete_account,[Pass]}, Res) ->
     case proplists:is_defined(Pass, S#state.rented) of
     	false ->
     	    Res =:= account_deleted;
     	true ->
     	    Res =:= return_movies_first
     end;
-postcondition(S, {call, _, rent_dvd, [_Pass,Movie]}, Res) ->
+postcondition(S, {call,_,rent_dvd,[_Pass,Movie]}, Res) ->
     case is_available(Movie, S) of
 	true ->
 	    lists:member(Movie, Res);
 	false ->
 	    not lists:member(Movie, Res)
     end;
-postcondition(_S, {call, _, return_dvd, [_Pass,Movie]}, Res) ->
+postcondition(_S, {call,_,return_dvd,[_Pass,Movie]}, Res) ->
     not lists:member(Movie, Res);
-postcondition(_S, {call, _, ask_for_popcorn, []}, Res) ->
+postcondition(_S, {call,_,ask_for_popcorn,[]}, Res) ->
     Res =:= bon_appetit.
 
 is_available(Movie, #state{rented = Rented}) ->

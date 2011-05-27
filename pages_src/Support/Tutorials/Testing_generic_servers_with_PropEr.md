@@ -16,8 +16,9 @@ The example
 
 Let us first introduce our example: a movie server at a dvd-club, implemented
 as an erlang generic server (gen_server behaviour). You can find the code of
-the server [here]. Nevertheless, for the most part of this tutorial you only
-need to understand the server's API, which is described below:
+the server [here](/code/movies/movie_server.erl). Nevertheless, for the most
+part of this tutorial you only need to understand the server's API, which is
+described below:
 
 * _Create a new account_
   
@@ -312,15 +313,17 @@ this is the case for `create_account/1`, since we need to add the result
 A point to always keep in mind is that the actual results of the API calls are
 not known during command generation. They are bound to symbolic variables.
 Because of this, any information has to be extracted in a symbolic way, i.e. by
-performing a symbolic call. For example, suppose the result of a command is a
-list and we want to use the first element in a subsequent call. An attempt to
-extract it using `hd/1` would fail. What should be used instead is a symbolic
-call: `{call,erlang,hd,[{var,N}]}`.
+performing a symbolic call. For example, suppose that the result of
+`create_account/1` was a non-empty list of passwords and that we wanted to
+use the first password of the list. An attempt to extract it using `hd/1` would
+fail. Instead, `next_state/3` should return:
+
+        S#state{users = [{call,erlang,hd,[V]}|S#state.users]}
   
 The state transitions for the other calls make the expected changes to the
 server's state. Since the password generator that we defined produces only
 valid passwords, we expect the server to respond to our requests and not ignore
-us with a 'not_a_client' answer.
+us with a `not_a_client` answer.
 
 When a client deletes an account, the account's password should be erased from
 the list of users.
@@ -455,7 +458,7 @@ property:
 
 As we can see, creating an account and then returning the movie "Inception" is
 enough to make the server to crash. Luckily PropEr didn't crash, since we have
-enclosed the property in a ?TRAPEXIT macro. But why did the server crash in the
+enclosed the property in a `?TRAPEXIT` macro. But why did the server crash in the
 first place? This happened because "Inception" was never available at the
 dvd-club. In real life we can be certain that nobody will ever return a movie
 that she didn't rent in advance. However, in a production system there
@@ -614,7 +617,7 @@ following case:
 * Mary wants to rent another copy of the same movie, but there are no
   more copies available.
 
-In this case the postcondition for `rent_dvd` is false. Again, it is up to us
+In this case the postcondition for `rent_dvd/2` is false. Again, it is up to us
 to redefine our model and we decide to add a precondition that prevents the
 aforementioned scenario.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -688,32 +691,32 @@ Let us rewrite:
     true
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Now we are confident we fixed this bug. But inspecting the previous
+Now we are confident we fixed this bug. But while inspecting the reported
 testcase distribution, we can easily notice that `return_dvd/2` calls are
-rarely tested. This happens because of the precondition that permits to return
+rarely tested. This happens because of the precondition that allows to return
 only movies you have previously rented. To remedy the situation, we will modify
-the command generator so that `return_dvd/2` calls will be more frequently
-selected. However, the best solution would be to introduce a generator
-`{password(S),movie(S)}` that selects only rented movies from the model state.
+the command generator so that `return_dvd/2` calls can be more frequently
+selected. 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     command(S) ->
-        frequency([{1, {call, ?SERVER, create_account, [name()]}},
-	           {1, {call, ?SERVER, ask_for_popcorn, []}}] ++
-	          [{1, {call, ?SERVER, delete_account, [password(S)]}}
+        frequency([{1, {call,?SERVER,create_account,[name()]}},
+	           {1, {call,?SERVER,ask_for_popcorn,[]}}] ++
+	          [{1, {call,?SERVER,delete_account,[password(S)]}}
 	           || S#state.users =/= []] ++
-	          [{5, {call, ?SERVER, rent_dvd, [password(S), movie()]}}
+	          [{5, {call,?SERVER,rent_dvd,[password(S), movie()]}}
 	           || S#state.users =/= []] ++
-	          [{15, {call, ?SERVER, return_dvd, [password(S), movie()]}}
-	           || S#state.users =/= []]).
+	          [{5, ?LET({Pass,Movie}, elements(S#state.rented),
+			    {call,?SERVER,return_dvd,[Pass, Movie]})}
+	           || S#state.rented =/= []]).
 
     42> proper:quickcheck(movie_server:prop_movies(), 3000).
     <...3000 dots....>
     OK: Passed 3000 test(s).
 
-    26% {movie_server,rent_dvd,2}
-    25% {movie_server,ask_for_popcorn,0}
-    24% {movie_server,create_account,1}
-    13% {movie_server,delete_account,1}
-     9% {movie_server,return_dvd,2}
+    36% {movie_server,rent_dvd,2}
+    19% {movie_server,return_dvd,2}
+    18% {movie_server,ask_for_popcorn,0}
+    17% {movie_server,create_account,1}
+     8% {movie_server,delete_account,1}
     true
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
