@@ -2,7 +2,7 @@ Summary: a PropEr statem tutorial
 
 Testing purely functional code is usually not enough for industrial erlang
 applications like telecom software or http servers. In this tutorial, we
-describe how to use PropEr for automated random testing of stateful systems.  
+describe how to use PropEr for automated random testing of stateful systems.
 
 Undoubtedly, automated random testing of a stateful API would require some
 magic, unless some additional information is provided. Since we're not
@@ -21,7 +21,7 @@ part of this tutorial you only need to understand the server's API, which is
 described below:
 
 * _Create a new account_
-  
+
   Just say your name, and a new account will be created for you.
   The server will return a password for the new account. This password can be
   used for all future requests.
@@ -32,7 +32,7 @@ described below:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 * _Delete an account_
-  
+
   You can delete an account by giving its password. If the password doesn't
   correspond to a registered user, the server will reply 'not_a_client'.
   Beware that if you still have some rented movies at home, the server won't let
@@ -46,7 +46,7 @@ described below:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 * _Rent a dvd_
-  
+
   When you ask for a movie, the server will check if there is a copy available
   at the moment and return the list of movies that you have currently rented
   (it's a polite way to remind you that you have to return them). If the movie
@@ -71,7 +71,7 @@ described below:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 * _ask for pop-corn_
-  
+
   Everybody can buy pop-corn at the dvd-club.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     -spec ask_for_popcorn() -> 'bon_appetit'.
@@ -224,7 +224,7 @@ introduce the following macros:
 
     %% a property list of the available movies,
     %% each pair in the list consists of a movie name and the number of
-    %% existing copies of this movie 
+    %% existing copies of this movie
     -define(AVAILABLE_MOVIES, ?SERVER:available_movies()).
 
     %% movies that clients will ask to rent in the testcases
@@ -285,7 +285,7 @@ but in a rather unusual way:
 	      [{call, ?SERVER, return_dvd, [password(S), movie()]}
 	       || S#state.users =/= []]).
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   
+
 So, that's it! Our generator is ready. In the next section we will talk in more
 detail about the model state, which was so useful for password generation.
 
@@ -319,7 +319,7 @@ use the first password of the list. An attempt to extract it using `hd/1` would
 fail. Instead, `next_state/3` should return:
 
         S#state{users = [{call,erlang,hd,[V]}|S#state.users]}
-  
+
 The state transitions for the other calls make the expected changes to the
 server's state. Since the password generator that we defined produces only
 valid passwords, we expect the server to respond to our requests and not ignore
@@ -337,7 +337,7 @@ there is an available copy, the server should allocate it to the user who asked
 for it and mark it as rented. If there are no copies of that movie available
 at that moment, the state shouldn't change. The function `is_available/2`
 checks the availability of a movie based on the current model state and on the
-list of initially available movies `?AVAILABLE_MOVIES`. 
+list of initially available movies `?AVAILABLE_MOVIES`.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     next_state(S, _V, {call,_,rent_dvd,[Pass,Movie]}) ->
         case is_available(Movie, S) of
@@ -391,7 +391,7 @@ When creating an account, a _new_ password is always returned.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Since our testcases include only valid passwords, deleting an account
-always succeeds. 
+always succeeds.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     postcondition(_S, {call,_,delete_account,[_Pass]}, Res) ->
         Res =:= account_deleted;
@@ -696,7 +696,7 @@ testcase distribution, we can easily notice that `return_dvd/2` calls are
 rarely tested. This happens because of the precondition that allows to return
 only movies you have previously rented. To remedy the situation, we will modify
 the command generator so that `return_dvd/2` calls can be more frequently
-selected. 
+selected.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     command(S) ->
         frequency([{1, {call,?SERVER,create_account,[name()]}},
@@ -720,3 +720,5 @@ selected.
      8% {movie_server,delete_account,1}
     true
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+<!-- kate: replace-tabs-save on; replace-tabs on; tab-width 8; -->

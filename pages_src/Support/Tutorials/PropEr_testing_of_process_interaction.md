@@ -28,7 +28,7 @@ External clients can make the following requests:
 
 * stop the ping-pong master
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    stop() -> 
+    stop() ->
         gen_server:cast(?MASTER, stop).
 
     handle_cast(stop, Dict) ->
@@ -51,7 +51,7 @@ External clients can make the following requests:
 	    undefined ->
 	        Pid = spawn(?MODULE, ping_pong_player, [Name]),
 	        true = register(Name, Pid);
-	        {reply, ok, dict:store(Name, 0, Dict)};		
+	        {reply, ok, dict:store(Name, 0, Dict)};
 	    Pid when is_pid(Pid) ->
 	        {reply, ok, Dict}
         end;
@@ -194,7 +194,7 @@ system. As usual, it specifies:
     name(S) -> elements(S#state.players).
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- 
+
 * _State updates_:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     next_state(S, _V, {call,_,add_player,[Name]}) ->
@@ -211,7 +211,7 @@ system. As usual, it specifies:
     next_state(S = #state{scores = Sc}, _V, {call,_,play_ping_pong,[Name]}) ->
         Score = proplists:get_value(Name, Sc),
         S#state{scores = [{Name,Score+1}|proplists:delete(Name, Sc)]};
-    next_state(S, _, _) ->    
+    next_state(S, _, _) ->
         S.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -267,10 +267,10 @@ this property to pass the tests:
     5> proper:quickcheck(ping_pong_statem:prop_ping_pong_works()).
     .............
     =ERROR REPORT==== 27-May-2011::17:57:37 ===
-    ** Generic server ping_pong terminating 
+    ** Generic server ping_pong terminating
     ** Last message in was {'$gen_cast',stop}
     ** When Server state == <...internal representation of the state...>
-    ** Reason for termination == 
+    ** Reason for termination ==
     ** {badarg,[{erlang,exit,[undefined,kill]},
                 {ping_pong,'-terminate/2-lc$^0/1-0-',1},
                 {ping_pong,terminate,2},
@@ -322,7 +322,7 @@ we can see yet another benefit of property based testing: it helps to increase
 our understanding about process interaction in the system under test.
 
 Fixing the postcondition of `get_score/1` so as to achieve deterministic
-results is quite simple: 
+results is quite simple:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     postcondition(S, {call,_,get_score,[Name]}, Res) ->
         Res =< proplists:get_value(Name, S#state.scores);
@@ -378,7 +378,7 @@ being assosiated with any process. Having spotted the bug it is easy to fix it:
     16% {ping_pong,play_tennis,1}
     16% {ping_pong,get_score,1}
     true
-    
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
+<!-- kate: replace-tabs-save on; replace-tabs on; tab-width 8; -->

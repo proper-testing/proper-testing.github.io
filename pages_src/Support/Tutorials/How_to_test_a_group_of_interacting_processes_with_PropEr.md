@@ -118,11 +118,11 @@ interact with a ping-pong player is the following:
 The ping-pong player has a rather simple interface, but still we would like
 to test its stand-alone behaviour, before moving on to test the interaction with
 the ping-pong master. The following abstract state machine specifies the
-behaviour model. 
+behaviour model.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     initial_state() -> [].
-    
+
     command([]) ->
     	{call,?MODULE,spawn_reg,[name()]};
     command(Players) ->
@@ -149,7 +149,7 @@ behaviour model.
             false -> [Name|Players]
         end;
     next_state(Players, _V, {call,_,_,_}) ->
-        Players.	    
+        Players.
 
     postcondition(_, {call,_,play_tennis,_}, Res) ->
         Res =:= maybe_later;
@@ -255,7 +255,7 @@ include calls to both ?MASTER and ?PLAYER processes.
     name(S) -> elements(S#state.players).
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- 
+
 State updates:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -272,7 +272,7 @@ State updates:
     next_state(S = #state{scores = Sc}, _V, {call,_,cast_ping_pong,[Name]}) ->
         Score = proplists:get_value(Name, Sc),
         S#state{scores = [{Name,Score+1}|proplists:delete(Name, Sc)]};
-    next_state(S, _, _) ->    
+    next_state(S, _, _) ->
         S.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -459,3 +459,5 @@ And some parallel testing:
     false
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+<!-- kate: replace-tabs-save on; replace-tabs on; tab-width 8; -->

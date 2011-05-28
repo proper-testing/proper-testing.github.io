@@ -38,6 +38,10 @@ Editing the site
     will be the value of its 'Summary' attribute. The description of each
     sub-directory will be the value of the 'Summary' attribute of that
     directory's index page.
+*   The lines:
+        <!-- kate: replace-tabs-save on; replace-tabs on; tab-width 8; -->
+        (the corresponding line for Emacs)
+    must be copied to the bottom of each .md file.
 *   EDoc-generated documentation must be copied manually to 'resources/doc'
     periodically, by running 'make update_docs' on a system that has a recent
     version of EDoc.
@@ -67,6 +71,7 @@ Stuff to add
 Front Page
 ----------
 
+*   some description of what PropEr is
 *   Where to go now (download, read the user guide, see the docs, contact etc.)
 *   "Current version is ..."
 *   links to other tools (dialyzer etc.)
@@ -75,10 +80,13 @@ Front Page
 Header
 ------
 
-*   shirt icon (links to front page)
-*   "PropEr" in fancy font (links to front page)
+*   icon and (fancy) "PropEr" logo that link to the main page
+*   shirt icon: "PropEr" on the shirt tag, size = "42"
+*   more modern (and austere) font for logo (e.g. SansSerif)
 *   Horizontal navigation bar (have extra "Home" link?)
 *   Second level of structure, for the current sub-directory
+*   The documentation / FAQ, etc. could be more visible, not hidden under
+    support: flat navbar layout (for now)
 
 
 Footer
@@ -88,7 +96,8 @@ Footer
 *   license
 *   "Powered by ..."
 *   "Valid HTML ..."
-*   "This page was last edited on ..."
+*   "This page was last edited on ..." (make this more fine-grained?)
+*   page author information (read from meta-information)
 
 
 Help/Support
@@ -103,11 +112,31 @@ Help/Support
 *   FAQ, How-To
 *   Tips, Common mistakes/blunders
 *   Tutorials (e.g. simple lists properties, re2, proc_dict statem, combining
-    PropEr and EUnit ...)
+    PropEr and EUnit: go from EUnit to PropEr or integrate PropEr in EUnit ...)
 *   Demos, Sample Properties, showcase of QC-mode and PropEr-exclusive features
     (various demos from presentations, Kresten's properties, ec_dictionary, from
     open-source projects, ...)
+*   re2 extended demo (full process of specification, re vs re2, generators from
+    regexps, generators or even native types as string,regexp,options)
 *   links to (preferably locally saved) talks and papers
+
+
+Code highlighting
+-----------------
+
+*   consistency in code examples, correct indentation, blank lines between
+    functions
+*   pick a theme and include the corresponding .css file
+*   add language annotation to code blocks (#!erlang for code and #!erl for
+    shell output)
+*   no line numbers
+*   best themes: manni, colorful, default, trac (nice, but users might confuse
+    red keywords for links), emacs, pastie (nice)
+*   a light blue/gray background is good for differentiating code from text
+    (could add it explicitly if theme doesn't have one)
+*   alternatively, left-indent code blocks (via the margin-left or border-left
+    CSS property?) (also add corresponding right-indentation?)
+*   fix python-markdown fenced-code & codehilite incompatibility
 
 
 Download
@@ -124,7 +153,7 @@ About
 *   Per author:
     - name
     - photo
-    - bio
+    - bio (funny version?)
     - part written
     - e-mail
     - personal webpage
@@ -145,5 +174,6 @@ Infrastructure
 *   Restore the copying of README.md from proper.
 *   Work on the stylesheet (bigger text on navbars?).
 *   make header.png non-transparent?
+*   have a set of alternatives for each photo and make them auto-cycle
 
 <!-- kate: replace-tabs-save on; replace-tabs on; tab-width 8; -->
