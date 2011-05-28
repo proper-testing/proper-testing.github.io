@@ -56,10 +56,10 @@ described below:
      the list. Finally, in case your password is invalid, the server will not
      give you any movie.
 
-         :::erlang
-         -spec rent_dvd(password(), movie()) -> [movie()] | 'not_a_client'.
-         rent_dvd(Pass, Movie) ->
-             gen_server:call(?MODULE, {rent, Pass, Movie}).
+        :::erlang
+        -spec rent_dvd(password(), movie()) -> [movie()] | 'not_a_client'.
+        rent_dvd(Pass, Movie) ->
+            gen_server:call(?MODULE, {rent, Pass, Movie}).
 
 
 *   _Return a dvd_
@@ -360,10 +360,10 @@ list of initially available movies `?AVAILABLE_MOVIES`.
     :::erlang
     next_state(S, _V, {call,_,rent_dvd,[Pass,Movie]}) ->
         case is_available(Movie, S) of
-	    true  ->
-	        S#state{rented = [{Pass,Movie}|S#state.rented]};
-	    false ->
-	        S
+            true  ->
+                S#state{rented = [{Pass,Movie}|S#state.rented]};
+            false ->
+                S
         end;
 
 

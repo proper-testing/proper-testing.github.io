@@ -260,7 +260,7 @@ this property to pass the tests:
                         io:format("History: ~w\nState: ~w\nRes: ~w\n",
                                   [H,S,Res]),
                         aggregate(command_names(Cmds), Res =:= ok))
-	        end)).
+                end)).
 
 But...
 
