@@ -2,7 +2,7 @@ Summary: a PropEr statem tutorial
 
 Testing purely functional code is usually not enough for industrial erlang
 applications like telecom software or http servers. In this tutorial, we
-describe how to use PropEr for automated random testing of stateful systems.  
+describe how to use PropEr for automated random testing of stateful systems.
 
 Undoubtedly, automated random testing of a stateful API would require some
 magic, unless some additional information is provided. Since we're not
@@ -234,7 +234,7 @@ introduce the following macros:
 
     %% a property list of the available movies,
     %% each pair in the list consists of a movie name and the number of
-    %% existing copies of this movie 
+    %% existing copies of this movie
     -define(AVAILABLE_MOVIES, ?SERVER:available_movies()).
 
     %% movies that clients will ask to rent in the testcases
@@ -772,3 +772,5 @@ The resulting distribution is:
     17% {movie_server,create_account,1}
      8% {movie_server,delete_account,1}
     true
+
+<!-- kate: replace-tabs-save on; replace-tabs on; tab-width 8; -->

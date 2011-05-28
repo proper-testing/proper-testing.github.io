@@ -268,10 +268,10 @@ But...
     5> proper:quickcheck(ping_pong_statem:prop_ping_pong_works()).
     .............
     =ERROR REPORT==== 27-May-2011::17:57:37 ===
-    ** Generic server ping_pong terminating 
+    ** Generic server ping_pong terminating
     ** Last message in was {'$gen_cast',stop}
     ** When Server state == <...internal representation of the state...>
-    ** Reason for termination == 
+    ** Reason for termination ==
     ** {badarg,[{erlang,exit,[undefined,kill]},
                 {ping_pong,'-terminate/2-lc$^0/1-0-',1},
                 {ping_pong,terminate,2},
@@ -321,7 +321,7 @@ we can see yet another benefit of property based testing: it helps to increase
 our understanding about process interaction in the system under test.
 
 Fixing the postcondition of `get_score/1` so as to achieve deterministic
-results is quite simple: 
+results is quite simple:
 
     :::erlang
     postcondition(S, {call,_,get_score,[Name]}, Res) ->
@@ -378,3 +378,5 @@ Now the property passes 3000 tests.
     16% {ping_pong,play_tennis,1}
     16% {ping_pong,get_score,1}
     true
+
+<!-- kate: replace-tabs-save on; replace-tabs on; tab-width 8; -->
