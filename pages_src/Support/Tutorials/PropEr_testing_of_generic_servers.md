@@ -108,14 +108,14 @@ API.
 can try to compute it, even without knowing the details of the implementation.
 To this end, we build an abstract state machine that models the behaviour
 of the server. The state of the abstract state machine, also referred as the
-_model state_, corresponds to the implicit internal state of the SUT. Now, all
-we have to check is whether these states ever become inconsistent. Such an
-inconsistency can be detected from the results of API calls. When this occurs,
-there is much probability that the error lies in our model and not the
-implemetation. But then, it is quite easy to redefine our model and run the
-test again. In this way, well hidden bugs can be revealed, because after
-e.g. 3000 random tests, PropEr will eventually try sequences of calls that
-would not have been tested by traditional unit testing methods.
+_model state_, corresponds to the implicit internal state of the system under
+test. Now, all we have to check is whether these states ever become
+inconsistent. Such an inconsistency can be detected from the results of API
+calls. When this occurs, there is much probability that the error lies in our
+model and not the implemetation. But then, it is quite easy to redefine our
+model and run the test again. In this way, well hidden bugs can be revealed,
+because after e.g. 3000 random tests, PropEr will eventually try sequences of
+calls that would not have been tested by traditional unit testing methods.
 
 In a nutshell, the concept of testing stateful operations with PropEr is the
 following:
@@ -150,12 +150,11 @@ The actions described in this property are:
 * Generate a random list of symbolic commands, i.e. symbolic API calls. As we
   can see, `commands/1` generator takes as argument a module name.
   In this module we should describe everything PropEr needs to know about the
-  SUT. Don't worry, usually it's not that much, only the information provided
-  by the API.
-* Execute the list of commands, collecting the results of execution. This is
-  done by `run_commands/2`, a function that evaluates a symbolic command
+  SUT. Don't worry, usually it's not that much!
+* Execute the list of commands while collecting the results of execution. This
+  is done by `run_commands/2`, a function that evaluates a symbolic command
   sequence according to an abstract state machine specification.
-  The function takes as arguments a module name (defining a model of the SUT)
+  The function takes as arguments a module name (defining the model of the SUT)
   and the symbolic command sequence to be evaluated and returns a triple, which
   contains information about command execution.
 * Each test should be self-contained. For this reason, almost every property
@@ -185,9 +184,8 @@ In order to get an idea of what testcases look like, you can try:
 
 
 The story here is quite simple. Ben creates an account at the dvd-club and
-then decides to rent some movies. How do we know it's Ben who wants to
-rent the movies? That's because we bind the result of each symbolic call to a
-symbolic variable. Therefore, `{var,1}` is Ben's password and, in this way,
+then decides to rent some movies. The result of each symbolic call is bound to
+a symbolic variable. Therefore, `{var,1}` is Ben's password and, in this way,
 it can be used in subsequent commands/requests. After watching the Lion King,
 Ben returns it to the dvd club. Then, Alice creates an account, someone
 comes in to buy pop-corn and life goes on... As we cannot test every possible
@@ -253,7 +251,7 @@ The generators for names and movies become:
     movie() -> elements(?MOVIE_TITLES).
 
 
-But what about passwords? Password allocation is on the server side, and we
+But what about passwords? Password allocation is on the server side and we
 have little information about it, since we decided to test it as a blackbox.
 We could make an exception and take a look at the algorithm for password
 generation, but in this way we would be copying and not actually testing how
@@ -328,22 +326,23 @@ this is the case for `create_account/1`, since we need to add the result
 
 A point to always keep in mind is that the actual results of the API calls are
 not known during command generation. They are bound to symbolic variables.
-Because of this, any information has to be extracted in a symbolic way, i.e. by
-performing a symbolic call. For example, suppose that the result of
+Because of this, pattern matching on the result `V` of the call should be
+avoided. Moreover, any information has to be extracted in a symbolic way, i.e.
+by performing a symbolic call. For example, suppose that the result of
 `create_account/1` was a non-empty list of passwords and that we wanted to
 use the first password of the list. An attempt to extract it using `hd/1` would
-fail. Instead, `next_state/3` should return:
+raise an exception. Instead, `next_state/3` should return:
 
     :::erlang
     S#state{users = [{call,erlang,hd,[V]}|S#state.users]}
   
-The state transitions for the other calls make the expected changes to the
-server's state. Since the password generator that we defined produces only
-valid passwords, we expect the server to respond to our requests and not ignore
-us with a `not_a_client` answer.
+The state transitions for the other calls are less tricky to define. Since the
+password generator that we use produces only valid passwords, we expect the
+server to respond to all requests and not ignore them with a `not_a_client`
+reply.
 
-When a client deletes an account, the account's password should be erased from
-the list of users.
+When a client deletes an account, the corresponding password should be erased
+from the list of users.
 
     :::erlang
     next_state(S, _V, {call,_,delete_account,[Pass]}) ->
@@ -381,13 +380,7 @@ Finally, buying pop-corn does not change the state.
     next_state(S, _V, {call,_,ask_for_popcorn,[]}) -> S.
 
 
-Note that `V` (i.e. the result of the call) can be either symbolic or dynamic.
-Thus, while it is perfectly allowable to include it in the next state and/or
-perform symbolic calls on it, actions like pattern matching have to be avoided.
-
-
 ### Specifying pre- and post- conditions ###
-
 
 Preconditions are the PropEr way to impose constraints on valid command
 sequences, since they are always checked before a command is actually included
@@ -484,7 +477,7 @@ property:
 
 
 As we can see, creating an account and then returning the movie "Inception" is
-enough to make the server to crash. Luckily PropEr didn't crash, since we have
+enough to make the server crash. Luckily PropEr didn't crash, since we have
 enclosed the property in a `?TRAPEXIT` macro. But why did the server crash in
 the first place? This happened because "Inception" was never available at the
 dvd-club. In real life we can be certain that nobody will ever return a movie
@@ -563,7 +556,7 @@ need to change the `next_state/3` callback.
     	        Res =:= return_movies_first
         end;
 
-Running the property:
+And again we try:
 
         :::erl
     12> proper:quickcheck(movie_statem:prop_movies()).
@@ -615,7 +608,7 @@ following preconditions:
     precondition(_, _) ->
         true.
 
-And test the property again:
+And test the property once more:
 
     :::erl
     15> proper:quickcheck(movie_statem:prop_movies()).
@@ -661,8 +654,8 @@ to redefine our model and we decide to add a precondition that prevents the
 aforementioned scenario.
 
     :::erlang
-    precondition(S, {call,_,rent_dvd,[Pass,_Movie]}) ->
-        not lists:member({Pass,_Movie}, S#state.rented) andalso
+    precondition(S, {call,_,rent_dvd,[Pass,Movie]}) ->
+        not lists:member({Pass,Movie}, S#state.rented) andalso
             lists:member(Pass, S#state.users);
 
 Eventually:
@@ -701,8 +694,9 @@ The code handling `return_dvd` requests is the following:
         {reply, Reply, S};
 
 
-The command `ets:lookup_element(Movies, Movie, 2)` makes the server crash with
-the following counterexample:
+The command `ets:lookup_element(Movies, Movie, 2)` raises an exception if no
+object with the key `Movie` is stored in the table. PropEr produced the
+following counterexample:
 
     :::erl
     [{set,{var,1},{call,movie_server,create_account,[john]}},
@@ -732,20 +726,27 @@ Let us rewrite:
             end,
         {reply, Reply, S};
 
-And check that the counterexample now passes the test:
+and check that the counterexample now passes the test:
 
     :::erl 
     41> proper:check(movie_server:prop_movies(), proper:counterexample()).
     OK: The input passed the test.
     true
 
+Can we be confident that we fixed all bugs? Let's take a moment to inspect the
+testcase distribution, as reported the last time we run the tests.
 
-Now we are confident we fixed this bug. But while inspecting the reported
-testcase distribution, we can easily notice that `return_dvd/2` calls are
-rarely tested. This happens because of the precondition that allows to return
-only movies you have previously rented. To remedy the situation, we will modify
-the command generator so that `return_dvd/2` calls can be more frequently
-selected. 
+    :::erl
+    30% {movie_server,ask_for_popcorn,0}
+    30% {movie_server,create_account,1}
+    19% {movie_server,delete_account,1}
+    18% {movie_server,rent_dvd,2}
+     1% {movie_server,return_dvd,2}
+
+We can easily notice that `return_dvd/2` calls are rarely tested. This happens
+because of the precondition that allows to return only movies you have
+previously rented. To remedy the situation, we will modify the command
+generator so that `return_dvd/2` calls can be more frequently selected. 
 
     :::erlang
     command(S) ->

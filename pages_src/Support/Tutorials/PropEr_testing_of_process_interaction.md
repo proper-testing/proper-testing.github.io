@@ -4,9 +4,8 @@ In this tutorial, we will use PropEr to test a group of interacting processes.
 The system under test consists of one master and multiple slave processes. The
 main concept is that the master plays ping-pong (i.e. exchanges ping and pong
 messages) with all slave processes, which do not interact with each other. For
-the rest of this tutorial, we will refer to the slave processes as ping-pong
-players, because (as you will soon realize) they are unwilling to play other
-sports.
+the rest of this tutorial, we will refer to the slave processes as _the
+ping-pong players_.
 
 The ping-pong master
 --------------------
@@ -91,10 +90,11 @@ External clients can make the following requests:
             {reply, Score, Dict}.
 
 
-In order to test the ping-pong master we can define an abstract state machine,
-as described in [this](PropEr_testing_of_generic_servers.html) tutorial. The
-state machine specification for the master can be found
-[here](/code/ping_pong/master_statem.erl).
+In order to test the stand-alone behaviour of the ping-pong master we can
+define an abstract state machine, as described in
+[this](PropEr_testing_of_generic_servers.html) tutorial about testing generic
+servers with PropEr. The state machine specification for the ping-pong master
+can be found [here](/code/ping_pong/master_statem.erl).
 
 
 The ping-pong players
@@ -350,11 +350,12 @@ how `ping` messages are handled by the server:
 
 This suggests that incoming `ping` messages associated with names not present
 in the server's dictionary are actually inserted in the dictionary. When we
-perform an asynchronous `play_ping_pong/1` call to a player, there is a chance
-that this player might be removed before sending the `ping` message to the
-master. In this case, when the master eventually receives the `ping` message,
-the name of the removed player will be added to the dictionary, despite not
-being assosiated with any process. Having spotted the bug it is easy to fix it:
+perform an asynchronous `play_ping_pong/1` request to a player, there is a
+chance that this player might be removed before her `ping` message is received
+by the master. In this case, when the master eventually receives the `ping`
+message, the name of the removed player will be added to the dictionary,
+despite not being assosiated with any process. Having spotted the bug, it can
+be easily fixed:
 
     :::erlang
     handle_call({ping,FromName}, _From, Dict) ->
@@ -365,7 +366,7 @@ being assosiated with any process. Having spotted the bug it is easy to fix it:
     	        {reply, {removed,FromName}, Dict}
         end;
 
-Now the property passes 3000 tests.
+And now the property successfully passes the tests:
 
     :::erl
     11> proper:quickcheck(ping_pong_statem:prop_ping_pong_works()).
