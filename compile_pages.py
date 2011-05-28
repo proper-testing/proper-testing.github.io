@@ -120,7 +120,7 @@ def parse_file(fs_path):
     in_file = codecs.open(fs_path, 'r', 'utf8')
     text = in_file.read()
     in_file.close()
-    md = markdown.Markdown(extensions = ['meta', 'fenced_code'])
+    md = markdown.Markdown(extensions = ['extra','meta'])
     content = md.convert(text)
     summary = ' '.join(md.Meta['summary'])
     return (summary, content)

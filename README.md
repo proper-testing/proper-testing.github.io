@@ -89,7 +89,6 @@ Footer
 *   "Powered by ..."
 *   "Valid HTML ..."
 *   "This page was last edited on ..."
-*   "Icon by Gordon Irving"
 
 
 Help/Support
@@ -131,6 +130,8 @@ About
     - personal webpage
 *   PropEr's users
 *   (Humorous) reviews
+*   "Icon by Gordon Irving"
+*   link to QuviQ's site
 
 
 Infrastructure
@@ -140,6 +141,9 @@ Infrastructure
     or simply "Back to main page" for home links).
 *   Test for broken links, set up automatic check.
 *   Setup code highlighting with pygments, also other extensions.
+*   Choose a code highlighting style
 *   Restore the copying of README.md from proper.
 *   Work on the stylesheet (bigger text on navbars?).
 *   make header.png non-transparent?
+
+<!-- kate: replace-tabs-save on; replace-tabs on; tab-width 8; -->
