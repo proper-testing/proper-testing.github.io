@@ -16,80 +16,80 @@ state of the server is a dictionary containing the scores (i.e. number of
 ping-pong message exchanges with the master) of the ping-pong players.
 External clients can make the following requests:
 
-* start and link to the ping-pong master
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    start_link() ->
-        gen_server:start_link({local, ?MASTER}, ?MASTER, [], []).
+*   start and link to the ping-pong master
 
-    init([]) ->
-        {ok, dict:new()}.
+        :::erlang
+        start_link() ->
+            gen_server:start_link({local, ?MASTER}, ?MASTER, [], []).
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        init([]) ->
+            {ok, dict:new()}.
 
-* stop the ping-pong master
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    stop() -> 
-        gen_server:cast(?MASTER, stop).
 
-    handle_cast(stop, Dict) ->
-        {stop, normal, Dict}.
+*   stop the ping-pong master
 
-    terminate(_Reason, Dict) ->
-        Players = dict:fetch_keys(Dict),
-        [exit(whereis(Name), kill) || Name <- Players],
-        ok.
+        :::erlang
+        stop() -> 
+            gen_server:cast(?MASTER, stop).
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        handle_cast(stop, Dict) ->
+            {stop, normal, Dict}.
 
-* add a new ping-pong player to interact with the master
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    add_player(Name) ->
-        gen_server:call(?MODULE, {add_player,Name}).
+        terminate(_Reason, Dict) ->
+            Players = dict:fetch_keys(Dict),
+            [exit(whereis(Name), kill) || Name <- Players],
+            ok.
 
-    handle_call({add_player,Name}, _From, Dict) ->
-        case whereis(Name) of
-	    undefined ->
-	        Pid = spawn(?MODULE, ping_pong_player, [Name]),
-	        true = register(Name, Pid);
-	        {reply, ok, dict:store(Name, 0, Dict)};		
-	    Pid when is_pid(Pid) ->
-	        {reply, ok, Dict}
-        end;
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*   add a new ping-pong player to interact with the master
 
-* remove a ping-pong player
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    remove_player(Name) ->
-        gen_server:call(?MODULE, {remove_player,Name}).
+        :::erlang
+        add_player(Name) ->
+            gen_server:call(?MODULE, {add_player,Name}).
 
-    handle_call({remove_player,Name}, _From, Dict) ->
-        Pid = whereis(Name),
-        exit(Pid, kill),
-        {reply, {removed,Name}, dict:erase(Name, Dict)};
+        handle_call({add_player,Name}, _From, Dict) ->
+            case whereis(Name) of
+                undefined ->
+                    Pid = spawn(?MODULE, ping_pong_player, [Name]),
+                    true = register(Name, Pid);
+                    {reply, ok, dict:store(Name, 0, Dict)};
+                Pid when is_pid(Pid) ->
+                    {reply, ok, Dict}
+            end;
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-* send a ping message to the server
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    ping(FromName) ->
-        gen_server:call(?MODULE, {ping, FromName}).
+*   remove a ping-pong player
 
-    handle_call({ping,FromName}, _From, Dict) ->
-        {reply, pong, dict:update_counter(FromName, 1, Dict)};
+        :::erlang
+        remove_player(Name) ->
+            gen_server:call(?MODULE, {remove_player,Name}).
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        handle_call({remove_player,Name}, _From, Dict) ->
+            Pid = whereis(Name),
+            exit(Pid, kill),
+            {reply, {removed,Name}, dict:erase(Name, Dict)};
 
-* get the score of a given player
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    get_score(Name) ->
-        gen_server:call(?MODULE, {get_score,Name}).
 
-    handle_call({get_score,Name}, _From, Dict) ->
-        Score = dict:fetch(Name, Dict),
-        {reply, Score, Dict}.
+*   send a ping message to the server
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        :::erlang
+        ping(FromName) ->
+            gen_server:call(?MODULE, {ping, FromName}).
+
+        handle_call({ping,FromName}, _From, Dict) ->
+            {reply, pong, dict:update_counter(FromName, 1, Dict)};
+
+
+*   get the score of a given player
+
+        :::erlang
+        get_score(Name) ->
+            gen_server:call(?MODULE, {get_score,Name}).
+
+        handle_call({get_score,Name}, _From, Dict) ->
+            Score = dict:fetch(Name, Dict),
+            {reply, Score, Dict}.
+
 
 In order to test the ping-pong master we can define an abstract state machine,
 as described in [this](PropEr_testing_of_generic_servers.html) tutorial. The
@@ -102,7 +102,8 @@ The ping-pong players
 
 A ping-pong player is a process spawned and registered as `Name` that executes
 the following loop:
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    :::erlang
     ping_pong_player(Name) ->
         receive
             ping_pong ->
@@ -114,14 +115,14 @@ the following loop:
         end,
         ping_pong_player(Name).
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 When a player is asked by an external client to play ping-pong, she will send a
 `ping` message to the ping-pong master. On the other hand, if asked to play
 tennis or football, the player replies with a message expressing her dislike for
 any sport other than ping-pong. The API for interacting with a ping-pong player
 is the following:
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    :::erlang
     play_ping_pong(Player) ->
         Player ! ping_pong,
         ok.
@@ -137,8 +138,6 @@ is the following:
         receive
             Reply -> Reply
         end.
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 It's ping-pong time
@@ -169,101 +168,103 @@ of the selected API calls.
 This is the abstract state machine that will be used to test the ping-pong
 system. As usual, it specifies:
 
-* The _initial state_ of the model
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    -record(state, {players = [] :: [name()],
-                    scores  = [] :: [{name(),score()}]}).
+*   The _initial state_ of the model:
 
-    initial_state() ->  #state{}.
+        :::erlang
+        -record(state, {players = [] :: [name()],
+                        scores  = [] :: [{name(),score()}]}).
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        initial_state() ->  #state{}.
 
-* The _API calls_ that will be tested:
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    command(#state{players = []}) ->
-        {call,?MASTER,add_player,[name()]};
-    command(S) ->
-        oneof([{call,?MASTER,add_player,[name()]},
-	       {call,?MASTER,remove_player,[name(S)]},
-	       {call,?MASTER,get_score,[name(S)]},
-	       {call,?PLAYER,play_ping_pong,[name(S)]},
-	       {call,?PLAYER,play_tennis,[name(S)]}]).
 
-    name() -> elements(?NAMES).
+*   The _API calls_ that will be tested:
 
-    name(S) -> elements(S#state.players).
+        :::erlang
+        command(#state{players = []}) ->
+            {call,?MASTER,add_player,[name()]};
+        command(S) ->
+            oneof([{call,?MASTER,add_player,[name()]},
+                   {call,?MASTER,remove_player,[name(S)]},
+                   {call,?MASTER,get_score,[name(S)]},
+                   {call,?PLAYER,play_ping_pong,[name(S)]},
+                   {call,?PLAYER,play_tennis,[name(S)]}]).
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        name() -> elements(?NAMES).
+
+        name(S) -> elements(S#state.players).
+
  
-* _State updates_:
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    next_state(S, _V, {call,_,add_player,[Name]}) ->
-        case lists:member(Name, S#state.players) of
-	    false ->
-	        S#state{players = [Name|S#state.players],
-		        scores = [{Name,0}|S#state.scores]};
-	    true ->
-	        S
-        end;
-    next_state(S, _V, {call,_,remove_player,[Name]}) ->
-        S#state{players = lists:delete(Name, S#state.players),
-	        scores  = proplists:delete(Name, S#state.scores)};
-    next_state(S = #state{scores = Sc}, _V, {call,_,play_ping_pong,[Name]}) ->
-        Score = proplists:get_value(Name, Sc),
-        S#state{scores = [{Name,Score+1}|proplists:delete(Name, Sc)]};
-    next_state(S, _, _) ->    
-        S.
+*   _State updates_:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        :::erlang
+        next_state(S, _V, {call,_,add_player,[Name]}) ->
+            case lists:member(Name, S#state.players) of
+                false ->
+                    S#state{players = [Name|S#state.players],
+                            scores = [{Name,0}|S#state.scores]};
+                true ->
+                    S
+            end;
+        next_state(S, _V, {call,_,remove_player,[Name]}) ->
+            S#state{players = lists:delete(Name, S#state.players),
+                    scores  = proplists:delete(Name, S#state.scores)};
+        next_state(S = #state{scores = Sc}, _V, {call,_,play_ping_pong,[Name]}) ->
+            Score = proplists:get_value(Name, Sc),
+            S#state{scores = [{Name,Score+1}|proplists:delete(Name, Sc)]};
+        next_state(S, _, _) ->    
+            S.
 
-* _Preconditions_ that should always be respected (even while shrinking):
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    precondition(S, {call,_,remove_player,[Name]}) ->
-        lists:member(Name, S#state.players);
-    precondition(S, {call,_,get_score,[Name]}) ->
-        lists:member(Name, S#state.players);
-    precondition(S, {call,_,play_ping_pong,[Name]}) ->
-        lists:member(Name, S#state.players);
-    precondition(S, {call,_,play_tennis,[Name]}) ->
-        lists:member(Name, S#state.players);
-    precondition(_, _) ->
-        true.
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*   _Preconditions_ that should always be respected (even while shrinking):
 
-* And finally, _postconditions_ about the results of the calls:
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    postcondition(_S, {call,_,add_player,[_Name]}, Res) ->
-        Res =:= ok;
-    postcondition(_S, {call,_,remove_player,[Name]}, Res) ->
-        Res =:= {removed,Name};
-    postcondition(S, {call,_,get_score,[Name]}, Res) ->
-        Res =:= proplists:get_value(Name, S#state.scores);
-    postcondition(_S, {call,_,play_ping_pong,[_Name]}, Res) ->
-        Res =:= ok;
-    postcondition(_S, {call,_,play_tennis,[_Name]}, Res) ->
-        Res =:= maybe_later.
+        :::erlang
+        precondition(S, {call,_,remove_player,[Name]}) ->
+            lists:member(Name, S#state.players);
+        precondition(S, {call,_,get_score,[Name]}) ->
+            lists:member(Name, S#state.players);
+        precondition(S, {call,_,play_ping_pong,[Name]}) ->
+            lists:member(Name, S#state.players);
+        precondition(S, {call,_,play_tennis,[Name]}) ->
+            lists:member(Name, S#state.players);
+        precondition(_, _) ->
+            true.
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*   And finally, _postconditions_ about the results of the calls:
+
+        :::erlang
+        postcondition(_S, {call,_,add_player,[_Name]}, Res) ->
+            Res =:= ok;
+        postcondition(_S, {call,_,remove_player,[Name]}, Res) ->
+            Res =:= {removed,Name};
+        postcondition(S, {call,_,get_score,[Name]}, Res) ->
+            Res =:= proplists:get_value(Name, S#state.scores);
+        postcondition(_S, {call,_,play_ping_pong,[_Name]}, Res) ->
+            Res =:= ok;
+        postcondition(_S, {call,_,play_tennis,[_Name]}, Res) ->
+            Res =:= maybe_later.
+
 
 Having successfully tested the stand-alone behaviour of the master, we expect
 this property to pass the tests:
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     prop_ping_pong_works() ->
-        ?FORALL(
-           Cmds, commands(?MODULE),
-           ?TRAPEXIT(
-	       begin
-	           ?MASTER:start_link(),
-	           {H,S,Res} = run_commands(?MODULE, Cmds),
-	           ?MASTER:stop(),
-	           ?WHENFAIL(
-		       io:format("History: ~w\nState: ~w\nRes: ~w\n",
-			         [H,S,Res]),
-		       aggregate(command_names(Cmds), Res =:= ok))
-	       end)).
 
+    :::erlang
+    prop_ping_pong_works() ->
+        ?FORALL(Cmds, commands(?MODULE),
+            ?TRAPEXIT(
+                begin
+                    ?MASTER:start_link(),
+                    {H,S,Res} = run_commands(?MODULE, Cmds),
+                    ?MASTER:stop(),
+                    ?WHENFAIL(
+                        io:format("History: ~w\nState: ~w\nRes: ~w\n",
+                                  [H,S,Res]),
+                        aggregate(command_names(Cmds), Res =:= ok))
+	        end)).
 
+But...
+
+    :::erl
     5> proper:quickcheck(ping_pong_statem:prop_ping_pong_works()).
     .............
     =ERROR REPORT==== 27-May-2011::17:57:37 ===
@@ -313,9 +314,7 @@ this property to pass the tests:
     Res: {postcondition,false}
     false
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-...but it fails, along with error reports on the server crashing!
+...it fails, along with error reports on the server crashing!
 This happens because the asynchronous `play_ping_pong/1` operation introduces
 non-determinism in the order in which messages are received by the server. Here
 we can see yet another benefit of property based testing: it helps to increase
@@ -323,33 +322,31 @@ our understanding about process interaction in the system under test.
 
 Fixing the postcondition of `get_score/1` so as to achieve deterministic
 results is quite simple: 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    :::erlang
     postcondition(S, {call,_,get_score,[Name]}, Res) ->
         Res =< proplists:get_value(Name, S#state.scores);
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 The error reports, however, are triggered by a not-so-evident bug in the code.
 They are occassionaly produced when stopping the server, because of an attempt
 to get and subsequently kill the pid associated with a name that is
 actually not present in the process registry. Let us re-examine the code that's
 executed when stopping the server:
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    :::erlang
     terminate(_Reason, Dict) ->
         Players = dict:fetch_keys(Dict),
         [exit(whereis(Name), kill) || Name <- Players],
         ok.
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 The exception raised suggests that there exist some names which are stored in
 the server's internal dictionary, but are not associated with any (process) pid.
 But where do these names come from? To get the answer we have to take a look at
 how `ping` messages are handled by the server:
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    :::erlang
     handle_call({ping,FromName}, _From, Dict) ->
         {reply, pong, dict:update_counter(FromName, 1, Dict)};
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This suggests that incoming `ping` messages associated with names not present
 in the server's dictionary are actually inserted in the dictionary. When we
@@ -358,16 +355,19 @@ that this player might be removed before sending the `ping` message to the
 master. In this case, when the master eventually receives the `ping` message,
 the name of the removed player will be added to the dictionary, despite not
 being assosiated with any process. Having spotted the bug it is easy to fix it:
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    :::erlang
     handle_call({ping,FromName}, _From, Dict) ->
         case dict:is_key(FromName, Dict) of
     	    true ->
                 {reply, pong, dict:update_counter(FromName, 1, Dict)};
     	    false ->
     	        {reply, {removed,FromName}, Dict}
-    end;
+        end;
 
+Now the property passes 3000 tests.
 
+    :::erl
     11> proper:quickcheck(ping_pong_statem:prop_ping_pong_works()).
     <...3000 dots...>
     OK: Passed 3000 test(s).
@@ -378,7 +378,3 @@ being assosiated with any process. Having spotted the bug it is easy to fix it:
     16% {ping_pong,play_tennis,1}
     16% {ping_pong,get_score,1}
     true
-    
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
