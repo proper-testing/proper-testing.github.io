@@ -22,9 +22,9 @@ We describe it below:
 
 *   _Create a new account_
   
-    We just say our name, and a new account is created for us. The server
-    will return a password for the new account. This password can be
-    used for all future requests.
+    We just say our name (e.g., "Bond", "James Bond"), and a new account is
+    created for us. The server will return a password for the new account.
+    This password can be used for all future requests.
     
         :::erlang
         -spec create_account(name()) -> password().
@@ -43,8 +43,8 @@ We describe it below:
         :::erlang
         -spec delete_account(password()) ->
                 'not_a_client' | 'account_deleted' | 'return_movies_first'.
-        delete_account(Pass) ->
-            gen_server:call(?MODULE, {delete_account, Pass}).
+        delete_account(Password) ->
+            gen_server:call(?MODULE, {delete_account, Password}).
 
 
 *   _Rent a dvd_
@@ -58,8 +58,8 @@ We describe it below:
 
         :::erlang
         -spec rent_dvd(password(), movie()) -> [movie()] | 'not_a_client'.
-        rent_dvd(Pass, Movie) ->
-            gen_server:call(?MODULE, {rent, Pass, Movie}).
+        rent_dvd(Password, Movie) ->
+            gen_server:call(?MODULE, {rent, Password, Movie}).
 
 
 *   _Return a dvd_
@@ -71,8 +71,8 @@ We describe it below:
 
         :::erlang
         -spec return_dvd(password(), movie()) -> [movie()] | 'not_a_client'.
-        return_dvd(Pass, Movie) ->
-            gen_server:call(?MODULE, {return, Pass, Movie}).
+        return_dvd(Password, Movie) ->
+            gen_server:call(?MODULE, {return, Password, Movie}).
 
 
 *   _And some pop-corn, please_
