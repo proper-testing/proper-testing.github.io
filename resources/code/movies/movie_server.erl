@@ -1,4 +1,5 @@
 -module(movie_server).
+
 -behaviour(gen_server).
 
 -export([start_link/0, stop/0]).
@@ -35,16 +36,16 @@ create_account(Name) ->
 
 -spec delete_account(password()) ->
 	 'not_a_client' | 'account_deleted' | 'return_movies_first'.
-delete_account(Pass) ->
-    gen_server:call(?MODULE, {delete_account, Pass}).
+delete_account(Password) ->
+    gen_server:call(?MODULE, {delete_account, Password}).
 
 -spec rent_dvd(password(), movie()) -> [movie()] | 'not_a_client'.
-rent_dvd(Pass, Movie) ->
-    gen_server:call(?MODULE, {rent, Pass, Movie}).
+rent_dvd(Password, Movie) ->
+    gen_server:call(?MODULE, {rent, Password, Movie}).
 
 -spec return_dvd(password(), movie()) -> [movie()] | 'not_a_client'.
-return_dvd(Pass, Movie) ->
-    gen_server:call(?MODULE, {return, Pass, Movie}).
+return_dvd(Password, Movie) ->
+    gen_server:call(?MODULE, {return, Password, Movie}).
 
 -spec ask_for_popcorn() -> 'bon_appetit'.
 ask_for_popcorn() ->
@@ -60,7 +61,7 @@ available_movies() -> ?MOVIES.
 init([]) ->
     Tid = ets:new(movies, []),
     ets:insert(Tid, ?MOVIES),
-    {ok, #state{users   = ets:new(users, []),
+    {ok, #state{users     = ets:new(users, []),
 		movies    = Tid, 
 		next_pass = 1}}.
 

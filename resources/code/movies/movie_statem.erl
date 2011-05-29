@@ -1,4 +1,5 @@
 -module(movie_statem).
+
 -behaviour(proper_statem).
 
 -include_lib("proper/include/proper.hrl").
@@ -32,16 +33,15 @@ sample() ->
 
 prop_movies() ->
     ?FORALL(Cmds, commands(?MODULE),
-	?TRAPEXIT(
-	   begin
-	       ?SERVER:start_link(),
-	       {H,S,Res} = run_commands(?MODULE, Cmds),
-	       ?SERVER:stop(),
-	       ?WHENFAIL(
-		  io:format("History: ~w\nState: ~w\nRes: ~w\n",
-			    [H,S,Res]),
-		  aggregate(command_names(Cmds), Res =:= ok))
-	   end)).
+	    ?TRAPEXIT(
+	       begin
+		   ?SERVER:start_link(),
+		   {H,S,Res} = run_commands(?MODULE, Cmds),
+		   ?SERVER:stop(),
+		   ?WHENFAIL(io:format("History: ~w\nState: ~w\nRes: ~w\n",
+				       [H,S,Res]),
+			     aggregate(command_names(Cmds), Res =:= ok))
+	       end)).
 
 %% prop_p() ->
 %%     ?FORALL(Cmds, parallel_commands(?MODULE),
