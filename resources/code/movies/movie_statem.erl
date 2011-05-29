@@ -38,23 +38,10 @@ prop_movies() ->
 		   ?SERVER:start_link(),
 		   {H,S,Res} = run_commands(?MODULE, Cmds),
 		   ?SERVER:stop(),
-		   ?WHENFAIL(io:format("History: ~w\nState: ~w\nRes: ~w\n",
-				       [H,S,Res]),
-			     aggregate(command_names(Cmds), Res =:= ok))
+		   ?WHENFAIL(io:format("History: ~w\nState: ~w\nResult: ~w\n",
+		   		       [H,S,Res]),
+		   	     aggregate(command_names(Cmds), Res =:= ok))
 	       end)).
-
-%% prop_p() ->
-%%     ?FORALL(Cmds, parallel_commands(?MODULE),
-%% 	?TRAPEXIT(
-%% 	   begin
-%% 	       start_link(),
-%% 	       {S,P,Res} = run_parallel_commands(?MODULE, Cmds),
-%% 	       stop(),
-%% 	       ?WHENFAIL(
-%% 		  io:format("Sequential: ~w\nParallel: ~w\nRes: ~w\n",
-%% 			    [S,P,Res]),
-%% 		  Res =:= ok)
-%% 	   end)).
 
 initial_state() ->
     #state{users  = [],
@@ -68,7 +55,7 @@ command(S) ->
 	      [{5, {call,?SERVER,rent_dvd,[password(S), movie()]}}
 	       || S#state.users =/= []] ++
 	      [{5, ?LET({Pass,Movie}, elements(S#state.rented),
-			{call,?SERVER,return_dvd,[Pass, Movie]})}
+	      		{call,?SERVER,return_dvd,[Pass, Movie]})}
 	       || S#state.rented =/= []]).
 
 name() ->
