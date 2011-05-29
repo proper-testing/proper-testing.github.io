@@ -23,7 +23,9 @@ Editing the site
     enabled separately, inside compile_pages.py). This README is actually
     written in Markdown.
 *   Page names must be alphanumeric, in mixed case, with underscores instead of
-    spaces, and must have the extension '.md'.
+    spaces, and must have the extension '.md'. A page name may optionally begin
+    with an index of the form '42#', in order to override the default alphabetic
+    ordering of pages. This prefix will be removed when building the site.
 *   The site's structure is reflected in the directory hierarchy.
 *   Support/User_Guide.md is copied from PropEr's README file. Do not edit this
     file directly: any changes you make will be overwritten.
@@ -81,6 +83,7 @@ Header
 ------
 
 *   icon and (fancy) "PropEr" logo that link to the main page
+*   Erlang icon must be lower (and bigger)
 *   shirt icon: "PropEr" on the shirt tag, size = "42"
 *   more modern (and austere) font for logo (e.g. SansSerif)
 *   Horizontal navigation bar (have extra "Home" link?)
@@ -119,6 +122,7 @@ Help/Support
 *   re2 extended demo (full process of specification, re vs re2, generators from
     regexps, generators or even native types as string,regexp,options)
 *   links to (preferably locally saved) talks and papers
+*   EDoc pages color theme that resembles the main page
 
 
 Code highlighting
@@ -161,6 +165,7 @@ About
 *   (Humorous) reviews
 *   "Icon by Gordon Irving"
 *   link to QuviQ's site
+*   Image map and separate page for each dev
 
 
 Infrastructure
@@ -175,5 +180,10 @@ Infrastructure
 *   Work on the stylesheet (bigger text on navbars?).
 *   make header.png non-transparent?
 *   have a set of alternatives for each photo and make them auto-cycle
+*   some way to specify the order of pages: e.g. can name pages as:
+    1.Something.md, to make them first in the list, then remove the 1. when
+    converting, so that we get Something.html
+*   make the width 900px?
+*   fully justified text?
 
 <!-- kate: replace-tabs-save on; replace-tabs on; tab-width 8; -->
