@@ -130,13 +130,14 @@ following:
   call match the predicted model state.
 * Run this property in PropEr.
 
+<!--
 The property that we will use to test the movie server is:
 
     :::erlang
     prop_movies() ->
         ?FORALL(Cmds, commands(?MODULE),
                 ?TRAPEXIT(
-                   begin 
+                   begin
                        start_link(),
                        {H,S,Res} = run_commands(?MODULE, Cmds),
                        stop(),
@@ -191,21 +192,82 @@ a symbolic variable. Therefore, `{var,1}` is Ben's password and, in this way,
 it can be used in subsequent commands/requests. After watching the Lion King,
 Ben returns it to the dvd club. Then, Alice creates an account, someone
 comes in to buy pop-corn and life goes on... As we cannot test every possible
-scenario, we let PropEr make some random selections and test these instead.
+scenario, we let PropEr make some random selections and test these instead.  -->
+
+###Testcases for stateful systems###
+
+Testcases generated for testing a stateful system are lists of _symbolic_ API
+calls to that system. At this point, one may wonder why we choose to complicate
+things, when we could simply perform calls to the system under test. As it
+turns out, symbolic representation makes things much easier. Here are some
+reasons to vote for it, listed in increasing order of importance:
+
+* Generated testcases are easier to read and understand.
+* Failing testcases are easier to shrink.
+* The generation phase is side-effect free and this results in
+  repeatable testcases, which is essential for correct shrinking
+
+Symbolic calls are not executed during testcase generation. Therefore, the
+actual result of a call is not known at generation time and cannot be used in
+subsequent operations. To remedy this situation, symbolic variables are used.
+A _command_ is a symbolic term, used to bind a symbolic variable to the result
+of a symbolic call. For example, the command
+
+    :::erlang
+    {set, {var,1}, {call,?SERVER,create_account,[james_bond]}}
+
+binds Mr Bond's password to the symbolic variable `{var,1}`.
+
+###Properties for stateful systems###
+
+Each test consists of two phases:
+
+* As a first step, PropEr generates random symbolic command sequences
+  deriving information from the callback module implementing the abstract state
+  machine. This is the role of `commands/1` generator, which takes as argument
+  the name of the callback module and returns a random command sequence.
+
+* As a second step, command sequences are executed so as to check that the
+  system behaves as expected. This is the role of `run_commands/2`, a function
+  that evaluates a symbolic command sequence according to an abstract state
+  machine specification. It takes as arguments the name of the callback module,
+  where the state machine is specified, and the command sequence to be
+  evaluated and returns a triple, which contains information about command
+  execution.
+
+These two phases are encapsulated in the following property, which can be used
+for testing a generic server with PropEr:
+
+    :::erlang
+    prop_server_works_fine() ->
+        ?FORALL(Cmds, commands(?MODULE),
+                begin 
+                  ?SERVER:start_link(),
+                  {H,S,Res} = run_commands(?MODULE, Cmds),
+                  ?SERVER:stop(),
+                  Res =:= ok
+                end).
+
+It is very important to keep each test self-contained. For this reason, almost
+every property for testing stateful systems contains some set-up and/or
+clean-up code, necessary to put the system in a known state, so that the next
+test can be executed independently from previous ones. In our case, set-up means
+spawning and linking to the server, while clean-up means stopping it.
 
 
 Defining the abstract state machine
 -----------------------------------
 
-Now that you have a rough idea of what will be tested, it's time to implement
-the abstract state machine of the movie server.
-
 ### Command generation ###
-Since our testcases are symbolic call sequences, we definitely need a symbolic
-call generator, i.e. a function that will be called to produce the next call
-to be included in the testcase. In the general case, the generator should take
-into account the model state. In our example, we are not sure yet if this is
-necessary. Let us make a first attempt. What about...?
+
+The first callback function to consider is the command generator.
+This function will be repeatedly called to produce the next symbolic call to
+be included in the testcase. PropEr automatically binds the result of each
+symbolic call to a symbolic variable. In other words, symbolic calls are
+automatically translated to commands.
+In the general case, the command generator should take into account the model
+state. In our example, we are not sure yet if this is necessary. Let us make a
+first attempt. What about...?
 
     :::erlang
     command(_S) ->
@@ -300,8 +362,9 @@ but in a rather unusual way:
                || S#state.users =/= []]).
 
    
-So, that's it! Our generator is ready. In the next section we will talk in more
-detail about the model state, which was so useful for password generation.
+So, that's it! Our command generator is ready. In the next section we will talk
+in more detail about the model state, which was so useful for password
+generation.
 
 
 ### Updating the model state ###
