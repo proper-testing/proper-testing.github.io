@@ -1,4 +1,5 @@
 -module(ping_pong_statem).
+
 -behaviour(proper_statem).
 
 -include_lib("proper/include/proper.hrl").
@@ -6,7 +7,7 @@
 -export([initial_state/0, command/1, precondition/2, next_state/3,
 	 postcondition/3]).
 
--type name() :: atom().
+-type name()  :: atom().
 -type score() :: non_neg_integer().
 
 -record(state, {players = [] :: [name()],
@@ -14,29 +15,28 @@
 
 -define(PLAYER, ping_pong).
 -define(MASTER, ping_pong).
--define(NAMES, [bob, alice, john, mary, ben]).
+-define(NAMES,  [bob, alice, john, mary, ben]).
 
 
 %%% Property
 
 prop_ping_pong_works() ->
-    ?FORALL(
-       Cmds, commands(?MODULE),
-       ?TRAPEXIT(
-	  begin
-	      ?MASTER:start_link(),
-	      {H,S,Res} = run_commands(?MODULE, Cmds),
-	      ?MASTER:stop(),
-	      ?WHENFAIL(
-		 io:format("History: ~w\nState: ~w\nRes: ~w\n",
-			   [H,S,Res]),
-		 aggregate(command_names(Cmds), Res =:= ok))
-	  end)).
+    ?FORALL(Cmds, commands(?MODULE),
+	    ?TRAPEXIT(
+	       begin
+		   ?MASTER:start_link(),
+		   {H,S,Res} = run_commands(?MODULE, Cmds),
+		   ?MASTER:stop(),
+		   ?WHENFAIL(
+		      io:format("History: ~w\nState: ~w\nRes: ~w\n",
+				[H,S,Res]),
+		      aggregate(command_names(Cmds), Res =:= ok))
+	       end)).
 
 
 %%% Statem Callbacks
 
-initial_state() ->  #state{}.
+initial_state() -> #state{}.
 
 command(#state{players = []}) ->
     {call,?MASTER,add_player,[name()]};
@@ -66,13 +66,13 @@ next_state(S, _V, {call,_,add_player,[Name]}) ->
     case lists:member(Name, S#state.players) of
 	false ->
 	    S#state{players = [Name|S#state.players],
-		    scores = [{Name,0}|S#state.scores]};
+		    scores  = [{Name,0}|S#state.scores]};
 	true ->
 	    S
     end;
 next_state(S, _V, {call,_,remove_player,[Name]}) ->
     S#state{players = lists:delete(Name, S#state.players),
-	    scores = proplists:delete(Name, S#state.scores)};
+	    scores  = proplists:delete(Name, S#state.scores)};
 next_state(S = #state{scores = Sc}, _V, {call,_,play_ping_pong,[Name]}) ->
     Score = proplists:get_value(Name, Sc),
     S#state{scores = [{Name,Score+1}|proplists:delete(Name, Sc)]};
@@ -82,7 +82,7 @@ next_state(S, _, _) ->
 postcondition(_S, {call,_,add_player,[_Name]}, Res) ->
     Res =:= ok;
 postcondition(_S, {call,_,remove_player,[Name]}, Res) ->
-    Res =:= {removed,Name};
+    Res =:= {removed, Name};
 postcondition(S, {call,_,get_score,[Name]}, Res) ->
     %% Res =:= proplists:get_value(Name, S#state.scores);
     Res =< proplists:get_value(Name, S#state.scores);
