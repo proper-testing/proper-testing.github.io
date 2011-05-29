@@ -15,10 +15,10 @@ A server example
 ----------------
 
 Let us first introduce our example: a movie server at a dvd-club, implemented
-as an Erlang generic server (gen_server behaviour). The complete code of the
-server can be found [here](/code/movies/movie_server.erl). Nevertheless, for
-the most part of this tutorial we only need to understand the server's API.
-We describe it below:
+as an Erlang generic server (using the `gen_server` behaviour). The complete
+code of the server can be found [here](/code/movies/movie_server.erl).
+Nevertheless, for the most part of this tutorial we only need to understand
+the server's API. We describe it below:
 
 *   _Create a new account_
   
@@ -51,8 +51,8 @@ We describe it below:
   
      When we ask for a movie, the server will check if there is a copy
      available at the moment and return the list of movies that we have
-     currently rented (it's a polite way of reminding us that we should
-     have returned them). If the movie we asked for is available, then it
+     currently rented. (It's a polite way of reminding us that we should
+     have returned them.) If the movie we asked for is available, then it
      will be added to the list. Finally, in case the password we supplied
      is invalid, the server will not give us any movies.
 
@@ -113,7 +113,7 @@ _model state_, corresponds to the implicit internal state of the system under
 test. Now, all we have to check is whether these states ever become
 inconsistent. Such an inconsistency can be detected from the results of API
 calls. When this occurs, there is much probability that the error lies in our
-model and not the implemetation. But then, it is quite easy to redefine our
+model and not in the implemetation. But then, it is quite easy to redefine our
 model and run the test again. In this way, well hidden bugs can be revealed,
 because after e.g. 3000 random tests, PropEr will eventually try sequences of
 calls that would not have been tested by traditional unit testing methods.
@@ -136,18 +136,19 @@ Testcases generated for testing a stateful system are lists of _symbolic_ API
 calls to that system. At this point, one may wonder why we choose to complicate
 things, when we could simply perform calls to the system under test. As it
 turns out, symbolic representation makes things much easier. Here are some
-reasons to vote for it, listed in increasing order of importance:
+reasons to prefer it, listed in increasing order of importance:
 
 * Generated testcases are easier to read and understand.
 * Failing testcases are easier to shrink.
 * The generation phase is side-effect free and this results in
-  repeatable testcases, which is essential for correct shrinking
+  repeatable testcases, which is essential for correct shrinking.
 
 Symbolic calls are not executed during testcase generation. Therefore, the
 actual result of a call is not known at generation time and cannot be used in
 subsequent operations. To remedy this situation, symbolic variables are used.
 A _command_ is a symbolic term, used to bind a symbolic variable to the result
-of a symbolic call. For example, the command
+of a symbolic call. For example, if as we will see below, **`?SERVER`** denotes
+the name of the server module, the command
 
     :::erlang
     {set, {var,1}, {call,?SERVER,create_account,[james_bond]}}
@@ -168,8 +169,8 @@ Each test consists of two phases:
   that evaluates a symbolic command sequence according to an abstract state
   machine specification. It takes as arguments the name of the callback module,
   where the state machine is specified, and the command sequence to be
-  evaluated and returns a triple, which contains information about command
-  execution.
+  evaluated and returns a triple that contains information about the execution
+  of the command.
 
 These two phases are encapsulated in the following property, which can be used
 for testing a generic server with PropEr:
@@ -184,10 +185,11 @@ for testing a generic server with PropEr:
                     Res =:= ok
                 end).
 
-It is very important to keep each test self-contained. For this reason, almost
-every property for testing stateful systems contains some set-up and/or
-clean-up code, necessary to put the system in a known state, so that the next
-test can be executed independently from previous ones. In our case, set-up means
+As we can see, even in this simple property, it is very important to keep
+each test self-contained. For this reason, almost every property for testing
+stateful systems contains some set-up and/or clean-up code. Such code is
+necessary to put the system in a known state, so that the next test can be
+executed independently from previous ones. In this property, set-up means
 spawning and linking to the server, while clean-up means stopping it.
 
 
@@ -217,11 +219,12 @@ first attempt. What about...?
 where `name()` generates a random name for a new client at the dvd club,
 `movie()` generates a random movie name and `password()` a random password.
 
-Although it is fairly easy to generate random names, movies and passwords
-for each new symbolic call, it is more appropriate to select them from a rather
-small predefined set, so that a testcase is likely to refer to the same objects
-several times. Then, we have a bigger chance of detecting errors. So, we
-introduce the following macros:
+Although it is fairly easy to use the type definitions of `name()`, `movie()`,
+and `password()` to generate random names, movies and passwords for each new
+symbolic call, it is more appropriate to select them from a rather small
+predefined set, so that a testcase is likely to refer to the same objects
+several times. Then, we will have a bigger chance of detecting errors.
+So, rather than using the type definitions, we introduce the following macros:
 
     :::erlang
     %% The module implementing the movie_server
@@ -243,8 +246,9 @@ introduce the following macros:
             proplists:get_keys(?AVAILABLE_MOVIES) ++ [titanic, inception]).
 
 
-The generators for names and movies become:
-        
+Given these macros, the generators for names and movies are written using the
+`elements/1` function of PropEr:
+
     :::erlang
     name() -> elements(?NAMES).
 
@@ -257,7 +261,7 @@ We could make an exception and take a look at the algorithm for password
 generation, but in this way we would be copying and not actually testing how
 passwords are created.
 
-We decide to take a different approach: since passwords are available to the
+We can take a different approach: since passwords are available to the
 users as the result of creating a new account (i.e. `create_count/1` calls),
 they should be treated and tested exactly as such. In order to achieve this, we
 will use the state of the abstract state machine. This is defined as follows:
@@ -270,9 +274,9 @@ will use the state of the abstract state machine. This is defined as follows:
 The first component is a list of passwords generated from `create_account/1`
 calls in the current test, while the second is a list keeping track of rented
 movies. Given this state, we can arrange for the password generator to choose
-one of the passwords already created in the same testcase (or possibly define
-the frequency that invalid passwords may appear in our tests, depending on what
-we are interested in testing).
+one of the passwords already created in the same testcase. (Alternatively, we
+can possibly define the frequency that invalid passwords may appear in our
+tests. The choice depends on what we are interested in testing.)
 
 Being interested only in valid passwords, we define:
 
@@ -288,14 +292,12 @@ but in a rather unusual way:
 
     :::erlang
     command(S) ->
-        oneof([{call, ?SERVER, create_account, [name()]}	,
+        Users = (S#state.users =/= []),
+        oneof([{call, ?SERVER, create_account, [name()]},
                {call, ?SERVER, ask_for_popcorn, []}] ++
-              [{call, ?SERVER, delete_account, [password(S)]}
-               || S#state.users =/= []] ++
-              [{call, ?SERVER, rent_dvd, [password(S), movie()]}
-               || S#state.users =/= []] ++
-              [{call, ?SERVER, return_dvd, [password(S), movie()]}
-               || S#state.users =/= []]).
+              [{call, ?SERVER, delete_account, [password(S)]} || Users] ++
+              [{call, ?SERVER, rent_dvd, [password(S), movie()]} || Users] ++
+              [{call, ?SERVER, return_dvd, [password(S), movie()]} || Users]).
 
    
 So, that's it! Our command generator is ready. In the next section we will talk
@@ -350,7 +352,7 @@ from the list of users.
         S#state{users = lists:delete(Password, S#state.users)};
 
 
-When a client asks to rent a movie, the server will check the availability. If
+When a client asks to rent a movie, the server will check its availability. If
 there is an available copy, the server should allocate it to the user who asked
 for it and mark it as rented. If there are no copies of that movie available
 at that moment, the state shouldn't change. The function `is_available/2`
@@ -467,13 +469,15 @@ property:
          in call from gen_server:handle_msg/5
          in call from proc_lib:init_p_do_apply/3
 
-This is not quite what we expected. The movie server crashed and this is
-acceptable, since we are looking for bugs in the code. The problem is that
-PropEr also crashed without providing any kind of useful information about
-the cause of the failure. In cases like that, the `?TRAPEXIT` macro comes
-to the rescue.  Enclosing a property in `?TRAPEXIT` prevents PropEr from
-crashing when a linked process dies abnormally.
-Now that we know the trick, we can redefine the property.
+Oh dear! This is not quite what we expected... The movie server crashed.
+This is acceptable, since we are looking for bugs in the code. The problem
+is that PropEr also crashed without providing any kind of useful information
+about the cause of the failure. This was improper!
+
+In cases like this, the `?TRAPEXIT` macro comes to the rescue.
+Enclosing a property in `?TRAPEXIT` prevents PropEr from crashing when
+a linked process dies abnormally. Now that we know the trick, we can
+redefine the property:
 
     :::erlang
     prop_server_works_fine() ->
@@ -486,7 +490,7 @@ Now that we know the trick, we can redefine the property.
                         Res =:= ok
                     end)).
 
-And try again:
+Let's try it again:
 
     :::erl
     4> proper:quickcheck(movie_server:prop_server_works_fine()).
