@@ -28,6 +28,7 @@ prop_ping_pong_works() ->
 		   ?MASTER:stop(),
 		   ?WHENFAIL(
 		      io:format("History: ~w\nState: ~w\nRes: ~w\n",
+				%% [H, S, Res]),
 				[pretty_history(H), pretty_state(S), Res]),
 		      aggregate(command_names(Cmds), Res =:= ok))
 	       end)).
@@ -87,8 +88,8 @@ postcondition(_S, {call,_,add_player,[_Name]}, Res) ->
 postcondition(_S, {call,_,remove_player,[Name]}, Res) ->
     Res =:= {removed, Name};
 postcondition(S, {call,_,get_score,[Name]}, Res) ->
-    Res =:= dict:fetch(Name, S#state.scores);
-    %% Res =< dict:fetch(Name, S#state.scores);
+    %% Res =:= dict:fetch(Name, S#state.scores);
+    Res =< dict:fetch(Name, S#state.scores);
 postcondition(_S, {call,_,play_ping_pong,[_Name]}, Res) ->
     Res =:= ok;
 postcondition(_S, {call,_,play_tennis,[_Name]}, Res) ->

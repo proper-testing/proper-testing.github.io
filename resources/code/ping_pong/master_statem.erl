@@ -29,7 +29,7 @@ prop_master() ->
 		 io:format("History: ~w\nState: ~w\nRes: ~w\n",
 			   [pretty_history(H), pretty_state(S), Res]),
 		 aggregate(command_names(Cmds), Res =:= ok))
-	    end)).
+	  end)).
 
 pretty_history(History) ->
     [{pretty_state(State),Res} || {State,Res} <- History].

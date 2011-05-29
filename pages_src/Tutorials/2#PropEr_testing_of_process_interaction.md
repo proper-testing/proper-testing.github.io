@@ -266,8 +266,88 @@ But...
 
     :::erl
     5> proper:quickcheck(ping_pong_statem:prop_ping_pong_works()).
+    ...............
+    =ERROR REPORT==== 30-May-2011::01:50:11 ===
+    ** Generic server ping_pong terminating
+    ** Last message in was {'$gen_cast',stop}
+    ** When Server state ==  <...internal representation of the state...>
+    ** Reason for termination ==
+    ** {badarg,[{erlang,exit,[undefined,kill]},
+                {ping_pong,'-terminate/2-lc$^0/1-0-',1},
+                {ping_pong,terminate,2},
+                {gen_server,terminate,6},
+                {proc_lib,init_p_do_apply,3}]}
+    ..!
+    Failed: After 18 test(s).
+    [{set,{var,1},{call,ping_pong,add_player,[mary]}},
+     {set,{var,2},{call,ping_pong,play_ping_pong,[mary]}},
+     {set,{var,3},{call,ping_pong,play_ping_pong,[mary]}},
+     {set,{var,4},{call,ping_pong,get_score,[mary]}},
+     {set,{var,5},{call,ping_pong,add_player,[mary]}},
+     {set,{var,6},{call,ping_pong,play_tennis,[mary]}},
+     {set,{var,7},{call,ping_pong,play_tennis,[mary]}},
+     {set,{var,8},{call,ping_pong,play_tennis,[mary]}},
+     {set,{var,9},{call,ping_pong,remove_player,[mary]}}]
+    History: [{{state,[],{dict,0,16,16,8,80,48,{[],[],[],[],[],[],[],[],[],[],[],[],[],[],
+               [],[]},{{[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]}}}},ok},
+              {{state,[mary],{dict,1,16,16,8,80,48,{[],[],[],[],[],[],[],[],[],[],[],[],[],
+               [],[],[]},{{[],[],[],[],[],[],[],[],[],[[mary|0]],[],[],[],[],[],[]}}}},ok},
+              {{state,[mary],{dict,1,16,16,8,80,48,{[],[],[],[],[],[],[],[],[],[],[],[],[],
+               [],[],[]},{{[],[],[],[],[],[],[],[],[],[[mary|1]],[],[],[],[],[],[]}}}},ok},
+              {{state,[mary],{dict,1,16,16,8,80,48,{[],[],[],[],[],[],[],[],[],[],[],[],[],
+               [],[],[]},{{[],[],[],[],[],[],[],[],[],[[mary|2]],[],[],[],[],[],[]}}}},0}]
+    State: {state,[mary],{dict,1,16,16,8,80,48,{[],[],[],[],[],[],[],[],[],[],[],[],[],[],
+            [],[]},{{[],[],[],[],[],[],[],[],[],[[mary|2]],[],[],[],[],[],[]}}}}
+    Res: {postcondition,false}
+
+    Shrinking ...(3 time(s))
+    [{set,{var,1},{call,ping_pong,add_player,[mary]}},
+     {set,{var,3},{call,ping_pong,play_ping_pong,[mary]}},
+     {set,{var,4},{call,ping_pong,get_score,[mary]}}]
+    History: [{{state,[],{dict,0,16,16,8,80,48,{[],[],[],[],[],[],[],[],[],[],[],[],[],[],
+               [],[]},{{[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]}}}},ok},
+              {{state,[mary],{dict,1,16,16,8,80,48,{[],[],[],[],[],[],[],[],[],[],[],[],[],
+               [],[],[]},{{[],[],[],[],[],[],[],[],[],[[mary|0]],[],[],[],[],[],[]}}}},ok},
+              {{state,[mary],{dict,1,16,16,8,80,48,{[],[],[],[],[],[],[],[],[],[],[],[],[],
+               [],[],[]},{{[],[],[],[],[],[],[],[],[],[[mary|1]],[],[],[],[],[],[]}}}},0}]
+    State: {state,[mary],{dict,1,16,16,8,80,48,{[],[],[],[],[],[],[],[],[],[],[],[],[],[],
+            [],[]},{{[],[],[],[],[],[],[],[],[],[[mary|1]],[],[],[],[],[],[]}}}}
+    Res: {postcondition,false}
+    false
+
+...the property fails, along with error reports on the server crashing!
+
+What is more, the `History` and `State` fields contain dictionaries which are
+printed out based on their internal representation. We decide to deal with this
+issue by including some pretty-printing functions in the property, so as to
+output more informative debugging information.
+
+    :::erlang
+    pretty_history(History) ->
+        [{pretty_state(State),Res} || {State,Res} <- History].
+
+    pretty_state(S = #state{scores = Scores}) ->
+        S#state{scores = dict:to_list(Scores)}.
+
+    prop_ping_pong_works() ->
+        ?FORALL(Cmds, commands(?MODULE),
+                ?TRAPEXIT(
+                    begin
+                        ?MASTER:start_link(),
+                        {H,S,Res} = run_commands(?MODULE, Cmds),
+                        ?MASTER:stop(),
+                        ?WHENFAIL(
+                         io:format("History: ~w\nState: ~w\nRes: ~w\n",
+                                   [pretty_history(H), pretty_state(S), Res]),
+                         aggregate(command_names(Cmds), Res =:= ok))
+                    end)).
+
+And run the test once more:
+
+    :::erl
+    7> proper:quickcheck(ping_pong_statem:prop_ping_pong_works()).
     .............
-    =ERROR REPORT==== 27-May-2011::17:57:37 ===
+    =ERROR REPORT==== 30-May-2011::02:09:56 ===
     ** Generic server ping_pong terminating
     ** Last message in was {'$gen_cast',stop}
     ** When Server state == <...internal representation of the state...>
@@ -278,7 +358,7 @@ But...
                 {gen_server,terminate,6},
                 {proc_lib,init_p_do_apply,3}]}
     .
-    =ERROR REPORT==== 27-May-2011::17:57:37 ===
+    =ERROR REPORT==== 30-May-2011::02:09:56 ===
     <...similar error report...>
     ..........!
     Failed: After 25 test(s).
@@ -314,8 +394,7 @@ But...
     Res: {postcondition,false}
     false
 
-...the property fails, along with error reports on the server crashing!
-
+Of course the property still fails and new error reports are produced.
 This happens because the asynchronous `play_ping_pong/1` operation introduces
 non-determinism in the order in which messages are received by the server. Here
 we can see yet another benefit of property based testing: it helps to increase
