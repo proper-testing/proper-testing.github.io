@@ -18,6 +18,10 @@ body{
     width: 100%;
 }
 
+#content p img {
+    vertical-align: middle;
+}
+
 #nav ul{
     list-style-type: none;
     margin: 0px;
