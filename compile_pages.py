@@ -79,6 +79,7 @@ def make_link_list(site_paths, titles, summaries):
 
 def switch_base_dir(fs_path):
     path_components = split_path(fs_path)
+    path_components = [remove_index(c) for c in path_components]
     path_components[0] = 'build'
     new_fs_path = path_components.pop()
     while path_components <> []:
@@ -86,12 +87,17 @@ def switch_base_dir(fs_path):
     return switch_extension(new_fs_path)
 
 def to_site_path(fs_path):
-    fs_path = switch_extension(fs_path)
-    return '/' + '/'.join(split_path(fs_path)[1:])
+    path_components = split_path(fs_path)[1:]
+    path_components = [remove_index(c) for c in path_components]
+    path_components[-1] = switch_extension(path_components[-1])
+    return '/' + '/'.join(path_components)
 
 def get_title(filename):
-    basename = os.path.splitext(filename)[0]
+    basename = remove_index(os.path.splitext(filename)[0])
     return basename.replace('_', ' ')
+
+def remove_index(filename):
+    return filename.split('#')[-1]
 
 def split_path(fs_path):
     path_components = []
