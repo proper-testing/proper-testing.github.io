@@ -22,8 +22,8 @@ We describe it below:
 
 *   _Create a new account_
   
-    We just say our name (e.g., "Bond", "James Bond"), and a new account is
-    created for us. The server will return a password for the new account.
+    We just say our name (e.g., 'Bond', 'James Bond'), and a new account is
+    created for us. The server will return us a password for the new account.
     This password can be used for all future requests.
     
         :::erlang
@@ -97,13 +97,13 @@ some things we might want to test:
   give us some!
 
 
-The PropEr approach
--------------------
+The PropEr approach to testing the server
+-----------------------------------------
 
 **The problem:** Our server has some internal state based on previous
-operations (e.g. user accounts, movies available, next password to be
-allocated) and this state is not directly accessible, at least not from the
-API.
+operations (e.g. user accounts which have been created, the set of available
+movies, next password to be allocated, etc.) and this state is not directly
+accessible, at least not from the API.
 
 **The solution:** Even if not observable, the state is there! And this means we
 can try to compute it, even without knowing the details of the implementation.
@@ -126,34 +126,34 @@ following:
   expected behaviour is specified via an abstract state machine that models
   the operations in the SUT, treating it as a blackbox accessible only from
   the API.
-* Run a property which tests whether the real observed results of each API
+* Write a property that tests whether the real observed results of each API
   call match the predicted model state.
+* Run this property in PropEr.
 
 The property that we will use to test the movie server is:
 
     :::erlang
     prop_movies() ->
         ?FORALL(Cmds, commands(?MODULE),
-            ?TRAPEXIT(
-                begin 
-                    start_link(),
-                    {H,S,Res} = run_commands(?MODULE, Cmds),
-                    stop(),
-                    ?WHENFAIL(
-                        io:format("History: ~w\nState: ~w\nRes: ~w\n",
-                                  [H,S,Res]),
-                        aggregate(command_names(Cmds), Res =:= ok))
-                end)).
+                ?TRAPEXIT(
+                   begin 
+                       start_link(),
+                       {H,S,Res} = run_commands(?MODULE, Cmds),
+                       stop(),
+                       ?WHENFAIL(io:format("History: ~w\nState: ~w\nRes: ~w\n",
+                                           [H,S,Res]),
+                                 aggregate(command_names(Cmds), Res =:= ok))
+                   end)).
 
 
 The actions described in this property are:
 
 * Generate a random list of symbolic commands, i.e. symbolic API calls. As we
-  can see, `commands/1` generator takes as argument a module name.
+  can see, the `commands/1` generator takes as argument a module name.
   In this module we should describe everything PropEr needs to know about the
   SUT. Don't worry, usually it's not that much!
-* Execute the list of commands while collecting the results of execution. This
-  is done by `run_commands/2`, a function that evaluates a symbolic command
+* Execute the list of commands while collecting the results of execution.
+  This is done by `run_commands/2`, a function that evaluates a symbolic command
   sequence according to an abstract state machine specification.
   The function takes as arguments a module name (defining the model of the SUT)
   and the symbolic command sequence to be evaluated and returns a triple, which
@@ -170,7 +170,8 @@ The actions described in this property are:
 * In case of success, collect statistics about command execution. This is
   useful to ensure that each command was tested as often as expected.
 
-In order to get an idea of what testcases look like, you can try:
+In order to get an idea of how test cases look like, we can generate one
+using PropEr:
 
      :::erl
      3> proper_gen:pick(proper_statem:commands(movie_server)).
