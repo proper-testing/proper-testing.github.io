@@ -1,28 +1,28 @@
 Summary: a PropEr statem tutorial
 
-Testing purely functional code is usually not enough for industrial erlang
-applications like telecom software or http servers. In this tutorial, we
+Testing purely functional code is usually not enough for industrial Erlang
+applications like telecom software or http servers. In this tutorial, we will
 describe how to use PropEr for automated random testing of stateful systems.
 
 Undoubtedly, automated random testing of a stateful API would require some
-magic, unless some additional information is provided. Since we're not
-magicians but erlang programmers, we choose to describe the side-effects of
+magic, unless some additional information is provided. Since we are not
+magicians but Erlang developers, we choose to describe the side-effects of
 the system under test via an abstract state machine and then, let PropEr do
-some magic for us.
+its magic for us.
 
 
-The example
------------
+A server example
+----------------
 
 Let us first introduce our example: a movie server at a dvd-club, implemented
-as an erlang generic server (gen_server behaviour). You can find the code of
-the server [here](/code/movies/movie_server.erl). Nevertheless, for the most
-part of this tutorial you only need to understand the server's API, which is
-described below:
+as an Erlang generic server (gen_server behaviour). The complete code of the
+server can be found [here](/code/movies/movie_server.erl). Nevertheless, for
+the most part of this tutorial we only need to understand the server's API.
+We describe it below:
 
 *   _Create a new account_
   
-    Just say your name, and a new account will be created for you. The server
+    We just say our name, and a new account is created for us. The server
     will return a password for the new account. This password can be
     used for all future requests.
     
@@ -34,27 +34,27 @@ described below:
 
 *   _Delete an account_
   
-    You can delete an account by giving its password. If the password doesn't
+    We can delete an account by giving its password. If the password doesn't
     correspond to a registered user, the server will reply `not_a_client`.
-    Beware that if you still have some rented movies at home, the server won't
-    let you delete your account. Instead, it will remind you to return the
-    movies you owe to the dvd-club.
+    Beware that if we still have some rented movies at home, the server won't
+    let us delete our account. Instead, it will remind us to return the
+    movies we owe to the dvd-club.
 
         :::erlang
         -spec delete_account(password()) ->
-               'not_a_client' | 'account_deleted' | 'return_movies_first'.
+                'not_a_client' | 'account_deleted' | 'return_movies_first'.
         delete_account(Pass) ->
             gen_server:call(?MODULE, {delete_account, Pass}).
 
 
 *   _Rent a dvd_
   
-     When you ask for a movie, the server will check if there is a copy
-     available at the moment and return the list of movies that you have
-     currently rented (it's a polite way to remind you that you have to return
-     them). If the movie you asked for is available, then it will be added to
-     the list. Finally, in case your password is invalid, the server will not
-     give you any movie.
+     When we ask for a movie, the server will check if there is a copy
+     available at the moment and return the list of movies that we have
+     currently rented (it's a polite way of reminding us that we should
+     have returned them). If the movie we asked for is available, then it
+     will be added to the list. Finally, in case the password we supplied
+     is invalid, the server will not give us any movies.
 
         :::erlang
         -spec rent_dvd(password(), movie()) -> [movie()] | 'not_a_client'.
@@ -64,10 +64,10 @@ described below:
 
 *   _Return a dvd_
 
-    You can return a dvd by giving your passord, so that the movie will be
-    deleted from your account. The server will reply with the list of movies
-    you still have to return. Again, if the password is invalid, the server
-    won't be co-operative and won't accept the movie you are trying to return.
+    We can return a dvd by giving our password, so that the movie will be
+    deleted from our account. The server will reply with the list of movies
+    we still have to return. Again, if the password is invalid, the server
+    will not accept the movie we are trying to return.
 
         :::erlang
         -spec return_dvd(password(), movie()) -> [movie()] | 'not_a_client'.
@@ -75,7 +75,7 @@ described below:
             gen_server:call(?MODULE, {return, Pass, Movie}).
 
 
-*   _Ask for pop-corn_
+*   _And some pop-corn, please_
   
     Everybody can buy pop-corn at the dvd-club.
     
@@ -89,11 +89,12 @@ But how do we know the server actually behaves as described above? Here are
 some things we might want to test:
 
 * no duplicate passwords are given to users
-* when asking to rent a movie, the server will let you have it, unless it is
-  not available or you are not registered
-* when renting or returning a movie, a list of all the movies you owe will be
+* when asking to rent a movie, the server will let us have it, unless it is
+  not available or we are not registered
+* when renting or returning a movie, a list of all the movies we owe is
   returned by the server
-* you can ask for pop-corn and the server will always serve you some
+* and, most importantly, when we ask for pop-corn the server will always
+  give us some!
 
 
 The PropEr approach
