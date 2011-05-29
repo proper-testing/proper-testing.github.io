@@ -93,12 +93,12 @@ handle_call({remove_player,Name}, _From, Dict) ->
     exit(Pid, kill),
     {reply, {removed,Name}, dict:erase(Name, Dict)};
 handle_call({ping,FromName}, _From, Dict) ->
-    case dict:is_key(FromName, Dict) of
-    	true ->
+    %% case dict:is_key(FromName, Dict) of
+    %% 	true ->
 	    {reply, pong, dict:update_counter(FromName, 1, Dict)};
-    	false ->
-    	    {reply, {removed,FromName}, Dict}
-    end;
+    %% 	false ->
+    %% 	    {reply, {removed,FromName}, Dict}
+    %% end;
 handle_call({get_score,Name}, _From, Dict) ->
     Score = dict:fetch(Name, Dict),
     {reply, Score, Dict}.

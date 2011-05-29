@@ -130,82 +130,80 @@ following:
   call match the predicted model state.
 * Run this property in PropEr.
 
-The property that we will use to test the movie server is:
+###Testcases for stateful systems###
+
+Testcases generated for testing a stateful system are lists of _symbolic_ API
+calls to that system. At this point, one may wonder why we choose to complicate
+things, when we could simply perform calls to the system under test. As it
+turns out, symbolic representation makes things much easier. Here are some
+reasons to vote for it, listed in increasing order of importance:
+
+* Generated testcases are easier to read and understand.
+* Failing testcases are easier to shrink.
+* The generation phase is side-effect free and this results in
+  repeatable testcases, which is essential for correct shrinking
+
+Symbolic calls are not executed during testcase generation. Therefore, the
+actual result of a call is not known at generation time and cannot be used in
+subsequent operations. To remedy this situation, symbolic variables are used.
+A _command_ is a symbolic term, used to bind a symbolic variable to the result
+of a symbolic call. For example, the command
 
     :::erlang
-    prop_movies() ->
+    {set, {var,1}, {call,?SERVER,create_account,[james_bond]}}
+
+binds Mr Bond's password to the symbolic variable `{var,1}`.
+
+###Properties for stateful systems###
+
+Each test consists of two phases:
+
+* As a first step, PropEr generates random symbolic command sequences
+  deriving information from the callback module implementing the abstract state
+  machine. This is the role of `commands/1` generator, which takes as argument
+  the name of the callback module and returns a random command sequence.
+
+* As a second step, command sequences are executed so as to check that the
+  system behaves as expected. This is the role of `run_commands/2`, a function
+  that evaluates a symbolic command sequence according to an abstract state
+  machine specification. It takes as arguments the name of the callback module,
+  where the state machine is specified, and the command sequence to be
+  evaluated and returns a triple, which contains information about command
+  execution.
+
+These two phases are encapsulated in the following property, which can be used
+for testing a generic server with PropEr:
+
+    :::erlang
+    prop_server_works_fine() ->
         ?FORALL(Cmds, commands(?MODULE),
-                ?TRAPEXIT(
-                   begin 
-                       start_link(),
-                       {H,S,Res} = run_commands(?MODULE, Cmds),
-                       stop(),
-                       ?WHENFAIL(io:format("History: ~w\nState: ~w\nRes: ~w\n",
-                                           [H,S,Res]),
-                                 aggregate(command_names(Cmds), Res =:= ok))
-                   end)).
+                begin 
+                    ?SERVER:start_link(),
+                    {_H,_S,Res} = run_commands(?MODULE, Cmds),
+                    ?SERVER:stop(),
+                    Res =:= ok
+                end).
 
-
-The actions described in this property are:
-
-* Generate a random list of symbolic commands, i.e. symbolic API calls. As we
-  can see, the `commands/1` generator takes as argument a module name.
-  In this module we should describe everything PropEr needs to know about the
-  SUT. Don't worry, usually it's not that much!
-* Execute the list of commands while collecting the results of execution.
-  This is done by `run_commands/2`, a function that evaluates a symbolic command
-  sequence according to an abstract state machine specification.
-  The function takes as arguments a module name (defining the model of the SUT)
-  and the symbolic command sequence to be evaluated and returns a triple, which
-  contains information about command execution.
-* Each test should be self-contained. For this reason, almost every property
-  for testing stateful systems contains some set-up and/or clean-up code,
-  necessary to put the system in a known state, so that the next test can be
-  executed independently from previous ones. In our case, set-up means
-  spawning and linking to the server, while clean-up means stopping it.
-* Enclose the property in `?TRAPEXIT`, so that PropEr won't crash if a linked
-  process (i.e. our server) dies abnormally.
-* In case of failure, report debugging information using `?WHENFAIL`. This is
-  very useful for identifying the cause of failure.
-* In case of success, collect statistics about command execution. This is
-  useful to ensure that each command was tested as often as expected.
-
-In order to get an idea of how test cases look like, we can generate one
-using PropEr:
-
-     :::erl
-     3> proper_gen:pick(proper_statem:commands(movie_server)).
-     {ok,[{set,{var,1},{call,movie_server,create_account,[ben]}},
-          {set,{var,2},{call,movie_server,rent_dvd,[{var,1},toy_story]}},
-          {set,{var,3},{call,movie_server,rent_dvd,[{var,1},the_lion_king]}},
-          {set,{var,4},{call,movie_server,rent_dvd,[{var,1},despicable_me]}},
-          {set,{var,5},{call,movie_server,rent_dvd,[{var,1},mary_poppins]}},
-          {set,{var,6},{call,movie_server,return_dvd,[{var,1},the_lion_king]}},
-          {set,{var,7},{call,movie_server,create_account,[alice]}},
-          {set,{var,8},{call,movie_server,ask_for_popcorn,[]}}]}
-
-
-The story here is quite simple. Ben creates an account at the dvd-club and
-then decides to rent some movies. The result of each symbolic call is bound to
-a symbolic variable. Therefore, `{var,1}` is Ben's password and, in this way,
-it can be used in subsequent commands/requests. After watching the Lion King,
-Ben returns it to the dvd club. Then, Alice creates an account, someone
-comes in to buy pop-corn and life goes on... As we cannot test every possible
-scenario, we let PropEr make some random selections and test these instead.
+It is very important to keep each test self-contained. For this reason, almost
+every property for testing stateful systems contains some set-up and/or
+clean-up code, necessary to put the system in a known state, so that the next
+test can be executed independently from previous ones. In our case, set-up means
+spawning and linking to the server, while clean-up means stopping it.
 
 
 Defining the abstract state machine
 -----------------------------------
 
-Now that you have a rough idea of what will be tested, it's time to implement
-the abstract state machine of the movie server.
-
 ### Command generation ###
-Since our testcases are symbolic call sequences, we definitely need a symbolic
-call generator, i.e. a function that will be called to produce the next call
-to be included in the testcase. In the general case, the generator should take
-into account the model state. In our example, we are not sure yet if this is
-necessary. Let us make a first attempt. What about...?
+
+The first callback function to consider is the command generator.
+This function will be repeatedly called to produce the next symbolic call to
+be included in the testcase. PropEr automatically binds the result of generated
+symbolic calls to symbolic variables. In other words, symbolic calls are
+automatically translated to commands.
+In the general case, the command generator should take into account the model
+state. In our example, we are not sure yet if this is necessary. Let us make a
+first attempt. What about...?
 
     :::erlang
     command(_S) ->
@@ -300,8 +298,9 @@ but in a rather unusual way:
                || S#state.users =/= []]).
 
    
-So, that's it! Our generator is ready. In the next section we will talk in more
-detail about the model state, which was so useful for password generation.
+So, that's it! Our command generator is ready. In the next section we will talk
+in more detail about the model state, which was so useful for password
+generation.
 
 
 ### Updating the model state ###
@@ -347,8 +346,8 @@ When a client deletes an account, the corresponding password should be erased
 from the list of users.
 
     :::erlang
-    next_state(S, _V, {call,_,delete_account,[Pass]}) ->
-        S#state{users = lists:delete(Pass, S#state.users)};
+    next_state(S, _V, {call,_,delete_account,[Password]}) ->
+        S#state{users = lists:delete(Password, S#state.users)};
 
 
 When a client asks to rent a movie, the server will check the availability. If
@@ -359,10 +358,10 @@ checks the availability of a movie based on the current model state and on the
 list of initially available movies `?AVAILABLE_MOVIES`. 
 
     :::erlang
-    next_state(S, _V, {call,_,rent_dvd,[Pass,Movie]}) ->
+    next_state(S, _V, {call,_,rent_dvd,[Password,Movie]}) ->
         case is_available(Movie, S) of
             true  ->
-                S#state{rented = [{Pass,Movie}|S#state.rented]};
+                S#state{rented = [{Password,Movie}|S#state.rented]};
             false ->
                 S
         end;
@@ -372,8 +371,8 @@ In a similar way, when a user returns a movie, the server should delete it from
 the user's account and mark it as available again.
         
     :::erlang       
-    next_state(S, _V, {call, _, return_dvd, [Pass,Movie]}) ->
-        S#state{rented = lists:delete({Pass,Movie}, S#state.rented)};
+    next_state(S, _V, {call, _, return_dvd, [Password,Movie]}) ->
+        S#state{rented = lists:delete({Password,Movie}, S#state.rented)};
 
 
 Finally, buying pop-corn does not change the state.
@@ -412,7 +411,7 @@ Since our testcases include only valid passwords, deleting an account
 always succeeds. 
 
     :::erlang
-    postcondition(_S, {call,_,delete_account,[_Pass]}, Res) ->
+    postcondition(_S, {call,_,delete_account,[_Password]}, Res) ->
        Res =:= account_deleted;
 
 
@@ -420,7 +419,7 @@ When someone asks for a movie, then if it's available it's added to her list,
 otherwise not.
          
     :::erlang
-    postcondition(S, {call,_,rent_dvd,[_Pass,Movie]}, Res) ->
+    postcondition(S, {call,_,rent_dvd,[_Password,Movie]}, Res) ->
         case is_available(Movie, S) of
             true ->
                 lists:member(Movie, Res);
@@ -432,7 +431,7 @@ otherwise not.
 When someone returns a dvd, then it's no longer in her list.
 
     :::erlang
-    postcondition(_S, {call,_,return_dvd,[_Pass,Movie]}, Res) ->
+    postcondition(_S, {call,_,return_dvd,[_Password,Movie]}, Res) ->
         not lists:member(Movie, Res);
 
 
@@ -450,7 +449,47 @@ Having specified the abstract state machine, it's high time to test the
 property:
 
     :::erl
-    5> proper:quickcheck(movie_server:prop_movies()).
+    2> proper:quickcheck(movie_statem:prop_server_works_fine()).
+    ....
+    =ERROR REPORT==== 29-May-2011::22:28:16 ===
+    ** Generic server movie_server terminating 
+    ** Last message in was {return,1,inception}
+    ** When Server state == {state,53265,49168,2}
+    ** Reason for termination == 
+    ** {badarg,[{ets,lookup_element,[49168,inception,2]},
+                {movie_server,handle_call,3},
+                {gen_server,handle_msg,5},
+                {proc_lib,init_p_do_apply,3}]}
+    ** exception exit: badarg
+         in function  ets:lookup_element/3
+            called as ets:lookup_element(49168,inception,2)
+         in call from movie_server:handle_call/3
+         in call from gen_server:handle_msg/5
+         in call from proc_lib:init_p_do_apply/3
+
+This is not quite what we expected. The movie server crashed and this is
+acceptable, since we are looking for bugs in the code. The problem is that
+PropEr also crashed without providing any kind of useful information about
+the cause of the failure. In cases like that, the `?TRAPEXIT` macro comes
+to the rescue.  Enclosing a property in `?TRAPEXIT` prevents PropEr from
+crashing when a linked process dies abnormally.
+Now that we know the trick, we can redefine the property.
+
+    :::erlang
+    prop_server_works_fine() ->
+        ?FORALL(Cmds, commands(?MODULE),
+                ?TRAPEXIT(
+                    begin
+                        ?SERVER:start_link(),
+                        {_H,_S,Res} = run_commands(?MODULE, Cmds),
+                        ?SERVER:stop(),
+                        Res =:= ok
+                    end)).
+
+And try again:
+
+    :::erl
+    4> proper:quickcheck(movie_server:prop_server_works_fine()).
     ....................!
     Failed: After 21 test(s).
     A linked process died with reason
@@ -490,13 +529,65 @@ shall fix the code later. For the moment, we are interested in discovering more
 bugs. So, we add a precondition that doesn't let this known bug appear.
 
     :::erlang
-    precondition(S, {call,_,return_dvd,[Pass,Movie]}) ->
-        lists:member({Pass,Movie}, S#state.rented);
+    precondition(S, {call,_,return_dvd,[Password,Movie]}) ->
+        lists:member({Password,Movie}, S#state.rented);
 
 And run the property once more:
 
     :::erl
-    8> proper:quickcheck(movie_statem:prop_movies()).
+    6> proper:quickcheck(movie_statem:prop_server_works_fine()).
+    ..............!
+    Failed: After 15 test(s).
+    [{set,{var,1},{call,movie_server,create_account,[mary]}},
+     {set,{var,2},{call,movie_server,ask_for_popcorn,[]}},
+     {set,{var,3},{call,movie_server,rent_dvd,[{var,1},despicable_me]}},
+     {set,{var,4},{call,movie_server,rent_dvd,[{var,1},the_lion_king]}},
+     {set,{var,5},{call,movie_server,rent_dvd,[{var,1},peter_pan]}},
+     {set,{var,6},{call,movie_server,rent_dvd,[{var,1},titanic]}},
+     {set,{var,7},{call,movie_server,ask_for_popcorn,[]}},
+     {set,{var,8},{call,movie_server,delete_account,[{var,1}]}}] 
+
+    Shrinking ....(4 time(s))
+    [{set,{var,1},{call,movie_server,create_account,[mary]}},
+     {set,{var,5},{call,movie_server,rent_dvd,[{var,1},peter_pan]}},
+     {set,{var,8},{call,movie_server,delete_account,[{var,1}]}}]
+
+The property fails again and this time the minimal counterexample produced
+contains three commands. Although we might suspect the cause of failure,
+we would like to be more certain about it. Thus, we decide to add debugging
+information to our property, using the `?WHENFAIL` macro. The second
+argument of `?WHENFAIL` should be a boolean clause. In case it evaluates to
+false, the `Action` specified as the first argument will be executed. 
+
+    :::erlang
+    prop_server_works_fine() ->
+        ?FORALL(Cmds, commands(?MODULE),
+                ?TRAPEXIT(
+                    begin
+                        ?SERVER:start_link(),
+                        {H,S,Res} = run_commands(?MODULE, Cmds),
+                        ?SERVER:stop(),
+                        ?WHENFAIL(io:format("History: ~w\nState: ~w\nRes: ~w\n",
+                                            [H,S,Res]),
+                                  Res =:= ok)
+                    end)).
+
+* _History_ contains the command execution history. For each command that was
+  executed without raising an exception there is a tuple specifying the state
+  prior to command execution and the actual result of the command.
+
+* _State_ contains the state of the abstract state machine at the moment when
+  execution stopped.
+
+* Finally, _Result_ specifies the outcome of command execution. When it is
+  the atom **ok**, it means that all commands were successfully run and all
+  postconditions were true.
+
+Running the test for the new property, we get more explicit information
+about command execution and the cause of failure.
+
+    :::erl
+    8> proper:quickcheck(movie_statem:prop_server_works_fine()).
     .............................!
     Failed: After 30 test(s).
     [{set,{var,1},{call,movie_server,create_account,[bob]}},
@@ -515,7 +606,7 @@ And run the property once more:
                {{state,[3],[{3,the_lion_king}]},4},
                {{state,[4,3],[{3,the_lion_king}]},return_movies_first}]
      State: {state,[4],[{3,the_lion_king}]}
-     Res: {postcondition,false}
+     Result: {postcondition,false}
 
      Shrinking ..(2 time(s))
      [{set,{var,6},{call,movie_server,create_account,[mary]}},
@@ -524,7 +615,7 @@ And run the property once more:
      History: [{{state,[],[]},1},{{state,[1],[]},[the_lion_king]},
                {{state,[1],[{1,the_lion_king}]},return_movies_first}]
      State: {state,[],[{1,the_lion_king}]}
-     Res: {postcondition,false}
+     Result: {postcondition,false}
      false
 
 
@@ -542,16 +633,16 @@ postcondition. Keep in mind that when changing postconditions, we might also
 need to change the `next_state/3` callback.
 
     :::erlang
-    next_state(S, _V, {call, _, delete_account, [Pass]}) ->
-        case proplists:is_defined(Pass, S#state.rented) of
+    next_state(S, _V, {call, _, delete_account, [Password]}) ->
+        case proplists:is_defined(Password, S#state.rented) of
     	    false ->
-    	        S#state{users = lists:delete(Pass, S#state.users)};
+    	        S#state{users = lists:delete(Password, S#state.users)};
     	    true ->
     	        S
         end;
 
-    postcondition(S, {call, _, delete_account, [Pass]}, Res) ->
-        case proplists:is_defined(Pass, S#state.rented) of
+    postcondition(S, {call, _, delete_account, [Password]}, Res) ->
+        case proplists:is_defined(Password, S#state.rented) of
     	    false ->
     	        Res =:= account_deleted;
     	    true ->
@@ -561,14 +652,14 @@ need to change the `next_state/3` callback.
 And again we try:
 
         :::erl
-    12> proper:quickcheck(movie_statem:prop_movies()).
+    12> proper:quickcheck(movie_statem:prop_server_works_fine()).
     ............................................................................
     .........!
     Failed: After 86 test(s).
     <...testcase of 34 commands...>
     History: <...long history of command execution...>
     State: {state,[1],[{1,peter_pan},{1,despicable_me},{1,finding_nemo}]}
-    Res: {postcondition,false}
+    Result: {postcondition,false}
 
     Shrinking .........(9 time(s))
     [{set,{var,1},{call,movie_server,create_account,[alice]}},
@@ -577,7 +668,7 @@ And again we try:
     History: [{{state,[],[]},1},{{state,[1],[]},account_deleted},
               {{state,[],[]},not_a_client}]
     State: {state,[],[{1,peter_pan}]}
-    Res: {postcondition,{exception,error,badarg,
+    Result: {postcondition,{exception,error,badarg,
                          [{lists,member,[peter_pan,not_a_client]},
                           {movie_statem,postcondition,3},
                           <...6 more lines of stacktrace...>]}}
@@ -601,19 +692,19 @@ failure while ensuring that all preconditions still hold. Thus, we add the
 following preconditions:
 
     :::erlang
-    precondition(S, {call, _, return_dvd, [Pass,Movie]}) ->
-        lists:member({Pass,Movie}, S#state.rented);
-    precondition(S, {call, _, rent_dvd, [Pass,_Movie]}) ->
-        lists:member(Pass, S#state.users);
-    precondition(S, {call, _, delete_account, [Pass]}) ->
-        lists:member(Pass, S#state.users);
+    precondition(S, {call, _, return_dvd, [Password,Movie]}) ->
+        lists:member({Password,Movie}, S#state.rented);
+    precondition(S, {call, _, rent_dvd, [Password,_Movie]}) ->
+        lists:member(Password, S#state.users);
+    precondition(S, {call, _, delete_account, [Password]}) ->
+        lists:member(Password, S#state.users);
     precondition(_, _) ->
         true.
 
 And test the property once more:
 
     :::erl
-    15> proper:quickcheck(movie_statem:prop_movies()).
+    15> proper:quickcheck(movie_statem:prop_server_works_fine()).
     ...................!
     Failed: After 20 test(s).
     [{set,{var,1},{call,movie_server,ask_for_popcorn,[]}},
@@ -630,7 +721,7 @@ And test the property once more:
               {{state,[1],[]},[peter_pan]},
               {{state,[1],[{1,peter_pan}]},[peter_pan]}]
     State: {state,[1],[{1,peter_pan}]}
-    Res: {postcondition,false}
+    Result: {postcondition,false}
 
     Shrinking ...(3 time(s))
     [{set,{var,2},{call,movie_server,create_account,[mary]}},
@@ -639,7 +730,7 @@ And test the property once more:
     History: [{{state,[],[]},1},{{state,[1],[]},[peter_pan]},
               {{state,[1],[{1,peter_pan}]},[peter_pan]}]
     State: {state,[1],[{1,peter_pan}]}
-    Res: {postcondition,false}
+    Result: {postcondition,false}
     false
 
 
@@ -656,39 +747,32 @@ to redefine our model and we decide to add a precondition that prevents the
 aforementioned scenario.
 
     :::erlang
-    precondition(S, {call,_,rent_dvd,[Pass,Movie]}) ->
-        not lists:member({Pass,Movie}, S#state.rented) andalso
-            lists:member(Pass, S#state.users);
+    precondition(S, {call,_,rent_dvd,[Password,Movie]}) ->
+        not lists:member({Password,Movie}, S#state.rented) andalso
+            lists:member(Password, S#state.users);
 
 Eventually:
 
     :::erl
-    18>  proper:quickcheck(movie_statem:prop_movies()).
+    18>  proper:quickcheck(movie_statem:prop_server_works_fine()).
     ...........................................................................
     ..........................
     OK: Passed 100 test(s).
-
-    30% {movie_server,ask_for_popcorn,0}
-    30% {movie_server,create_account,1}
-    19% {movie_server,delete_account,1}
-    18% {movie_server,rent_dvd,2}
-     1% {movie_server,return_dvd,2}
     true
-
 
 Now that tests seem to pass, we will temporarily remove the first precondition
 that we introduced and correct our code to prevent the server from crashing.
 The code handling `return_dvd` requests is the following:
 
     :::erlang
-    handle_call({return,Pass,Movie}, _From, S) ->
+    handle_call({return,Password,Movie}, _From, S) ->
         #state{users = Users, movies = Movies} = S,
-        Reply = case ets:lookup(Users, Pass) of
+        Reply = case ets:lookup(Users, Password) of
                     []  ->
                         not_a_client;
                     [{_,_,Rented}] ->
                         NewRented = lists:delete(Movie, Rented),
-                        ets:update_element(Users, Pass, {3,NewRented}),
+                        ets:update_element(Users, Password, {3,NewRented}),
                         N = ets:lookup_element(Movies, Movie, 2),
                         ets:update_element(Movies, Movie, {2,N+1}),
                         NewRented
@@ -697,8 +781,8 @@ The code handling `return_dvd` requests is the following:
 
 
 The command `ets:lookup_element(Movies, Movie, 2)` raises an exception if no
-object with the key `Movie` is stored in the table. PropEr produced the
-following counterexample:
+object with the key `Movie` is stored in the table. When the test failed with
+the server craching, PropEr had produced the following counterexample:
 
     :::erl
     [{set,{var,1},{call,movie_server,create_account,[john]}},
@@ -709,10 +793,10 @@ following counterexample:
 Let us rewrite:
 
     :::erlang
-    handle_call({return,Pass,Movie}, _From, S) ->
+    handle_call({return,Password,Movie}, _From, S) ->
         #state{users = Users, movies = Movies} = S,
         Reply =
-            case ets:lookup(Users, Pass) of
+            case ets:lookup(Users, Password) of
                 []  ->
                     not_a_client;
                 [{_,_,Rented}] ->
@@ -721,7 +805,7 @@ Let us rewrite:
                             Rented;
                         [{_,N}] ->
                             NewRented = lists:delete(Movie, Rented),
-                            ets:update_element(Users, Pass, {3,NewRented}),
+                            ets:update_element(Users, Password, {3,NewRented}),
                             ets:update_element(Movies, Movie, {2,N+1}),
                             NewRented
                     end
@@ -731,19 +815,41 @@ Let us rewrite:
 and check that the counterexample now passes the test:
 
     :::erl 
-    41> proper:check(movie_server:prop_movies(), proper:counterexample()).
+    41> proper:check(movie_server:prop_server_works_fine(), proper:counterexample()).
     OK: The input passed the test.
     true
 
-Can we be confident that we fixed all bugs? Let's take a moment to inspect the
-testcase distribution, as reported the last time we run the tests.
+Can we be confident that we fixed all bugs? Well, let's take a moment to
+think about how often each operation was tested. Or even better, let's
+ask PropEr to do it for us. This is possible by using the `aggregate/2` function
+to collect statistics about how often each command was executed.
+
+    :::erlang
+    prop_server_works_fine() ->
+        ?FORALL(Cmds, commands(?MODULE),
+                ?TRAPEXIT(
+                    begin
+                        ?SERVER:start_link(),
+                        {H,S,Res} = run_commands(?MODULE, Cmds),
+                        ?SERVER:stop(),
+                        ?WHENFAIL(io:format("History: ~w\nState: ~w\nRes: ~w\n",
+                                            [H,S,Res]),
+                                  aggregate(command_names(Cmds), Res =:= ok))
+                    end)).
+
+If we run the test now:
 
     :::erl
+    41> proper:quickcheck(movie_server:prop_server_works_fine(), 1000).
+    <...1000 dots....>
+    OK: Passed 3000 test(s).
+
     30% {movie_server,ask_for_popcorn,0}
     30% {movie_server,create_account,1}
     19% {movie_server,delete_account,1}
     18% {movie_server,rent_dvd,2}
      1% {movie_server,return_dvd,2}
+    true
 
 We can easily notice that `return_dvd/2` calls are rarely tested. This happens
 because of the precondition that allows to return only movies you have
@@ -758,14 +864,14 @@ generator so that `return_dvd/2` calls can be more frequently selected.
                    || S#state.users =/= []] ++
                   [{5, {call,?SERVER,rent_dvd,[password(S), movie()]}}
                    || S#state.users =/= []] ++
-                  [{5, ?LET({Pass,Movie}, elements(S#state.rented),
-                            {call,?SERVER,return_dvd,[Pass, Movie]})}
+                  [{5, ?LET({Password,Movie}, elements(S#state.rented),
+                            {call,?SERVER,return_dvd,[Password, Movie]})}
                    || S#state.rented =/= []]).
 
 The resulting distribution is:
 
     :::erl
-    42> proper:quickcheck(movie_server:prop_movies(), 3000).
+    42> proper:quickcheck(movie_server:prop_server_works_fine(), 3000).
     <...3000 dots....>
     OK: Passed 3000 test(s).
 
