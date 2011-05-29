@@ -28,4 +28,5 @@ test:
 	python start_webserver.py
 
 upload: clean
-	rsync --archive --delete build/* $(USERNAME)@greedy.softlab.ntua.gr:/home/proper
+	rsync --archive --delete --group=proper --chmod=ug+rw,a+r \
+		build/* $(USERNAME)@greedy.softlab.ntua.gr:/home/proper

@@ -9,35 +9,36 @@
 <hr>
 
 <h1>Module proper_fsm</h1>
-<ul class="index"><li><a href="#description">Description</a></li><li><a href="#types">Data Types</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>This module contains functions for testing stateful systems that
-   can be modeled as a finite state machine.
+<ul class="index"><li><a href="#description">Description</a></li><li><a href="#types">Data Types</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>This module defines the <code>proper_fsm</code> behaviour, useful for testing
+   systems that can be modeled as finite state machines.
 <p>Copyright © 2010-2011 Manolis Papadakis &lt;manopapad@gmail.com&gt;,
                         Eirini Arvaniti &lt;eirinibob@gmail.com&gt;
                     and Kostis Sagonas &lt;kostis@cs.ntua.gr&gt;</p>
 
-<p><b>Version:</b> May 21 2011 16:58:45</p>
+<p><b>Version:</b> May 30 2011 00:37:36</p>
 <p><b>Authors:</b> Eirini Arvaniti (<a href="mailto:eirinibob@gmail.com"><tt>eirinibob@gmail.com</tt></a>).</p>
 
-<h2><a name="description">Description</a></h2><p>This module contains functions for testing stateful systems that
-   can be modeled as a finite state machine. That is, a finite collection
-   of named states and transitions between them. <code>proper_fsm</code> is closely related
-   to <a href="proper_statem.html"><code>proper_statem</code></a> and, in fact, implemented in terms of that. Test
-   cases generated using <code>proper_fsm</code> will be on precisely the same form as
-   test cases generated using <a href="proper_statem.html"><code>proper_statem</code></a>. The difference lies
-   in the way the callback modules are specified. On the whole, the relation
-   between <a href="proper_statem.html"><code>proper_statem</code></a> and <code>proper_fsm</code> can be considered similar
+<h2><a name="description">Description</a></h2><p>This module defines the <code>proper_fsm</code> behaviour, useful for testing
+   systems that can be modeled as finite state machines. That is, a finite
+   collection of named states and transitions between them. <code>proper_fsm</code> is
+   closely related to <a href="proper_statem.html"><code>proper_statem</code></a> and is, in fact, implemented in
+   terms of that. Testcases generated using <code>proper_fsm</code> will be on precisely
+   the same form as testcases generated using <a href="proper_statem.html"><code>proper_statem</code></a>. The
+   difference lies in the way the callback modules are specified.
+   The relation between <a href="proper_statem.html"><code>proper_statem</code></a> and <code>proper_fsm</code> is similar
    to the one between <code>gen_server</code> and <code>gen_fsm</code> in OTP libraries.</p>
   
    <p>Due to name conflicts with functions automatically imported from
    <a href="proper_statem.html"><code>proper_statem</code></a>, a fully qualified call is needed in order to
    use the  <a href="#index">API functions </a> of <code>proper_fsm</code>.</p>
   
-   <h3><a name="State_representation">State representation</a></h3><p>
+   <h3><a name="A_word_about...">A word about...</a></h3>
+   <h4><a name="...the_states_of_the_finite_state_machine">...the states of the finite state machine</a></h4><p>
    Following the convention used in <code>gen_fsm behaviour</code>, the state is
    separated into a <code>StateName::</code><code><a href="#type-state_name">state_name()</a></code> and some
    <code>StateData::</code><code><a href="#type-state_data">state_data()</a></code>. <code>StateName</code> is used to denote a state
    of the finite state machine and <code>StateData</code> is any relevant information
-   that has to be stored in the testcase state. States are fully
+   that has to be stored in the model state. States are fully
    represented as tuples <code>{StateName, StateData}</code>.</p>
   
    <p><code>StateName</code> is usually an atom (i.e. the name of the state), but can also
@@ -48,14 +49,14 @@
    <code>StateName</code> for each floor could be <code>{floor,K}, 1 &lt;= K &lt;= N</code>.<br>
    <code>StateData</code> can be an arbitrary term, but is usually a record.</p>
   
-   <h3><a name="Transition_represantation">Transition represantation</a></h3><p>
+   <h4><a name="...transitions_between_states">...transitions between states</a></h4><p>
    A transition (<code><a href="#type-transition">transition()</a></code>) is represented as a tuple
    <code>{TargetState, {call,M,F,A}}</code>. This means that performing the specified
    symbolic call at the current state of the fsm will lead to <code>TargetState</code>.
    The atom <code>history</code> can be used as <code>TargetState</code> to denote that a transition   
 does not change the current state of the fsm.</p>
   
-   <h3><a name="Callback_functions">Callback functions</a></h3>
+   <h4><a name="...the_proper_fsm_callback_functions">...the proper_fsm callback functions</a></h4>
    The following functions must be exported from the callback module
    implementing the finite state machine:
    <ul>
@@ -65,13 +66,14 @@ does not change the current state of the fsm.</p>
      </p></li>
    <li> <code>initial_state_data() ::</code> <code><a href="#type-state_data">state_data()</a></code>
      <p>Specifies what the state data should initially contain. Its result
-     should be deterministic.</p></li>
+     should be deterministic</p></li>
    <li> <code>StateName(S::</code><code><a href="#type-state_data">state_data()</a></code><code>) ::</code>
           <code>[</code><code><a href="#type-transition">transition()</a></code><code>]</code>
      <p>There should be one instance of this function for each reachable
      state <code>StateName</code> of the finite state machine. In case <code>StateName</code> is a
      tuple the function takes a different form, described just below. The
-     function returns a list of possible transitions from the current state.
+     function returns a list of possible transitions (<code><a href="#type-transition">transition()</a></code>)
+     from the current state.
      At command generation time, the instance of this function with the same
      name as the current state's name is called to return the list of possible
      transitions. Then, PropEr will randomly choose a transition and,
@@ -108,11 +110,7 @@ does not change the current state of the fsm.</p>
      symbolic call and lead to different target states. In this case, at most
      one of the target states may have a true precondition. Otherwise, PropEr
      will not be able to detect which transition was chosen and an exception
-     will be raised.<br>
-     Preconditions are also very important for the shrinking procedure. When
-     shrinking command sequences, we try to eliminate commands that do not
-     contribute to failure, ensuring that all preconditions still hold.</p>
-     </li>
+     will be raised.</p></li>
    <li> <code>postcondition(From::</code><code><a href="#type-state_name">state_name()</a></code><code>,
                        Target::</code><code><a href="#type-state_name">state_name()</a></code><code>,
                        StateData::</code><code><a href="#type-state_data">state_data()</a></code><code>,
@@ -133,8 +131,9 @@ does not change the current state of the fsm.</p>
      symbolic or dynamic.</p></li>
    </ul>
   
-   <h3><a name="Property_for_testing_finite_state_machines">Property for testing finite state machines</a></h3><p>   
-This is an example of a property to test an fsm specification:</p>
+   <h4><a name="...the_property_used">...the property used</a></h4><p>   
+This is an example of a property which can be used to test a   
+finite state machine specification:</p>
   
    <pre>      prop_fsm() -&gt;
          ?FORALL(Cmds, proper_fsm:commands(?MODULE),
@@ -149,74 +148,60 @@ This is an example of a property to test an fsm specification:</p>
           end).</pre>
 <h2><a name="types">Data Types</a></h2>
 
+<h3 class="typedecl"><a name="type-cmd_result">cmd_result()</a></h3>
+<p><b>abstract datatype</b>: <tt>cmd_result()</tt></p>
+
+
 <h3 class="typedecl"><a name="type-command">command()</a></h3>
-<p><pre>command() = {init, <a href="#type-fsm_state">fsm_state()</a>}
-          | {set, <a href="#type-symb_var">symb_var()</a>, <a href="#type-symb_call">symb_call()</a>}</pre></p>
-<p>Symbolic term used to bind the result of a symbolic call to a symbolic
-  variable or to initialize the state.</p>
+<p><pre>command() = {set, <a href="#type-symb_var">symb_var()</a>, <a href="#type-symb_call">symb_call()</a>}
+          | {init, <a href="#type-fsm_state">fsm_state()</a>}</pre></p>
+
 
 <h3 class="typedecl"><a name="type-command_list">command_list()</a></h3>
 <p><pre>command_list() = [<a href="#type-command">command()</a>]</pre></p>
-<p>List of symbolic commands.</p>
+
 
 <h3 class="typedecl"><a name="type-fsm_result">fsm_result()</a></h3>
 <p><pre>fsm_result() = <a href="proper_statem.html#type-statem_result">proper_statem:statem_result()</a></pre></p>
-<p>Specifies the overall result of command execution. It can be one of following:
-  <ul>
-   <li><b>ok</b>
-     <p>All commands were successfully run and all postconditions were true</p>
-   </li>
-   <li><b>initialization_error</b>
-     <p>There was an error while evaluating the initial state.</p>
-   </li>
-   <li><b>postcondition</b>
-     <p>A postcondition was false or raised an exception.</p>
-   </li>
-   <li><b>precondition</b>
-     <p>A precondition was false or raised an exception.</p>
-   </li>
-   <li><b>exception</b>
-     <p>An exception was raised while running a command.</p>
-   </li>
-  </ul></p>
+
 
 <h3 class="typedecl"><a name="type-fsm_state">fsm_state()</a></h3>
 <p><pre>fsm_state() = {<a href="#type-state_name">state_name()</a>, <a href="#type-state_data">state_data()</a>}</pre></p>
-<p>Full specification of fsm state.</p>
+
+
+<h3 class="typedecl"><a name="type-fun_name">fun_name()</a></h3>
+<p><pre>fun_name() = atom()</pre></p>
+
 
 <h3 class="typedecl"><a name="type-history">history()</a></h3>
-<p><pre>history() = [{<a href="#type-fsm_state">fsm_state()</a>, <a href="#type-result">result()</a>}]</pre></p>
-<p>History of command execution. Contains the dynamic state prior to command
-  execution and the actual result, for each command that was executed without
-  raising an exception.</p>
+<p><pre>history() = [{<a href="#type-fsm_state">fsm_state()</a>, <a href="#type-cmd_result">cmd_result()</a>}]</pre></p>
 
-<h3 class="typedecl"><a name="type-result">result()</a></h3>
-<p><pre>result() = term()</pre></p>
-<p>The actual result of executing a command.</p>
+
+<h3 class="typedecl"><a name="type-mod_name">mod_name()</a></h3>
+<p><pre>mod_name() = atom()</pre></p>
+
 
 <h3 class="typedecl"><a name="type-state_data">state_data()</a></h3>
-<p><pre>state_data() = term()</pre></p>
-<p>Internal state of the fsm.</p>
+<p><b>abstract datatype</b>: <tt>state_data()</tt></p>
+
 
 <h3 class="typedecl"><a name="type-state_name">state_name()</a></h3>
 <p><pre>state_name() = atom() | tuple()</pre></p>
-<p>A named state of the fsm.</p>
+
 
 <h3 class="typedecl"><a name="type-symb_call">symb_call()</a></h3>
 <p><pre>symb_call() = <a href="proper_statem.html#type-symb_call">proper_statem:symb_call()</a></pre></p>
-<p>Symbolic term which will be evaluated to a function call.</p>
+
 
 <h3 class="typedecl"><a name="type-symb_var">symb_var()</a></h3>
 <p><pre>symb_var() = <a href="proper_statem.html#type-symb_var">proper_statem:symb_var()</a></pre></p>
-<p>Symbolic term to which we bind the result of a command.</p>
 
-<h3 class="typedecl"><a name="type-transition">transition()</a></h3>
-<p><pre>transition() = {<a href="#type-state_name">state_name()</a>, <a href="#type-symb_call">symb_call()</a>}</pre></p>
-<p>The target state of a transition zipped with the call triggering it.</p>
 
 <h2><a name="index">Function Index</a></h2>
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#commands-1">commands/1</a></td><td>A special PropEr type which generates random command sequences,
-  according to an finite state machine specification.</td></tr>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#behaviour_info-1">behaviour_info/1</a></td><td>Specifies the callback functions that should be exported from a module
+  implementing the <code>proper_fsm</code> behaviour.</td></tr>
+<tr><td valign="top"><a href="#commands-1">commands/1</a></td><td>A special PropEr type which generates random command sequences,
+  according to a finite state machine specification.</td></tr>
 <tr><td valign="top"><a href="#commands-2">commands/2</a></td><td>Similar to <a href="#commands-1"><code>commands/1</code></a>, but generated command sequences always
   start at a given state.</td></tr>
 <tr><td valign="top"><a href="#run_commands-2">run_commands/2</a></td><td>Evaluates a given symbolic command sequence <code>Cmds</code> according to the
@@ -229,11 +214,17 @@ This is an example of a property to test an fsm specification:</p>
 
 <h2><a name="functions">Function Details</a></h2>
 
+<h3 class="function"><a name="behaviour_info-1">behaviour_info/1</a></h3>
+<div class="spec">
+<p><pre>behaviour_info(Attribute :: callbacks) -&gt; [{<a href="#type-fun_name">fun_name()</a>, arity()}]</pre></p>
+</div><p>Specifies the callback functions that should be exported from a module
+  implementing the <code>proper_fsm</code> behaviour.</p>
+
 <h3 class="function"><a name="commands-1">commands/1</a></h3>
 <div class="spec">
 <p><pre>commands(Mod :: <a href="#type-mod_name">mod_name()</a>) -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
 </div><p>A special PropEr type which generates random command sequences,
-  according to an finite state machine specification. The function takes as
+  according to a finite state machine specification. The function takes as
   input the name of a callback module, which contains the fsm specification.
   The initial state is computed by <br>
   <code>{Mod:initial_state/0, Mod:initial_state_data/0}</code>.</p>
@@ -277,6 +268,6 @@ This is an example of a property to test an fsm specification:</p>
 <hr>
 
 <div class="navbar"><a name="#navbar_bottom"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
-<p><i>Generated by EDoc, May 21 2011, 16:58:45.</i></p>
+<p><i>Generated by EDoc, May 30 2011, 00:37:37.</i></p>
 </body>
 </html>
