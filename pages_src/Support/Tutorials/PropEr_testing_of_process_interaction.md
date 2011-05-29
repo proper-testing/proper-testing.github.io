@@ -171,10 +171,9 @@ system. As usual, it specifies:
 
         :::erlang
         -type name()  :: atom().
-        -type score() :: non_neg_integer().
 
-        -record(state, {players = [] :: [name()],
-                        scores  = [] :: [{name(),score()}]}).
+        -record(state, {players = []         :: [name()],
+                        scores  = dict_new() :: dict()}).
 
         initial_state() -> #state{}.
 
@@ -203,16 +202,15 @@ system. As usual, it specifies:
             case lists:member(Name, S#state.players) of
                 false ->
                     S#state{players = [Name|S#state.players],
-                            scores  = [{Name,0}|S#state.scores]};
+                            scores  = dict:store(Name, 0, S#state.scores)};
                 true ->
                     S
             end;
         next_state(S, _V, {call,_,remove_player,[Name]}) ->
             S#state{players = lists:delete(Name, S#state.players),
-                    scores  = proplists:delete(Name, S#state.scores)};
+                    scores  = dict:erase(Name, S#state.scores)};
         next_state(S = #state{scores = Sc}, _V, {call,_,play_ping_pong,[Name]}) ->
-            Score = proplists:get_value(Name, Sc),
-            S#state{scores = [{Name,Score+1}|proplists:delete(Name, Sc)]};
+            S#state{scores = dict:update_counter(Name, 1, Sc)};
         next_state(S, _, _) ->    
             S.
 
@@ -240,7 +238,7 @@ system. As usual, it specifies:
         postcondition(_S, {call,_,remove_player,[Name]}, Res) ->
             Res =:= {removed, Name};
         postcondition(S, {call,_,get_score,[Name]}, Res) ->
-            Res =:= proplists:get_value(Name, S#state.scores);
+            Res =:= dict:fetch(Name, S#state.scores);
         postcondition(_S, {call,_,play_ping_pong,[_Name]}, Res) ->
             Res =:= ok;
         postcondition(_S, {call,_,play_tennis,[_Name]}, Res) ->
