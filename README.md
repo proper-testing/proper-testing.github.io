@@ -81,6 +81,7 @@ Header
 ------
 
 *   icon and (fancy) "PropEr" logo that link to the main page
+*   Erlang icon must be lower (and bigger)
 *   shirt icon: "PropEr" on the shirt tag, size = "42"
 *   more modern (and austere) font for logo (e.g. SansSerif)
 *   Horizontal navigation bar (have extra "Home" link?)
@@ -161,6 +162,7 @@ About
 *   (Humorous) reviews
 *   "Icon by Gordon Irving"
 *   link to QuviQ's site
+*   Image map and separate page for each dev
 
 
 Infrastructure
@@ -175,5 +177,10 @@ Infrastructure
 *   Work on the stylesheet (bigger text on navbars?).
 *   make header.png non-transparent?
 *   have a set of alternatives for each photo and make them auto-cycle
+*   some way to specify the order of pages: e.g. can name pages as:
+    1.Something.md, to make them first in the list, then remove the 1. when
+    converting, so that we get Something.html
+*   make the width 900px?
+*   fully justified text?
 
 <!-- kate: replace-tabs-save on; replace-tabs on; tab-width 8; -->

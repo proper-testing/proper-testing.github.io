@@ -38,7 +38,7 @@ def build(fs_path, title, extra, template):
 #===============================================================================
 
 def empty_extra():
-    return {'content':'', 'pri_navbar':'', 'sec_navbar':''}
+    return {'content':'', 'pri_navbar':''}
 
 def add_content(extra, content):
     new_extra = copy.copy(extra)
@@ -50,11 +50,6 @@ def add_navbar(extra, site_paths, titles, curr_path):
         navbar = make_navbar(site_paths, titles, curr_path, 'pri_navbar')
         new_extra = copy.copy(extra)
         new_extra['pri_navbar'] = navbar
-        return new_extra
-    elif extra['sec_navbar'] == '':
-        navbar = make_navbar(site_paths, titles, curr_path, 'sec_navbar')
-        new_extra = copy.copy(extra)
-        new_extra['sec_navbar'] = navbar
         return new_extra
     else:
         return extra
@@ -131,8 +126,6 @@ def write_html(fs_path, title, content, extra, template):
                '#TITLE#', title
            ).replace(
                '#PRI_NAVBAR#', extra['pri_navbar']
-           ).replace(
-               '#SEC_NAVBAR#', extra['sec_navbar']
            ).replace(
                '#CONTENT#', content + extra['content']
            )
