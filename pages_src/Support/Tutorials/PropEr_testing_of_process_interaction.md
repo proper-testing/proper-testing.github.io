@@ -10,9 +10,9 @@ ping-pong players_.
 The ping-pong master
 --------------------
 
-The ping-pong master is implemented as an erlang gen_server. The internal
-state of the server is a dictionary containing the scores (i.e. number of
-ping-pong message exchanges with the master) of the ping-pong players.
+The ping-pong master is implemented as an Erlang `gen_server`. The internal
+state of the server is a dictionary containing the scores (i.e. the number
+of ping-pong message exchanges with the master) of the ping-pong players.
 External clients can make the following requests:
 
 *   start and link to the ping-pong master
@@ -36,20 +36,19 @@ External clients can make the following requests:
 
         terminate(_Reason, Dict) ->
             Players = dict:fetch_keys(Dict),
-            [exit(whereis(Name), kill) || Name <- Players],
-            ok.
+            lists:foreach(fun (Name) -> exit(whereis(Name), kill) end, Players).
 
 
 *   add a new ping-pong player to interact with the master
 
         :::erlang
         add_player(Name) ->
-            gen_server:call(?MODULE, {add_player,Name}).
+            gen_server:call(?MODULE, {add_player, Name}).
 
-        handle_call({add_player,Name}, _From, Dict) ->
+        handle_call({add_player, Name}, _From, Dict) ->
             case whereis(Name) of
                 undefined ->
-                    Pid = spawn(?MODULE, ping_pong_player, [Name]),
+                    Pid = spawn(fun () -> ping_pong_player(Name) end),
                     true = register(Name, Pid);
                     {reply, ok, dict:store(Name, 0, Dict)};
                 Pid when is_pid(Pid) ->
@@ -61,12 +60,12 @@ External clients can make the following requests:
 
         :::erlang
         remove_player(Name) ->
-            gen_server:call(?MODULE, {remove_player,Name}).
+            gen_server:call(?MODULE, {remove_player, Name}).
 
-        handle_call({remove_player,Name}, _From, Dict) ->
+        handle_call({remove_player, Name}, _From, Dict) ->
             Pid = whereis(Name),
             exit(Pid, kill),
-            {reply, {removed,Name}, dict:erase(Name, Dict)};
+            {reply, {removed, Name}, dict:erase(Name, Dict)};
 
 
 *   send a ping message to the server
@@ -75,7 +74,7 @@ External clients can make the following requests:
         ping(FromName) ->
             gen_server:call(?MODULE, {ping, FromName}).
 
-        handle_call({ping,FromName}, _From, Dict) ->
+        handle_call({ping, FromName}, _From, Dict) ->
             {reply, pong, dict:update_counter(FromName, 1, Dict)};
 
 
@@ -83,16 +82,16 @@ External clients can make the following requests:
 
         :::erlang
         get_score(Name) ->
-            gen_server:call(?MODULE, {get_score,Name}).
+            gen_server:call(?MODULE, {get_score, Name}).
 
-        handle_call({get_score,Name}, _From, Dict) ->
+        handle_call({get_score, Name}, _From, Dict) ->
             Score = dict:fetch(Name, Dict),
             {reply, Score, Dict}.
 
 
 In order to test the stand-alone behaviour of the ping-pong master we can
 define an abstract state machine, as described in
-[this](PropEr_testing_of_generic_servers.html) tutorial about testing generic
+[this tutorial](PropEr_testing_of_generic_servers.html) about testing generic
 servers with PropEr. The state machine specification for the ping-pong master
 can be found [here](/code/ping_pong/master_statem.erl).
 
@@ -108,9 +107,9 @@ the following loop:
         receive
             ping_pong ->
                 ping(Name);
-            {tennis,From} ->
+            {tennis, From} ->
                 From ! maybe_later;
-            {football,From} ->
+            {football, From} ->
                 From ! no_way
         end,
         ping_pong_player(Name).
@@ -158,23 +157,26 @@ processes in a big supervision tree, we cannot be sure about the possible
 side-effects of each operation.
 
 On the other hand, it is important to keep the complexity of our model at a
-reasonable level. Otherwise, it will be as much probable to make errors in the
+reasonable level. Otherwise, it's quite probable to make errors in the
 state machine specification. For each different feature we would like to test,
 defining a simple state machine that concentrates on the operations related to
 that feature will usually reveal any inconsistencies between the model and the
 actual system behaviour. These inconsistencies will be reflected in the results
 of the selected API calls.
 
-This is the abstract state machine that will be used to test the ping-pong
+Below we give the abstract state machine that will be used to test the ping-pong
 system. As usual, it specifies:
 
 *   The _initial state_ of the model:
 
         :::erlang
+        -type name()  :: atom().
+        -type score() :: non_neg_integer().
+
         -record(state, {players = [] :: [name()],
                         scores  = [] :: [{name(),score()}]}).
 
-        initial_state() ->  #state{}.
+        initial_state() -> #state{}.
 
 
 *   The _API calls_ that will be tested:
@@ -201,7 +203,7 @@ system. As usual, it specifies:
             case lists:member(Name, S#state.players) of
                 false ->
                     S#state{players = [Name|S#state.players],
-                            scores = [{Name,0}|S#state.scores]};
+                            scores  = [{Name,0}|S#state.scores]};
                 true ->
                     S
             end;
@@ -236,7 +238,7 @@ system. As usual, it specifies:
         postcondition(_S, {call,_,add_player,[_Name]}, Res) ->
             Res =:= ok;
         postcondition(_S, {call,_,remove_player,[Name]}, Res) ->
-            Res =:= {removed,Name};
+            Res =:= {removed, Name};
         postcondition(S, {call,_,get_score,[Name]}, Res) ->
             Res =:= proplists:get_value(Name, S#state.scores);
         postcondition(_S, {call,_,play_ping_pong,[_Name]}, Res) ->
@@ -251,16 +253,16 @@ this property to pass the tests:
     :::erlang
     prop_ping_pong_works() ->
         ?FORALL(Cmds, commands(?MODULE),
-            ?TRAPEXIT(
-                begin
-                    ?MASTER:start_link(),
-                    {H,S,Res} = run_commands(?MODULE, Cmds),
-                    ?MASTER:stop(),
-                    ?WHENFAIL(
-                        io:format("History: ~w\nState: ~w\nRes: ~w\n",
-                                  [H,S,Res]),
-                        aggregate(command_names(Cmds), Res =:= ok))
-                end)).
+                ?TRAPEXIT(
+                   begin
+                       ?MASTER:start_link(),
+                       {H,S,Res} = run_commands(?MODULE, Cmds),
+                       ?MASTER:stop(),
+                       ?WHENFAIL(
+                          io:format("History: ~w\nState: ~w\nRes: ~w\n",
+                                    [H,S,Res]),
+                          aggregate(command_names(Cmds), Res =:= ok))
+                   end)).
 
 But...
 
@@ -314,14 +316,15 @@ But...
     Res: {postcondition,false}
     false
 
-...it fails, along with error reports on the server crashing!
+...the property fails, along with error reports on the server crashing!
+
 This happens because the asynchronous `play_ping_pong/1` operation introduces
 non-determinism in the order in which messages are received by the server. Here
 we can see yet another benefit of property based testing: it helps to increase
 our understanding about process interaction in the system under test.
 
 Fixing the postcondition of `get_score/1` so as to achieve deterministic
-results is quite simple:
+results is quite simple in this case:
 
     :::erlang
     postcondition(S, {call,_,get_score,[Name]}, Res) ->
@@ -329,15 +332,14 @@ results is quite simple:
 
 The error reports, however, are triggered by a not-so-evident bug in the code.
 They are occassionaly produced when stopping the server, because of an attempt
-to get and subsequently kill the pid associated with a name that is
-actually not present in the process registry. Let us re-examine the code that's
+to get and subsequently kill the pid associated with a name that is actually
+not present in the process registry. Let us re-examine the code that's
 executed when stopping the server:
 
     :::erlang
     terminate(_Reason, Dict) ->
         Players = dict:fetch_keys(Dict),
-        [exit(whereis(Name), kill) || Name <- Players],
-        ok.
+        lists:foreach(fun (Name) -> exit(whereis(Name), kill) end, Players).
 
 The exception raised suggests that there exist some names which are stored in
 the server's internal dictionary, but are not associated with any (process) pid.
@@ -345,7 +347,7 @@ But where do these names come from? To get the answer we have to take a look at
 how `ping` messages are handled by the server:
 
     :::erlang
-    handle_call({ping,FromName}, _From, Dict) ->
+    handle_call({ping, FromName}, _From, Dict) ->
         {reply, pong, dict:update_counter(FromName, 1, Dict)};
 
 This suggests that incoming `ping` messages associated with names not present
@@ -354,16 +356,16 @@ perform an asynchronous `play_ping_pong/1` request to a player, there is a
 chance that this player might be removed before her `ping` message is received
 by the master. In this case, when the master eventually receives the `ping`
 message, the name of the removed player will be added to the dictionary,
-despite not being assosiated with any process. Having spotted the bug, it can
-be easily fixed:
+despite not being associated with any process. Having spotted the bug, we
+can easily fix it:
 
     :::erlang
-    handle_call({ping,FromName}, _From, Dict) ->
+    handle_call({ping, FromName}, _From, Dict) ->
         case dict:is_key(FromName, Dict) of
     	    true ->
                 {reply, pong, dict:update_counter(FromName, 1, Dict)};
     	    false ->
-    	        {reply, {removed,FromName}, Dict}
+    	        {reply, {removed, FromName}, Dict}
         end;
 
 And now the property successfully passes the tests:
