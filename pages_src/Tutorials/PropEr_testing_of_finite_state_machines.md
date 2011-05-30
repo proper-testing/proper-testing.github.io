@@ -1,19 +1,20 @@
 Summary: a PropEr fsm tutorial
 
 In this tutorial we will use PropEr to test a finite state machine
-specification. The testcases produced using PropEr fsm library
-are of exactly the same form as the testcases produced using PropEr
-statem library. Before reading this tutorial, please make sure you
-have understood the basic concepts of testing stateful systems
-with PropEr, as described [here](PropEr_testing_of_generic_servers.html).
+specification. The testcases produced using the PropEr fsm library
+(`proper_fsm`) are of exactly the same form as the testcases produced
+using the PropEr statem library (`proper_statem`). Before reading this
+tutorial, please make sure you have understood the basic concepts of
+testing stateful systems with PropEr, as described
+[here](PropEr_testing_of_generic_servers.html) and
+[here](PropEr_testing_of_process_interaction.html).
 
-This library module provides a convenient way to test a system
-that can be in a finite number of states. The specification can
-be derived easily from a flow-chart. Consider, for example the
-following state machine, describing the life of a strange creature
-that feeds on cheese, grapes and lettuce, but never wants to have
-the same food two days in a row. Here is the fsm
-![hobit_fsm](/images/hobbit_fsm.png).
+This library module provides a convenient way to test a system that
+can be in a finite number of states. The specification can be derived
+easily from a flow-chart. Consider, for example the following finite
+state machine, describing the life of a strange creature that feeds on
+cheese, grapes and lettuce, but never wants to have the same food two
+days in a row. Here is the fsm: ![hobit_fsm](/images/hobbit_fsm.png)
 
 Let us briefly explain. Each day in the life of the creature is
 devoted to a certain kind of food. When it gets hungry it will
@@ -32,7 +33,7 @@ The food storage is kept in a record.
                       grapes  = 1 :: non_neg_integer()}).
 
     start() ->
-        gen_fsm:start({local,hobbit}, ?MODULE, [], []).
+        gen_fsm:start({local, hobbit}, ?MODULE, [], []).
 
     init([]) ->
         {ok, cheese_day, #storage{}}.
@@ -44,24 +45,24 @@ a portion of cheese to eat.
     hungry() ->
         gen_fsm:send_event(hobbit, eat).
 
-    cheese_day(eat, S = #storage{cheese = Cheese}) ->
-        {next_state, cheese_day, S#storage{cheese = Cheese-1}};
+    cheese_day(eat, #storage{cheese = Cheese} = S) ->
+        {next_state, cheese_day, S#storage{cheese = Cheese - 1}};
 
 Moreover, during the day he might decide to go shopping so that he can store
 some food for the next days.
 
     :::erlang
     buy(Food) ->
-        gen_fsm:send_event(hobbit, {store,Food}).
+        gen_fsm:send_event(hobbit, {store, Food}).
 
-    cheese_day({store,Food}, S) ->
+    cheese_day({store, Food}, S) ->
         case Food of
             cheese ->
-                {next_state, cheese_day, S#storage{cheese = S#storage.cheese-1}};
+                {next_state, cheese_day, S#storage{cheese = S#storage.cheese - 1}};
             lettuce ->
-                {next_state, cheese_day, S#storage{lettuce = S#storage.lettuce-1}};
+                {next_state, cheese_day, S#storage{lettuce = S#storage.lettuce - 1}};
             grapes ->
-                {next_state, cheese_day, S#storage{grapes = S#storage.grapes-1}}
+                {next_state, cheese_day, S#storage{grapes = S#storage.grapes - 1}}
         end;
 
 Finally, when the new day is about to come, our creature decides what he will
@@ -70,24 +71,24 @@ eat tomorrow:
     :::erlang
 
     new_day(Food) ->
-        gen_fsm:send_event(hobbit, {new_day,Food}).
+        gen_fsm:send_event(hobbit, {new_day, Food}).
 
-    cheese_day({new_day,lettuce}, S) -> 
+    cheese_day({new_day, lettuce}, S) -> 
         {next_state, lettuce_day, S};
-    cheese_day({new_day,grapes}, S) ->
+    cheese_day({new_day, grapes}, S) ->
         {next_state, grapes_day, S}.
 
 The same things happen on grapes day or lettuce day:
 
     :::erlang
     lettuce_day(eat, S = #storage{lettuce = Lettuce}) ->
-        {next_state, lettuce_day, S#storage{lettuce = Lettuce-1}};
+        {next_state, lettuce_day, S#storage{lettuce = Lettuce - 1}};
     lettuce_day({store,Food}, S) ->
         case Food of
             cheese ->
-                {next_state, lettuce_day, S#storage{cheese = S#storage.cheese+1}};
+                {next_state, lettuce_day, S#storage{cheese = S#storage.cheese + 1}};
             lettuce ->
-                {next_state, lettuce_day, S#storage{lettuce=S#storage.lettuce+1}};  
+                {next_state, lettuce_day, S#storage{lettuce = S#storage.lettuce + 1}};  
             grapes ->
                 {next_state, lettuce_day, S#storage{grapes = S#storage.grapes + 1}}
         end;
