@@ -58,11 +58,11 @@ some food for the next days.
     cheese_day({store, Food}, S) ->
         case Food of
             cheese ->
-                {next_state, cheese_day, S#storage{cheese = S#storage.cheese - 1}};
+                {next_state, cheese_day, S#storage{cheese = S#storage.cheese + 1}};
             lettuce ->
-                {next_state, cheese_day, S#storage{lettuce = S#storage.lettuce - 1}};
+                {next_state, cheese_day, S#storage{lettuce = S#storage.lettuce + 1}};
             grapes ->
-                {next_state, cheese_day, S#storage{grapes = S#storage.grapes - 1}}
+                {next_state, cheese_day, S#storage{grapes = S#storage.grapes + 1}}
         end;
 
 Finally, when the new day is about to come, our creature decides what he will
@@ -73,7 +73,7 @@ eat tomorrow:
     new_day(Food) ->
         gen_fsm:send_event(hobbit, {new_day, Food}).
 
-    cheese_day({new_day, lettuce}, S) -> 
+    cheese_day({new_day, lettuce}, S) ->
         {next_state, lettuce_day, S};
     cheese_day({new_day, grapes}, S) ->
         {next_state, grapes_day, S}.
@@ -83,7 +83,7 @@ The same things happen on grapes day or lettuce day:
     :::erlang
     lettuce_day(eat, S = #storage{lettuce = Lettuce}) ->
         {next_state, lettuce_day, S#storage{lettuce = Lettuce - 1}};
-    lettuce_day({store,Food}, S) ->
+    lettuce_day({store, Food}, S) ->
         case Food of
             cheese ->
                 {next_state, lettuce_day, S#storage{cheese = S#storage.cheese + 1}};
@@ -92,25 +92,25 @@ The same things happen on grapes day or lettuce day:
             grapes ->
                 {next_state, lettuce_day, S#storage{grapes = S#storage.grapes + 1}}
         end;
-    lettuce_day({new_day,cheese}, S) -> 
+    lettuce_day({new_day, cheese}, S) -> 
         {next_state, cheese_day, S};
-    lettuce_day({new_day,grapes}, S) ->
+    lettuce_day({new_day, grapes}, S) ->
         {next_state, grapes_day, S}.
 
     grapes_day(eat, S = #storage{grapes = Grapes}) ->
-        {next_state, grapes_day, S#storage{grapes = Grapes-1}};
-    grapes_day({store,Food}, S) ->
+        {next_state, grapes_day, S#storage{grapes = Grapes - 1}};
+    grapes_day({store, Food}, S) ->
         case Food of
             cheese ->
-                {next_state, grapes_day, S#storage{cheese = S#storage.cheese-1}};
+                {next_state, grapes_day, S#storage{cheese = S#storage.cheese - 1}};
             lettuce ->
-                {next_state, grapes_day, S#storage{lettuce = S#storage.lettuce-1}};
+                {next_state, grapes_day, S#storage{lettuce = S#storage.lettuce - 1}};
             grapes ->
-                {next_state, grapes_day, S#storage{grapes = S#storage.grapes-1}}
+                {next_state, grapes_day, S#storage{grapes = S#storage.grapes - 1}}
         end;
-    grapes_day({new_day,cheese}, S) -> 
+    grapes_day({new_day, cheese}, S) ->
         {next_state, cheese_day, S};
-    grapes_day({new_day,lettuce}, S) ->
+    grapes_day({new_day, lettuce}, S) ->
         {next_state, lettuce_day, S}.
 
 Here is how we will describe the creature's behaviour in PropEr terms.
