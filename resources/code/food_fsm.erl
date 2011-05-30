@@ -1,104 +1,126 @@
 -module(food_fsm).
+
 -behaviour(gen_fsm).
 
 -include_lib("proper/include/proper.hrl").
 
 -export([init/1, terminate/3, handle_sync_event/4]).
--export([start/0, stop/0, hungry/0, buy/1, new_day/1]).
+-export([start/1, stop/0, hungry/0, buy/2, new_day/1]).
 -export([cheese_day/2, lettuce_day/2, grapes_day/2]).
 -export([cheese_day/3, lettuce_day/3, grapes_day/3]).
 
 -export([initial_state/0, initial_state_data/0, precondition/4,
 	 postcondition/5, next_state_data/5, weight/3]).
 -export([cheese_day/1, lettuce_day/1, grapes_day/1]).
--export([test/0, test/1]).
 
--record(storage, {cheese  = 5 :: non_neg_integer(),
-		  lettuce = 5 :: non_neg_integer(),
-		  grapes  = 5 :: non_neg_integer()}).
+-type day() :: 'cheese_day' | 'lettuce_day' | 'grapes_day'.
+-type quantity() :: non_neg_integer().
 
-test() ->
-    test(100).
+-record(storage, {cheese  = 1 :: quantity(),
+		  lettuce = 1 :: quantity(),
+		  grapes  = 1 :: quantity()}).
 
-test(Tests) ->
-    proper:quickcheck(?MODULE:prop_food(),[{numtests,Tests}]).
 
-init([]) ->
-    {ok, cheese_day, #storage{}}.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%   API
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-cheese_day(eat, Caller, S = #storage{cheese = Cheese}) ->
-    gen_fsm:reply(Caller, {cheese_left, Cheese}),
-    {next_state, cheese_day, S#storage{cheese = Cheese-1}}.
-cheese_day({store,Food}, S) ->
-    case Food of
-	cheese ->
-	    {next_state, cheese_day, S#storage{cheese = S#storage.cheese+1}};
-	lettuce ->
-	    {next_state, cheese_day, S#storage{lettuce = S#storage.lettuce+1}};
-	grapes ->
-	    {next_state, cheese_day, S#storage{grapes = S#storage.grapes+1}}
-    end;    
-cheese_day({new_day,lettuce}, S) -> 
-    {next_state, lettuce_day, S};
-cheese_day({new_day,grapes}, S) ->
-    {next_state, grapes_day, S}.
-
-lettuce_day(eat, Caller, S = #storage{lettuce = Lettuce}) ->
-    gen_fsm:reply(Caller, {lettuce_left, Lettuce}),
-    {next_state, lettuce_day, S#storage{lettuce = Lettuce-1}}.
-lettuce_day({store,Food}, S) ->
-    case Food of
-	cheese ->
-	    {next_state, lettuce_day, S#storage{cheese = S#storage.cheese+1}};
-	lettuce ->
-	    {next_state, lettuce_day, S#storage{lettuce=S#storage.lettuce+1}};  
-	grapes ->
-	    {next_state, lettuce_day, S#storage{grapes = S#storage.grapes+1}}
-    end;
-lettuce_day({new_day,cheese}, S) -> 
-    {next_state, cheese_day, S};
-lettuce_day({new_day,grapes}, S) ->
-    {next_state, grapes_day, S}.
-
-grapes_day(eat, Caller, S = #storage{grapes = Grapes}) ->
-    gen_fsm:reply(Caller, {grapes_left, Grapes}),
-    {next_state, grapes_day, S#storage{grapes = Grapes-1}}.
-grapes_day({store,Food}, S) ->
-    case Food of
-	cheese ->
-	    {next_state, grapes_day, S#storage{cheese = S#storage.cheese+1}};
-	lettuce ->
-	    {next_state, grapes_day, S#storage{lettuce = S#storage.lettuce+2}};
-	grapes ->
-	    {next_state, grapes_day, S#storage{grapes = S#storage.grapes+1}}
-    end;
-grapes_day({new_day,cheese}, S) -> 
-    {next_state, cheese_day, S};
-grapes_day({new_day,lettuce}, S) ->
-    {next_state, lettuce_day, S}.
-
-hungry() ->
-    gen_fsm:sync_send_event(hobbit, eat).
-
-buy(Food) ->
-    gen_fsm:send_event(hobbit, {store,Food}).
-
-new_day(Food) ->
-    gen_fsm:send_event(hobbit, {new_day,Food}).
-
-start() ->
-    gen_fsm:start({local,hobbit}, ?MODULE, [], []).
+start(Day) ->
+    gen_fsm:start({local, creature}, ?MODULE, [Day], []).
 
 stop() ->
-    gen_fsm:sync_send_all_state_event(hobbit, stop).
+    gen_fsm:sync_send_all_state_event(creature, stop).
+
+hungry() ->
+    gen_fsm:sync_send_event(creature, eat).
+
+buy(Food, Quantity) ->
+    gen_fsm:send_event(creature, {store, Food, Quantity}).
+
+new_day(Food) ->
+    gen_fsm:send_event(creature, {new_day, Food}).
 
 handle_sync_event(stop, _, _, _) ->
-    {stop,normal,ok,[]}.
+    {stop, normal, ok, []}.
 
 terminate(_, _, _) ->
     ok.
 
-%% Proper Fsm 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%   Gen_fsm callbacks
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+init([Day]) ->
+    {ok, Day, #storage{}}.
+
+cheese_day(eat, Caller, S = #storage{cheese = Cheese}) ->
+    gen_fsm:reply(Caller, {cheese_left, Cheese}),
+    {next_state, cheese_day, S#storage{cheese = Cheese-1}}.
+
+cheese_day({store, Food, Quantity}, S) ->
+    case Food of
+	cheese ->
+	    {next_state, cheese_day,
+	     S#storage{cheese = S#storage.cheese + Quantity}};
+	lettuce ->
+	    {next_state, cheese_day,
+	     S#storage{lettuce = S#storage.lettuce + Quantity}};
+	grapes ->
+	    {next_state, cheese_day,
+	     S#storage{grapes = S#storage.grapes + Quantity}}
+    end;    
+cheese_day({new_day, lettuce}, S) -> 
+    {next_state, lettuce_day, S};
+cheese_day({new_day, grapes}, S) ->
+    {next_state, grapes_day, S}.
+
+lettuce_day(eat, Caller, S = #storage{lettuce = Lettuce}) ->
+    gen_fsm:reply(Caller, {lettuce_left, Lettuce}),
+    {next_state, lettuce_day, S#storage{lettuce = Lettuce - 1}}.
+
+lettuce_day({store, Food, Quantity}, S) ->
+    case Food of
+	cheese ->
+	    {next_state, lettuce_day,
+	     S#storage{cheese = S#storage.cheese + Quantity}};
+	lettuce ->
+	    {next_state, lettuce_day,
+	     S#storage{lettuce=S#storage.lettuce + Quantity}};
+	grapes ->
+	    {next_state, lettuce_day,
+	     S#storage{grapes = S#storage.grapes + Quantity}}
+    end;
+lettuce_day({new_day, cheese}, S) -> 
+    {next_state, cheese_day, S};
+lettuce_day({new_day, grapes}, S) ->
+    {next_state, grapes_day, S}.
+
+grapes_day(eat, Caller, S = #storage{grapes = Grapes}) ->
+    gen_fsm:reply(Caller, {grapes_left, Grapes}),
+    {next_state, grapes_day, S#storage{grapes = Grapes - 1}}.
+
+grapes_day({store, Food, Quantity}, S) ->
+    case Food of
+	cheese ->
+	    {next_state, grapes_day,
+	     S#storage{cheese = S#storage.cheese + Quantity}};
+	lettuce ->
+	    {next_state, grapes_day,
+	     S#storage{lettuce = S#storage.lettuce + Quantity}};
+	grapes ->
+	    {next_state, grapes_day,
+	     S#storage{grapes = S#storage.grapes + Quantity}}
+    end;
+grapes_day({new_day, cheese}, S) -> 
+    {next_state, cheese_day, S};
+grapes_day({new_day, lettuce}, S) ->
+    {next_state, lettuce_day, S}.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% PropEr Fsm specification  
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 cheese_day(S) ->
      store_transition() ++ eat_transition(S#storage.cheese) ++
@@ -118,24 +140,28 @@ grapes_day(S) ->
 food() ->
     oneof([cheese, lettuce, grapes]).
 
+quantity() ->
+    ?SUCHTHATMAYBE(I, pos_integer(), I < 5).
+
 store_transition() ->
-    [{history, {call,?MODULE,buy,[food()]}}].
+    [{history, {call,?MODULE,buy,[food(), quantity()]}}].
 
 eat_transition(Food_left) ->
     [{history, {call,?MODULE,hungry,[]}} || Food_left > 0].
+%% [{history, {call,?MODULE,hungry,[]}}].
 
 initial_state() -> cheese_day.
 
 initial_state_data() -> #storage{}.
 
-next_state_data(_, _, S, _, {call,_,buy,[Food]}) ->
+next_state_data(_, _, S, _, {call,_,buy,[Food, Quantity]}) ->
     case Food of
 	cheese ->
-	    S#storage{cheese = S#storage.cheese + 1};
+	    S#storage{cheese = S#storage.cheese + Quantity};
 	lettuce ->
-	    S#storage{lettuce = S#storage.lettuce + 1};    
+	    S#storage{lettuce = S#storage.lettuce + Quantity};    
 	grapes ->
-	    S#storage{grapes = S#storage.grapes + 1}
+	    S#storage{grapes = S#storage.grapes + Quantity}
     end;
 next_state_data(Today, _, S, _, {call,_,hungry,[]}) ->
     case Today of
@@ -171,28 +197,32 @@ precondition(_, _, _, {call,_,new_day,_}) ->
 precondition(_, _, _, {call,_,_,_}) ->
     true.
 
-postcondition(cheese_day, _, #storage{cheese = Cheese}, {call,_,hungry,[]}, Res) ->
-    Res =:= {cheese_left, Cheese};
-postcondition(lettuce_day, _, #storage{lettuce = Lettuce}, {call,_,hungry,[]}, Res) ->
-    Res =:= {lettuce_left, Lettuce};
-postcondition(grapes_day, _, #storage{grapes = Grapes}, {call,_,hungry,[]}, Res) ->
-    Res =:= {grapes_left, Grapes};
+postcondition(cheese_day, _, S, {call,_,hungry,[]}, Res) ->
+    Cheese = S#storage.cheese,
+    Cheese > 0 andalso Res =:= {cheese_left, Cheese};
+postcondition(lettuce_day, _, S, {call,_,hungry,[]}, Res) ->
+    Lettuce = S#storage.lettuce,
+    Lettuce > 0 andalso Res =:= {lettuce_left, Lettuce};
+postcondition(grapes_day, _, S, {call,_,hungry,[]}, Res) ->
+    Grapes = S#storage.grapes,
+    Grapes > 0 andalso Res =:= {grapes_left, Grapes};
 postcondition(_,_,_,_,Res) ->
     Res =:= ok.
 
 weight(_, _, {call,_,new_day,_}) -> 1;
-weight(_, _, {call,_,hungry,_}) -> 2;
+weight(_, _, {call,_,hungry,_}) -> 3;
 weight(_, _, {call,_,buy,_}) -> 3.
 
-prop_food() ->
+prop_never_run_out_of_supplies() ->
     ?FORALL(Cmds, proper_fsm:commands(?MODULE),
 	    begin
-		start(),
-		{H,S,Res} = proper_fsm:run_commands(?MODULE, Cmds),
+		start(cheese_day),
+		{History, State, Result} =
+		    proper_fsm:run_commands(?MODULE, Cmds),
 		stop(),
 		?WHENFAIL(
-		   io:format("H: ~w\nS: ~w\nR: ~w\n", [H,S,Res]),
-		   aggregate(zip(proper_fsm:state_names(H),
-				 command_names(Cmds)),
-			     Res =:= ok))
+		   io:format("History: ~w\nState: ~w\nResult: ~w\n",
+			     [History, State, Result]),
+		   aggregate(zip(proper_fsm:state_names(History),
+				 command_names(Cmds)), Result =:= ok))
 	    end).
