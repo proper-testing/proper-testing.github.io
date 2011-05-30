@@ -185,5 +185,6 @@ Infrastructure
     converting, so that we get Something.html
 *   make the width 900px?
 *   fully justified text?
+*   group on rsync is wrong?
 
 <!-- kate: replace-tabs-save on; replace-tabs on; tab-width 8; -->
