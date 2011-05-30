@@ -180,9 +180,9 @@ for testing a generic server with PropEr:
         ?FORALL(Cmds, commands(?MODULE),
                 begin 
                     ?SERVER:start_link(),
-                    {_H,_S,Res} = run_commands(?MODULE, Cmds),
+                    {_,_,Result} = run_commands(?MODULE, Cmds),
                     ?SERVER:stop(),
-                    Res =:= ok
+                    Result =:= ok
                 end).
 
 As we can see, even in this simple property, it is very important to keep
@@ -405,43 +405,43 @@ result. It returns a boolean.
 When creating an account, a _new_ password is always returned.
 
     :::erlang
-    postcondition(S, {call,_,create_account,[_Name]}, Res) ->
-        not lists:member(Res, S#state.users);
+    postcondition(S, {call,_,create_account,[_Name]}, Result) ->
+        not lists:member(Result, S#state.users);
 
 
 Since our testcases include only valid passwords, deleting an account
 always succeeds. 
 
     :::erlang
-    postcondition(_S, {call,_,delete_account,[_Password]}, Res) ->
-       Res =:= account_deleted;
+    postcondition(_S, {call,_,delete_account,[_Password]}, Result) ->
+       Result =:= account_deleted;
 
 
 When someone asks for a movie, then if it's available it's added to her list,
 otherwise not.
          
     :::erlang
-    postcondition(S, {call,_,rent_dvd,[_Password,Movie]}, Res) ->
+    postcondition(S, {call,_,rent_dvd,[_Password,Movie]}, Result) ->
         case is_available(Movie, S) of
             true ->
-                lists:member(Movie, Res);
+                lists:member(Movie, Result);
             false ->
-                not lists:member(Movie, Res)
+                not lists:member(Movie, Result)
         end;
 
 
 When someone returns a dvd, then it's no longer in her list.
 
     :::erlang
-    postcondition(_S, {call,_,return_dvd,[_Password,Movie]}, Res) ->
-        not lists:member(Movie, Res);
+    postcondition(_S, {call,_,return_dvd,[_Password,Movie]}, Result) ->
+        not lists:member(Movie, Result);
 
 
-Every time someone buys popcorn, the server wishes bon appetit.
+Every time someone buys popcorn, the server wishes them bon appetit.
 
     :::erlang
-    postcondition(_S, {call,_,ask_for_popcorn,[]}, Res) ->
-        Res =:= bon_appetit.
+    postcondition(_S, {call,_,ask_for_popcorn,[]}, Result) ->
+        Result =:= bon_appetit.
 
 
 PropEr in action
@@ -470,14 +470,15 @@ property:
          in call from proc_lib:init_p_do_apply/3
 
 Oh dear! This is not quite what we expected... The movie server crashed.
-This is acceptable, since we are looking for bugs in the code. The problem
-is that PropEr also crashed without providing any kind of useful information
-about the cause of the failure. This was improper!
+That the server crashes is expected at this point, since we are looking for
+bugs in its code. What is not acceptable is that PropEr also crashes without
+providing any kind of useful information about the cause of the failure.
+This is improper behaviour!
 
 In cases like this, the `?TRAPEXIT` macro comes to the rescue.
 Enclosing a property in `?TRAPEXIT` prevents PropEr from crashing when
-a linked process dies abnormally. Now that we know the trick, we can
-redefine the property:
+a linked process dies abnormally. Now that we know this trick, we can
+revise the property:
 
     :::erlang
     prop_server_works_fine() ->
@@ -485,9 +486,9 @@ redefine the property:
                 ?TRAPEXIT(
                     begin
                         ?SERVER:start_link(),
-                        {_H,_S,Res} = run_commands(?MODULE, Cmds),
+                        {_,_,Result} = run_commands(?MODULE, Cmds),
                         ?SERVER:stop(),
-                        Res =:= ok
+                        Result =:= ok
                     end)).
 
 Let's try it again:
@@ -521,16 +522,17 @@ Let's try it again:
     false
 
 
-As we can see, creating an account and then returning the movie "Inception" is
-enough to make the server crash. Luckily PropEr didn't crash, since we have
-enclosed the property in a `?TRAPEXIT` macro. But why did the server crash in
-the first place? This happened because "Inception" was never available at the
-dvd-club. In real life we can be certain that nobody will ever return a movie
-that she didn't rent in advance. However, in a production system there
-is always the possibility that an unlikely sequence of events might actually
-happen. For this reason, it's not a good idea to let our server crash and we
-shall fix the code later. For the moment, we are interested in discovering more
-bugs. So, we add a precondition that doesn't let this known bug appear.
+As we can see, creating an account and then returning the movie `inception` is
+enough to make the server crash. Luckily PropEr didn't crash this time, since
+we enclosed the property in a `?TRAPEXIT` macro. But why did the server crash
+in the first place? This happened because the `inception` movie was never
+available at the dvd-club. In real life, we can be certain that nobody will
+ever return a movie that they didn't rent in advance. However, in a production
+system there is always the possibility that an unlikely sequence of events
+might actually happen. For this reason, it's not a good idea to let our server
+crash and we shall fix the code later. For the moment, we are interested in
+discovering more bugs. So, we add a precondition that doesn't let this
+situation happen.
 
     :::erlang
     precondition(S, {call,_,return_dvd,[Password,Movie]}) ->
@@ -569,11 +571,11 @@ false, the `Action` specified as the first argument will be executed.
                 ?TRAPEXIT(
                     begin
                         ?SERVER:start_link(),
-                        {H,S,Res} = run_commands(?MODULE, Cmds),
+                        {History,State,Result} = run_commands(?MODULE, Cmds),
                         ?SERVER:stop(),
-                        ?WHENFAIL(io:format("History: ~w\nState: ~w\nRes: ~w\n",
-                                            [H,S,Res]),
-                                  Res =:= ok)
+                        ?WHENFAIL(io:format("History: ~w\nState: ~w\nResult: ~w\n",
+                                            [History,State,Result]),
+                                  Result =:= ok)
                     end)).
 
 * _History_ contains the command execution history. For each command that was
@@ -584,7 +586,7 @@ false, the `Action` specified as the first argument will be executed.
   execution stopped.
 
 * Finally, _Result_ specifies the outcome of command execution. When it is
-  the atom **ok**, it means that all commands were successfully run and all
+  the atom `ok`, it means that all commands were successfully run and all
   postconditions were true.
 
 Running the test for the new property, we get more explicit information
@@ -645,12 +647,12 @@ need to change the `next_state/3` callback.
     	        S
         end;
 
-    postcondition(S, {call, _, delete_account, [Password]}, Res) ->
+    postcondition(S, {call, _, delete_account, [Password]}, Result) ->
         case proplists:is_defined(Password, S#state.rented) of
     	    false ->
-    	        Res =:= account_deleted;
+    	        Result =:= account_deleted;
     	    true ->
-    	        Res =:= return_movies_first
+    	        Result =:= return_movies_first
         end;
 
 And again we try:
@@ -834,11 +836,11 @@ to collect statistics about how often each command was executed.
                 ?TRAPEXIT(
                     begin
                         ?SERVER:start_link(),
-                        {H,S,Res} = run_commands(?MODULE, Cmds),
+                        {History,State,Result} = run_commands(?MODULE, Cmds),
                         ?SERVER:stop(),
-                        ?WHENFAIL(io:format("History: ~w\nState: ~w\nRes: ~w\n",
-                                            [H,S,Res]),
-                                  aggregate(command_names(Cmds), Res =:= ok))
+                        ?WHENFAIL(io:format("History: ~w\nState: ~w\nResult: ~w\n",
+                                            [History,State,Result]),
+                                  aggregate(command_names(Cmds), Result =:= ok))
                     end)).
 
 If we run the test now:
@@ -856,21 +858,20 @@ If we run the test now:
     true
 
 We can easily notice that `return_dvd/2` calls are rarely tested. This happens
-because of the precondition that allows to return only movies you have
+because of the precondition that allows us to only return movies we have
 previously rented. To remedy the situation, we will modify the command
-generator so that `return_dvd/2` calls can be more frequently selected. 
+generator so that `return_dvd/2` calls can be selected more frequently. 
 
     :::erlang
     command(S) ->
+        Users = (S#state.users =/= []),
+        Rented = (S#state.rented =/= []),
         frequency([{1, {call,?SERVER,create_account,[name()]}},
                    {1, {call,?SERVER,ask_for_popcorn,[]}}] ++
-                  [{1, {call,?SERVER,delete_account,[password(S)]}}
-                   || S#state.users =/= []] ++
-                  [{5, {call,?SERVER,rent_dvd,[password(S), movie()]}}
-                   || S#state.users =/= []] ++
+                  [{1, {call,?SERVER,delete_account,[password(S)]}} || Users] ++
+                  [{5, {call,?SERVER,rent_dvd,[password(S), movie()]}} || Users] ++
                   [{5, ?LET({Password,Movie}, elements(S#state.rented),
-                            {call,?SERVER,return_dvd,[Password, Movie]})}
-                   || S#state.rented =/= []]).
+                            {call,?SERVER,return_dvd,[Password, Movie]})} || Rented]).
 
 The resulting distribution is:
 
