@@ -1,4 +1,5 @@
 -module(master_statem).
+
 -behaviour(proper_statem).
 
 -include_lib("proper/include/proper.hrl").
@@ -23,18 +24,18 @@ prop_master() ->
        ?TRAPEXIT(
 	  begin
 	      ?MASTER:start_link(),
-	      {H,S,Res} = run_commands(?MODULE, Cmds),
+	      {History,State,Result} = run_commands(?MODULE, Cmds),
 	      ?MASTER:stop(),
 	      ?WHENFAIL(
-		 io:format("History: ~w\nState: ~w\nRes: ~w\n",
-			   [pretty_history(H), pretty_state(S), Res]),
-		 aggregate(command_names(Cmds), Res =:= ok))
+		 io:format("History: ~w\nState: ~w\nResult: ~w\n",
+			   [pretty_history(History), pretty_state(State), Result]),
+		 aggregate(command_names(Cmds), Result =:= ok))
 	  end)).
 
 pretty_history(History) ->
-    [{pretty_state(State),Res} || {State,Res} <- History].
+    [{pretty_state(State),Result} || {State,Result} <- History].
 
-pretty_state(S = #state{scores = Scores}) ->
+pretty_state(#state{scores = Scores} = S) ->
     S#state{scores = dict:to_list(Scores)}.
 
 initial_state() ->
@@ -79,11 +80,11 @@ next_state(S = #state{scores = Scores}, _V, {call,_,ping,[Name]}) ->
 next_state(S, _, _) ->    
     S.
 
-postcondition(_S, {call,_,add_player,[_Name]}, Res) ->
-    Res =:= ok;
-postcondition(_S, {call,_,remove_player,[Name]}, Res) ->
-    Res =:= {removed,Name};
-postcondition(S, {call,_,get_score,[Name]}, Res) ->
-    Res =:= dict:fetch(Name, S#state.scores);
-postcondition(_S, {call,_,ping,[_Name]}, Res) ->
-    Res =:= pong.
+postcondition(_S, {call,_,add_player,[_Name]}, Result) ->
+    Result =:= ok;
+postcondition(_S, {call,_,remove_player,[Name]}, Result) ->
+    Result =:= {removed,Name};
+postcondition(S, {call,_,get_score,[Name]}, Result) ->
+    Result =:= dict:fetch(Name, S#state.scores);
+postcondition(_S, {call,_,ping,[_Name]}, Result) ->
+    Result =:= pong.

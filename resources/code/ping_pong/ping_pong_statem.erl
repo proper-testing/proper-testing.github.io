@@ -24,19 +24,19 @@ prop_ping_pong_works() ->
 	    ?TRAPEXIT(
 	       begin
 		   ?MASTER:start_link(),
-		   {H,S,Res} = run_commands(?MODULE, Cmds),
+		   {History,State,Result} = run_commands(?MODULE, Cmds),
 		   ?MASTER:stop(),
 		   ?WHENFAIL(
-		      io:format("History: ~w\nState: ~w\nRes: ~w\n",
-				%% [H, S, Res]),
-				[pretty_history(H), pretty_state(S), Res]),
-		      aggregate(command_names(Cmds), Res =:= ok))
+		      io:format("History: ~w\nState: ~w\nResult: ~w\n",
+				%% [History, State, Result]),
+				[pretty_history(History), pretty_state(State), Result]),
+		      aggregate(command_names(Cmds), Result =:= ok))
 	       end)).
 
 pretty_history(History) ->
-    [{pretty_state(State),Res} || {State,Res} <- History].
+    [{pretty_state(State),Result} || {State,Result} <- History].
 
-pretty_state(S = #state{scores = Scores}) ->
+pretty_state(#state{scores = Scores} = S) ->
     S#state{scores = dict:to_list(Scores)}.
 
 %%% Statem Callbacks
@@ -83,14 +83,14 @@ next_state(S = #state{scores = Sc}, _V, {call,_,play_ping_pong,[Name]}) ->
 next_state(S, _, _) ->
     S.
 
-postcondition(_S, {call,_,add_player,[_Name]}, Res) ->
-    Res =:= ok;
-postcondition(_S, {call,_,remove_player,[Name]}, Res) ->
-    Res =:= {removed, Name};
-postcondition(S, {call,_,get_score,[Name]}, Res) ->
-    %% Res =:= dict:fetch(Name, S#state.scores);
-    Res =< dict:fetch(Name, S#state.scores);
-postcondition(_S, {call,_,play_ping_pong,[_Name]}, Res) ->
-    Res =:= ok;
-postcondition(_S, {call,_,play_tennis,[_Name]}, Res) ->
-    Res =:= maybe_later.
+postcondition(_S, {call,_,add_player,[_Name]}, Result) ->
+    Result =:= ok;
+postcondition(_S, {call,_,remove_player,[Name]}, Result) ->
+    Result =:= {removed, Name};
+postcondition(S, {call,_,get_score,[Name]}, Result) ->
+    %% Result =:= dict:fetch(Name, S#state.scores);
+    Result =< dict:fetch(Name, S#state.scores);
+postcondition(_S, {call,_,play_ping_pong,[_Name]}, Result) ->
+    Result =:= ok;
+postcondition(_S, {call,_,play_tennis,[_Name]}, Result) ->
+    Result =:= maybe_later.
