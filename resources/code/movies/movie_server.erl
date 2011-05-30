@@ -2,11 +2,14 @@
 
 -behaviour(gen_server).
 
+%% API
 -export([start_link/0, stop/0]).
--export([init/1, handle_call/3, handle_cast/2, handle_info/2,
-	 terminate/2, code_change/3]).
 -export([create_account/1, delete_account/1, rent_dvd/2, return_dvd/2,
 	 ask_for_popcorn/0, available_movies/0]).
+
+%% gen_server callbacks
+-export([init/1, handle_call/3, handle_cast/2, handle_info/2,
+	 terminate/2, code_change/3]).
 
 -type name()     :: atom().
 -type movie()    :: atom().
@@ -20,9 +23,9 @@
 		 {toy_story,5}, {the_lion_king,2}, {peter_pan,1}]).
 
 
-%%--------------------------------------------------------------------
+%%%-------------------------------------------------------------------
 %%% API
-%%--------------------------------------------------------------------
+%%%-------------------------------------------------------------------
 
 start_link() ->
     gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).
@@ -54,9 +57,9 @@ ask_for_popcorn() ->
 available_movies() -> ?MOVIES.
 
 
-%%--------------------------------------------------------------------
+%%%-------------------------------------------------------------------
 %%% Gen_server callbacks
-%%--------------------------------------------------------------------
+%%%-------------------------------------------------------------------
 
 init([]) ->
     Tid = ets:new(movies, []),
@@ -69,7 +72,8 @@ handle_call({new_account,Name}, _From, S) ->
     #state{users = Tab, next_pass = Pass} = S, 
     ets:insert(Tab, {Pass,Name,[]}),
     {reply, Pass, S#state{next_pass = Pass + 1}};
-handle_call({delete_account,Pass}, _From, S = #state{users = Tab}) ->
+handle_call({delete_account,Pass}, _From, S) ->
+    #state{users = Tab} = S,
     Reply = case ets:lookup(Tab, Pass) of
 		[]  ->
 		    not_a_client;
@@ -135,7 +139,9 @@ terminate(_Reason, #state{users = Tab1, movies = Tab2}) ->
 
 handle_cast(_Msg, S) ->
     {noreply, S}.
+
 handle_info(_Info, S) ->
     {noreply, S}.
+
 code_change(_OldVsn, S, _Extra) ->
     {ok, S}.
