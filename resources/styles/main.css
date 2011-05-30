@@ -53,6 +53,10 @@ body{
     color: black;
 }
 
+#nav a:hover{
+    background-color: red;
+}
+
 #pri_navbar{
     font-size: large;
 }
