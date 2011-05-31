@@ -1,8 +1,8 @@
 Summary: a PropEr fsm tutorial
 
 In this tutorial we will use PropEr to test a finite state machine
-specification. The testcases produced using the PropEr fsm library
-(`proper_fsm`) are of exactly the same form as the testcases produced
+specification. The test cases produced using the PropEr fsm library
+(`proper_fsm`) are of exactly the same form as the test cases produced
 using the PropEr statem library (`proper_statem`). The difference lies in
 the way the callback modules are specified. Before reading this
 tutorial, please make sure you have understood the basic concepts of
@@ -12,8 +12,8 @@ testing stateful systems with PropEr, as described
 
 PropEr fsm offers a convenient way to test systems exhibiting a finite state
 machine behaviour. That is, systems that can be modeled as a finite
-collection of named states and transitions between them. A typical finite
-state machine representation of a system is the state diagram. PropEr fsm is
+collection of named states with transitions between them. A typical finite
+state machine representation of a system is its state diagram. PropEr fsm is
 designed to bring the callback module specification very close to a state
 diagram.
 
@@ -22,21 +22,21 @@ A finite state machine example
 ------------------------------
 
 Consider the following state diagram that describes the life of a strange
-creature that feeds on cheese, grapes and lettuce but never eats the same kind
-of food on two consecutive days. ![](/images/creature.png)
+creature that feeds on cheese, grapes and lettuce, but never eats the same
+kind of food on two consecutive days. ![](/images/creature.png)
 
-As we can see from the state diagram, days are categorized into `cheese_days`,
+As we can see in the state diagram, days are categorized into `cheese_days`,
 `lettuce_days` and `grapes_days`. On a `cheese_day` the creature eats only
-cheese, on a `lettuce_day` only lettuce and so on. When it gets hungry, it
+cheese, on a `lettuce_day` only lettuce, and so on. When it gets hungry, it
 consumes a fixed portion of the daily food, which is kept in the food storage.
 To make life less boring and, more importantly, to bring food to the storage,
 the creature goes shopping from time to time. Finally, every night it decides
-what to eat the next day. There is only one rule regarding this decision:
-"never eat the same food for two days in a row".
+what to eat (or buy) the next day. There is only one rule governing this
+decision: "never choose the same food as today".
 
-Being a huge fun of Erlang, this creature has implemented a finite state
+Being a huge fan of Erlang, this creature has implemented a finite state
 machine describing its daily routine using the OTP `gen_fsm` behaviour. The
-internal state of the finite state machine is a record that represents the food
+internal state of the finite state machine is a record representing the food
 storage. The record fields contain the quantity of food that is currently
 stored.
 
@@ -47,10 +47,10 @@ stored.
                       lettuce = 5 :: quantity(),
                       grapes  = 5 :: quantity()}).
 
-Let us now describe the API of the finite state machine:
+Let us now describe the API of this finite state machine:
 
 *   We can start the finite state machine by specifying the kind of day on
-    which it will be started.
+    which it should start.
 
         :::erlang
         -type day() :: 'cheese_day' | 'lettuce_day' | 'grapes_day'. 
@@ -61,7 +61,7 @@ Let us now describe the API of the finite state machine:
         init(Day) ->
             {ok, Day, #storage{}}.
 
-*   We can simulate the condition when the creature is hungry. The function
+*   We can simulate what happens when the creature is hungry. The function
     `hungry/0` will return us the quantity of available food at the moment
     when the creature is ready to start eating.
 
@@ -76,16 +76,16 @@ Let us now describe the API of the finite state machine:
             gen_fsm:reply(Caller, {cheese, Cheese}),
             {next_state, cheese_day, S#storage{cheese = Cheese - 1}}.
 
-        lettuce_day(eat, Caller, S = #storage{lettuce = Lettuce}) ->
+        lettuce_day(eat, Caller, #storage{lettuce = Lettuce} = S) ->
             gen_fsm:reply(Caller, {lettuce, Lettuce}),
             {next_state, lettuce_day, S#storage{lettuce = Lettuce - 1}}.
 
-        grapes_day(eat, Caller, S = #storage{grapes = Grapes}) ->
+        grapes_day(eat, Caller, #storage{grapes = Grapes} = S) ->
             gen_fsm:reply(Caller, {grapes, Grapes}),
             {next_state, grapes_day, S#storage{grapes = Grapes - 1}}.
 
-*   We can simulate the situation when the creature goes shopping to buy some
-    new food.
+*   We can simulate what happens when the creature goes shopping to buy
+    more food.
 
         :::erlang
         -spec buy(food(), quantity()) -> 'ok'.
@@ -135,7 +135,7 @@ Let us now describe the API of the finite state machine:
         cheese_day({new_day, grapes}, S) ->
             {next_state, grapes_day, S}.
 
-        lettuce_day({new_day, cheese}, S) -> 
+        lettuce_day({new_day, cheese}, S) ->
             {next_state, cheese_day, S};
         lettuce_day({new_day, grapes}, S) ->
             {next_state, grapes_day, S}.
@@ -165,17 +165,17 @@ out of food in the storage.
                     start(cheese_day), %% could also be grapes_day or lettuce_day
                                        %% the same kind of day should be used
                                        %% to initialize the model state
-                    {H,S,Res} = proper_fsm:run_commands(?MODULE, Cmds),
+                    {History,State,Result} = proper_fsm:run_commands(?MODULE, Cmds),
                     stop(),
-                    ?WHENFAIL(
-                        io:format("H: ~w\nS: ~w\nR: ~w\n", [H,S,Res]),
-                                  Res =:= ok)
+                    ?WHENFAIL(io:format("History: ~w\nState: ~w\nResult: ~w\n",
+                                        [History, State, Result]),
+                              Result =:= ok)
                 end).
 
 Defining the PropEr finite state machine
 ----------------------------------------
 
-### State represenation ###
+### State representation ###
 
 Following the convention used in `gen_fsm` behaviour, the model state is
 separated into a _state name_ and some _state data_. The _state name_ is used to
@@ -183,7 +183,7 @@ denote a state of the finite state machine and the _state data_ is any relevant
 information that has to be stored in the model state. States are fully
 represented as tuples `{StateName, StateData}`.
 
-Splitting the model state into _state name_ and _state data_ makes the states
+Splitting the model state into state name and state data makes the states
 of the fsm more explicit and allows the specification to be closer to a state
 diagram of the system under test. The `proper_statem:command/1`
 generator is replaced by a collection of callback functions, one for each
@@ -193,7 +193,7 @@ represents and takes the _state data_ as argument.
 The state is initialized via the `initial_state/0` and `initial_state_data/0`
 callbacks. The former specifies the initial state of the finite state machine,
 while the latter specifies what the state data should initially contain.
-Let us start on a `cheese_day`, with five portions of each kind of food
+Let us start on a `cheese_day`, with the default portions of each kind of food
 available in the storage.
 
     :::erlang
@@ -249,17 +249,18 @@ this is specified by having `history` as the target state.
 At command generation time, the callback function corresponding to the current
 state of the finite state machine will be called to return the list of
 possible transitions from that state. Then, PropEr will randomly choose a
-transition and, according to that, generate the next symbolic call to be
-included in the command sequence. By default transitions are chosen with
-equal probability, but as we will see later this behaviour can be fine-tuned.
+transition and, based on that, generate the next symbolic call to be included
+in the command sequence. By default transitions are chosen with equal
+probability, but as we will see later this behaviour can be fine-tuned.
 
 ### The other callback functions ###
 
-Preconditions and postconditions are also imposed on the finite state machine
-specification. Only now these callbacks take a slightly different form. Instead
-of the _State_ argument that was provided in `proper_statem` callbacks,
+Similarly to what we did when testing generic servers, we can impose
+preconditions and postconditions on the finite state machine specification.
+Only now these callbacks take a slightly different form. Instead of the
+_State_ argument that was provided in `proper_statem` callbacks,
 the callbacks in `proper_fsm` take into account the origin of a transition
-(_From state_), the target of a transition (_Target state_) and the
+(_from state_), the target of a transition (_target state_) and the
 _state data_.
 
     :::erlang
@@ -267,17 +268,17 @@ _state data_.
         true.
 
     :::erlang
-    postcondition(cheese_day, _, S, {call,_,hungry,[]}, Res) ->
+    postcondition(cheese_day, _, S, {call,_,hungry,[]}, Result) ->
         Cheese = S#storage.cheese,
-        Cheese > 0 andalso Res =:= {cheese_left, Cheese};
-    postcondition(lettuce_day, _, S, {call,_,hungry,[]}, Res) ->
+        Cheese > 0 andalso Result =:= {cheese_left, Cheese};
+    postcondition(lettuce_day, _, S, {call,_,hungry,[]}, Result) ->
         Lettuce = S#storage.lettuce,
-        Lettuce > 0 andalso Res =:= {lettuce_left, Lettuce};
-    postcondition(grapes_day, _, S, {call,_,hungry,[]}, Res) ->
+        Lettuce > 0 andalso Result =:= {lettuce_left, Lettuce};
+    postcondition(grapes_day, _, S, {call,_,hungry,[]}, Result) ->
         Grapes = S#storage.grapes,
-        Grapes > 0 andalso Res =:= {grapes_left, Grapes};
-    postcondition(_,_,_,_,Res) ->
-        Res =:= ok.
+        Grapes > 0 andalso Result =:= {grapes_left, Grapes};
+    postcondition(_, _, _, _, Result) ->
+        Result =:= ok.
 
 The set of callback functions corresponding to the states of the fsm update
 part of the model state, since they specify the target state of a transition.
@@ -285,7 +286,7 @@ In order to update the _state data_, we have to define a separate callback
 function.
 
     :::erlang
-    next_state_data(_Today, _Today, S, _, {call,_,store,[Food, Quantity]}) ->
+    next_state_data(_Today, _Tomorrow, S, _, {call,_,store,[Food, Quantity]}) ->
         case Food of
             cheese ->
                 S#state{cheese = S#state.cheese + Quantity};
@@ -294,9 +295,9 @@ function.
             grapes ->
                 S#state{grapes = S#state.grapes + Quantity}
         end;
-    next_state_data(Today, _Today, S, _, {call,_,eat,[]}) ->
+    next_state_data(Today, _Tomorrow, S, _, {call,_,eat,[]}) ->
         case Today of
-            cheese_day->
+            cheese_day ->
                 S#state{cheese = S#state.cheese - 1};
             lettuce_day ->
                 S#state{lettuce = S#state.lettuce - 1};    
@@ -428,7 +429,7 @@ that. This can be modeled by moving this condition as a precondition.
     :::erlang
     precondition(Today, _, S, {call,_,hungry,[]}) ->
         case Today of
-            cheese_day->
+            cheese_day ->
                 S#storage.cheese > 0;
             lettuce_day ->
                 S#storage.lettuce > 0;    
@@ -436,7 +437,7 @@ that. This can be modeled by moving this condition as a precondition.
                 S#storage.grapes > 0
         end;
 
-Running:
+Running the property again now gives:
 
     :::erl
     73> proper:quickcheck(food_fsm:prop_never_run_out_of_supplies()).
@@ -446,7 +447,7 @@ Running:
     after 50 tries.
     {error,cant_generate}
 
-Changing the generators:
+We can fix this problem by changing the generators:
 
     :::erlang
     quantity() ->
@@ -455,14 +456,17 @@ Changing the generators:
     eat_transition(Food_left) ->
         [{history, {call,?MODULE,hungry,[]}} || Food_left > 0].
 
-Running:
+Let's see what happens now:
 
     :::erl
-    76> proper:quickcheck(food_fsm:prop_never_run_out_of_supplies(), 500).
-    <...500 dots...>
+    76> proper:quickcheck(food_fsm:prop_never_run_out_of_supplies()).
+    <...100 dots...>
     OK: Passed 100 test(s).
+    77> proper:quickcheck(food_fsm:prop_never_run_out_of_supplies(), 500).
+    <...50 dots...>
+    OK: Passed 500 test(s).
 
-Measuring distribution:
+We can also measure the distribution of our tests:
 
     :::erlang
     prop_never_run_out_of_supplies() ->
@@ -471,18 +475,17 @@ Measuring distribution:
                     start(cheese_day),
                     {History, State, Result} = proper_fsm:run_commands(?MODULE, Cmds),
                     stop(),
-                    ?WHENFAIL(
-                        io:format("History: ~w\nState: ~w\nResult: ~w\n",
-                                  [History, State, Result]),
-                        aggregate(zip(proper_fsm:state_names(History),
-                                      command_names(Cmds)),
-                                  Result =:= ok))
+                    ?WHENFAIL(io:format("History: ~w\nState: ~w\nResult: ~w\n",
+                                        [History, State, Result]),
+                              aggregate(zip(proper_fsm:state_names(History),
+                                            command_names(Cmds)),
+                                        Result =:= ok))
                 end).
 
-Running:
+Running the modified property now gives:
 
     :::erl
-    76> proper:quickcheck(food_fsm:prop_never_run_out_of_supplies(), 1000).
+    78> proper:quickcheck(food_fsm:prop_never_run_out_of_supplies(), 1000).
     <...1000 dots...>
     OK: Passed 1000 test(s).
 
@@ -497,19 +500,18 @@ Running:
      4% {grapes_day,{food_fsm,hungry,0}}
     true
 
-Assigning weights:
-Now, if we would like to test certain operations more frequently
-we can assign weights to transitions:
+Finally, we can assigning weights to our transitions to specify that some
+operations shoulw occur more frequently than others:
 
     :::erlang
     weight(_Today, _Tomorrow, {call,_,new_day,_}) -> 1;
     weight(_Today, _Tomorrow, {call,_,eat,_}) -> 3;
     weight(_Today, _Tomorrow, {call,_,store,_}) -> 3.
 
-Run:
+Let's run it again:
 
     :::erl
-    76> proper:quickcheck(food_fsm:prop_never_run_out_of_supplies(), 1000).
+    80> proper:quickcheck(food_fsm:prop_never_run_out_of_supplies(), 1000).
     <...1000 dots...>
     OK: Passed 1000 test(s).
 
@@ -522,6 +524,6 @@ Run:
      8% {grapes_day,{food_fsm,new_day,1}}
      8% {grapes_day,{food_fsm,hungry,0}}
      7% {lettuce_day,{food_fsm,new_day,1}}
-     true
+    true
 
 <!-- kate: replace-tabs-save on; replace-tabs on; tab-width 8; -->
