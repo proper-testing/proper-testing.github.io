@@ -6,3 +6,4 @@ proper
 username.mk
 *.pyc
 private
+*.beam
