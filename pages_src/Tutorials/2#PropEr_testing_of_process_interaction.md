@@ -173,7 +173,7 @@ system. As usual, it specifies:
         -type name()  :: atom().
 
         -record(state, {players = []         :: [name()],
-                        scores  = dict_new() :: dict()}).
+                        scores  = dict:new() :: dict()}).
 
         initial_state() -> #state{}.
 
@@ -233,16 +233,16 @@ system. As usual, it specifies:
 *   And finally, _postconditions_ about the results of the calls:
 
         :::erlang
-        postcondition(_S, {call,_,add_player,[_Name]}, Res) ->
-            Res =:= ok;
-        postcondition(_S, {call,_,remove_player,[Name]}, Res) ->
-            Res =:= {removed, Name};
-        postcondition(S, {call,_,get_score,[Name]}, Res) ->
-            Res =:= dict:fetch(Name, S#state.scores);
-        postcondition(_S, {call,_,play_ping_pong,[_Name]}, Res) ->
-            Res =:= ok;
-        postcondition(_S, {call,_,play_tennis,[_Name]}, Res) ->
-            Res =:= maybe_later.
+        postcondition(_S, {call,_,add_player,[_Name]}, Result) ->
+            Result =:= ok;
+        postcondition(_S, {call,_,remove_player,[Name]}, Result) ->
+            Result =:= {removed, Name};
+        postcondition(S, {call,_,get_score,[Name]}, Result) ->
+            Result =:= dict:fetch(Name, S#state.scores);
+        postcondition(_S, {call,_,play_ping_pong,[_Name]}, Result) ->
+            Result =:= ok;
+        postcondition(_S, {call,_,play_tennis,[_Name]}, Result) ->
+            Result =:= maybe_later.
 
 
 Having successfully tested the stand-alone behaviour of the master, we expect
@@ -254,12 +254,12 @@ this property to pass the tests:
                 ?TRAPEXIT(
                    begin
                        ?MASTER:start_link(),
-                       {H,S,Res} = run_commands(?MODULE, Cmds),
+                       {History,State,Result} = run_commands(?MODULE, Cmds),
                        ?MASTER:stop(),
                        ?WHENFAIL(
-                          io:format("History: ~w\nState: ~w\nRes: ~w\n",
-                                    [H,S,Res]),
-                          aggregate(command_names(Cmds), Res =:= ok))
+                          io:format("History: ~w\nState: ~w\nResult: ~w\n",
+                                    [History, State, Result]),
+                          aggregate(command_names(Cmds), Result =:= ok))
                    end)).
 
 But...
@@ -298,7 +298,7 @@ But...
                [],[],[]},{{[],[],[],[],[],[],[],[],[],[[mary|2]],[],[],[],[],[],[]}}}},0}]
     State: {state,[mary],{dict,1,16,16,8,80,48,{[],[],[],[],[],[],[],[],[],[],[],[],[],[],
             [],[]},{{[],[],[],[],[],[],[],[],[],[[mary|2]],[],[],[],[],[],[]}}}}
-    Res: {postcondition,false}
+    Result: {postcondition,false}
 
     Shrinking ...(3 time(s))
     [{set,{var,1},{call,ping_pong,add_player,[mary]}},
@@ -312,7 +312,7 @@ But...
                [],[],[]},{{[],[],[],[],[],[],[],[],[],[[mary|1]],[],[],[],[],[],[]}}}},0}]
     State: {state,[mary],{dict,1,16,16,8,80,48,{[],[],[],[],[],[],[],[],[],[],[],[],[],[],
             [],[]},{{[],[],[],[],[],[],[],[],[],[[mary|1]],[],[],[],[],[],[]}}}}
-    Res: {postcondition,false}
+    Result: {postcondition,false}
     false
 
 ...the property fails, along with error reports on the server crashing!
@@ -324,9 +324,9 @@ output more informative debugging information.
 
     :::erlang
     pretty_history(History) ->
-        [{pretty_state(State),Res} || {State,Res} <- History].
+        [{pretty_state(State),Result} || {State,Result} <- History].
 
-    pretty_state(S = #state{scores = Scores}) ->
+    pretty_state(#state{scores = Scores} = S) ->
         S#state{scores = dict:to_list(Scores)}.
 
     prop_ping_pong_works() ->
@@ -334,12 +334,12 @@ output more informative debugging information.
                 ?TRAPEXIT(
                     begin
                         ?MASTER:start_link(),
-                        {H,S,Res} = run_commands(?MODULE, Cmds),
+                        {History,State,Result} = run_commands(?MODULE, Cmds),
                         ?MASTER:stop(),
                         ?WHENFAIL(
                          io:format("History: ~w\nState: ~w\nRes: ~w\n",
-                                   [pretty_history(H), pretty_state(S), Res]),
-                         aggregate(command_names(Cmds), Res =:= ok))
+                                   [pretty_history(History), pretty_state(State), Result]),
+                         aggregate(command_names(Cmds), Result =:= ok))
                     end)).
 
 And run the test once more:
@@ -382,7 +382,7 @@ And run the test once more:
               {{state,[],[]},ok},{{state,[mary],[{mary,0}]},ok},
               {{state,[mary],[{mary,1}]},0}]
     State: {state,[mary],[{mary,1}]}
-    Res: {postcondition,false}
+    Result: {postcondition,false}
 
     Shrinking ........(8 time(s))
     [{set,{var,6},{call,ping_pong,add_player,[mary]}},
@@ -391,7 +391,7 @@ And run the test once more:
     History: [{{state,[],[]},ok},{{state,[mary],[{mary,0}]},ok},
               {{state,[mary],[{mary,1}]},0}]
     State: {state,[mary],[{mary,1}]}
-    Res: {postcondition,false}
+    Result: {postcondition,false}
     false
 
 Of course the property still fails and new error reports are produced.
@@ -404,8 +404,8 @@ Fixing the postcondition of `get_score/1` so as to achieve deterministic
 results is quite simple in this case:
 
     :::erlang
-    postcondition(S, {call,_,get_score,[Name]}, Res) ->
-        Res =< proplists:get_value(Name, S#state.scores);
+    postcondition(S, {call,_,get_score,[Name]}, Result) ->
+        Result =< proplists:get_value(Name, S#state.scores);
 
 The error reports, however, are triggered by a not-so-evident bug in the code.
 They are occassionaly produced when stopping the server, because of an attempt
