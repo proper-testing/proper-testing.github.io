@@ -55,6 +55,7 @@ Let us now describe the API of this finite state machine:
         :::erlang
         -type day() :: 'cheese_day' | 'lettuce_day' | 'grapes_day'. 
 
+        -spec start(day()) -> {'ok', pid()} | {'error', {'already_started', pid()}}.
         start(Day) ->
             gen_fsm:start({local, creature}, ?MODULE, Day, []).
 
@@ -414,7 +415,7 @@ Let's see what happens now:
     <...100 dots...>
     OK: Passed 100 test(s).
     77> proper:quickcheck(food_fsm:prop_never_run_out_of_supplies(), 500).
-    <...50 dots...>
+    <...500 dots...>
     OK: Passed 500 test(s).
 
 We can also measure the distribution of our tests:
