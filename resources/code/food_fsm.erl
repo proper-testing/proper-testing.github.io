@@ -18,15 +18,16 @@
 -type food() :: 'cheese' | 'lettuce' | 'grapes'.
 -type quantity() :: non_neg_integer().
 
--record(storage, {cheese  = 3 :: quantity(),
-		  lettuce = 3 :: quantity(),
-		  grapes  = 3 :: quantity()}).
+-record(storage, {cheese  = 5 :: quantity(),
+		  lettuce = 5 :: quantity(),
+		  grapes  = 5 :: quantity()}).
 
 
 %%%===========================================================================
 %%% API
 %%%===========================================================================
 
+-spec start(day()) -> {'ok', pid()} | {'error', {'already_started', pid()}}.
 start(Day) ->
     gen_fsm:start({local, creature}, ?MODULE, [Day], []).
 
