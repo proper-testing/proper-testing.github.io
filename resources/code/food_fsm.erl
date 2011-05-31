@@ -6,7 +6,7 @@
 
 -export([start/1, stop/0, hungry/0, buy/2, new_day/1]).
 
--export([init/1, handle_sync_event/4, terminate/3, code_change/3]).
+-export([init/1, handle_sync_event/4, terminate/3, code_change/4]).
 -export([cheese_day/2, lettuce_day/2, grapes_day/2]).
 -export([cheese_day/3, lettuce_day/3, grapes_day/3]).
 
@@ -15,11 +15,12 @@
 -export([cheese_day/1, lettuce_day/1, grapes_day/1]).
 
 -type day() :: 'cheese_day' | 'lettuce_day' | 'grapes_day'.
+-type food() :: 'cheese' | 'lettuce' | 'grapes'.
 -type quantity() :: non_neg_integer().
 
--record(storage, {cheese  = 1 :: quantity(),
-		  lettuce = 1 :: quantity(),
-		  grapes  = 1 :: quantity()}).
+-record(storage, {cheese  = 3 :: quantity(),
+		  lettuce = 3 :: quantity(),
+		  grapes  = 3 :: quantity()}).
 
 
 %%%===========================================================================
@@ -54,7 +55,12 @@ init([Day]) ->
 
 cheese_day(eat, Caller, #storage{cheese = Cheese} = S) ->
     gen_fsm:reply(Caller, {cheese_left, Cheese}),
-    {next_state, cheese_day, S#storage{cheese = Cheese - 1}}.
+    case Cheese > 0 of
+	true ->
+	    {next_state, cheese_day, S#storage{cheese = Cheese - 1}};
+	false ->
+	    {next_state, cheese_day, S}
+    end.
 
 cheese_day({store, Food, Quantity}, S) ->
     case Food of
@@ -75,7 +81,12 @@ cheese_day({new_day, grapes}, S) ->
 
 lettuce_day(eat, Caller, #storage{lettuce = Lettuce} = S) ->
     gen_fsm:reply(Caller, {lettuce_left, Lettuce}),
-    {next_state, lettuce_day, S#storage{lettuce = Lettuce - 1}}.
+    case Lettuce > 0 of
+	true ->
+	    {next_state, lettuce_day, S#storage{lettuce = Lettuce - 1}};
+	false ->
+	    {next_state, lettuce_day, S}
+    end.
 
 lettuce_day({store, Food, Quantity}, S) ->
     case Food of
@@ -96,7 +107,12 @@ lettuce_day({new_day, grapes}, S) ->
 
 grapes_day(eat, Caller, #storage{grapes = Grapes} = S) ->
     gen_fsm:reply(Caller, {grapes_left, Grapes}),
-    {next_state, grapes_day, S#storage{grapes = Grapes - 1}}.
+    case Grapes > 0 of
+	true ->
+	    {next_state, grapes_day, S#storage{grapes = Grapes - 1}};
+	false ->
+	    {next_state, grapes_day, S}
+    end.
 
 grapes_day({store, Food, Quantity}, S) ->
     case Food of
@@ -118,8 +134,8 @@ grapes_day({new_day, lettuce}, S) ->
 terminate(_, _, _) ->
     ok.
 
-code_change(_OldVsn, State, _Extra) ->
-    {ok, State}.
+code_change(_OldVsn, StateName, StateData, _Extra) ->
+    {ok, StateName, StateData}.
 
 
 %%%===========================================================================
@@ -150,9 +166,9 @@ quantity() ->
 store_transition() ->
     [{history, {call,?MODULE,buy,[food(), quantity()]}}].
 
-eat_transition(Food_left) ->
-    [{history, {call,?MODULE,hungry,[]}} || Food_left > 0].
-%% [{history, {call,?MODULE,hungry,[]}}].
+eat_transition(_Food_left) ->
+    %% [{history, {call,?MODULE,hungry,[]}} || Food_left > 0].
+    [{history, {call,?MODULE,hungry,[]}}].
 
 initial_state() -> cheese_day.
 
@@ -179,15 +195,15 @@ next_state_data(Today, _, S, _, {call,_,hungry,[]}) ->
 next_state_data(_, _, S, _, {call,_,_,_}) ->
     S.
 
-precondition(Today, _, S, {call,_,hungry,[]}) ->
-    case Today of
-	cheese_day->
-	    S#storage.cheese > 0;
-	lettuce_day ->
-	    S#storage.lettuce > 0;
-	grapes_day ->
-	    S#storage.grapes > 0
-    end;
+%% precondition(Today, _, S, {call,_,hungry,[]}) ->
+%%     case Today of
+%% 	cheese_day->
+%% 	    S#storage.cheese > 0;
+%% 	lettuce_day ->
+%% 	    S#storage.lettuce > 0;
+%% 	grapes_day ->
+%% 	    S#storage.grapes > 0
+%%     end;
 precondition(Day, Day, _, {call,_,new_day,_}) ->
     false;
 precondition(_, grapes_day, _, {call,_,new_day,[grapes]}) ->
@@ -217,7 +233,7 @@ weight(_, _, {call,_,new_day,_}) -> 1;
 weight(_, _, {call,_,hungry,_}) -> 3;
 weight(_, _, {call,_,buy,_}) -> 3.
 
-prop_never_run_out_of_supplies() ->
+prop_doesnt_run_out_of_supplies() ->
     ?FORALL(Cmds, proper_fsm:commands(?MODULE),
 	    begin
 		start(cheese_day),

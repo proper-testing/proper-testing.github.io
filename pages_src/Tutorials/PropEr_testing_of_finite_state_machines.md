@@ -309,29 +309,33 @@ function.
 PropEr in action
 ----------------
 
-Running the property:
+Let us run the first test on our property. It states that the creature never
+runs out of food in the storage.
 
     :::erl
-    70> proper:quickcheck(food_fsm:prop_never_run_out_of_supplies()).
+    70> proper:quickcheck(food_fsm:prop_doesnt_run_out_of_supplies()).
 
     Error: The transition from "cheese_day" state triggered by
     {food_fsm,new_day,1} call leads to multiple target states.
     Use the precondition/5 callback to specify which target state should be chosen.
     ** exception error: too_many_targets
 
-Why is this exception raised? PropEr allows more than one transitions to be
-triggered by the same symbolic call and lead to different target states.
-As in our case:
+Well, we didn't see that coming. It seems that some part of our specification
+is improper.
+
+PropEr allows more than one transitions to be triggered by the same
+symbolic call and lead to different target states. As in this case:
 
     :::erlang
-    cheese_day(_S) ->
-        [{grapes_day, {call,?MODULE,new_day,[grapes]}},
+    cheese_day(S) ->
+        [{grapes_day,  {call,?MODULE,new_day,[grapes]}},
          {lettuce_day, {call,?MODULE,new_day,[lettuce]}}].
 
-In this case, the precondition callback may return true for at most one of the
-target states. Otherwise, PropEr will not be able to detect which transition was
-chosen and an exception will be raised. We have to specify the following
-preconditions:
+However, the precondition callback may return true for at most one of these
+target states. Otherwise, PropEr will not be able to detect which transition
+was chosen and an exception will be raised. In our case, we have to specify
+the following preconditions to associate each possible argument of `new_day/1`
+with the correct target state. 
 
     :::erlang
     precondition(Day, Day, _, {call,_,new_day,_}) ->
@@ -347,32 +351,78 @@ preconditions:
     precondition(_, _, _, {call,_,_,_}) ->
         true.
 
-Running the property now:
+We run the test once more:
 
     :::erl
-    66> proper:quickcheck(food_fsm:prop_never_run_out_of_supplies()).
-    ...........!
-    Failed: After 9 test(s).
-    [{set,{var,1},{call,food_fsm,hungry,[]}},
+    6> proper:quickcheck(food_fsm:prop_doesnt_run_out_of_supplies()).
+    ............................!
+    Failed: After 29 test(s).
+    [{set,{var,1},{call,food_fsm,new_day,[grapes]}},
      {set,{var,2},{call,food_fsm,hungry,[]}},
-     {set,{var,3},{call,food_fsm,new_day,[grapes]}},
-     {set,{var,4},{call,food_fsm,new_day,[lettuce]}},
-     {set,{var,5},{call,food_fsm,buy,[lettuce,1]}}]
-    History: [{{cheese_day,{storage,1,1,1}},{cheese_left,1}},
-              {{cheese_day,{storage,0,1,1}},{cheese_left,0}}]
-    State: {cheese_day,{storage,-1,1,1}}
+     {set,{var,3},{call,food_fsm,hungry,[]}},
+     {set,{var,4},{call,food_fsm,hungry,[]}},
+     {set,{var,5},{call,food_fsm,hungry,[]}},
+     {set,{var,6},{call,food_fsm,hungry,[]}},
+     {set,{var,7},{call,food_fsm,new_day,[lettuce]}},
+     {set,{var,8},{call,food_fsm,hungry,[]}},
+     {set,{var,9},{call,food_fsm,hungry,[]}},
+     {set,{var,10},{call,food_fsm,buy,[lettuce,4]}},
+     {set,{var,11},{call,food_fsm,hungry,[]}},
+     {set,{var,12},{call,food_fsm,hungry,[]}},
+     {set,{var,13},{call,food_fsm,hungry,[]}}]
+    History: [{{cheese_day,{storage,3,3,3}},ok},{{grapes_day,{storage,3,3,3}},{grapes_left,3}},
+              {{grapes_day,{storage,3,3,2}},{grapes_left,2}},{{grapes_day,{storage,3,3,1}},{grapes_left,1}},
+              {{grapes_day,{storage,3,3,0}},{grapes_left,0}}]
+    State: {grapes_day,{storage,3,3,-1}}
     Result: {postcondition,false}
 
-    Shrinking ..(2 time(s))
-    [{set,{var,1},{call,food_fsm,hungry,[]}},
-     {set,{var,2},{call,food_fsm,hungry,[]}}]
-    History: [{{cheese_day,{storage,1,1,1}},{cheese_left,1}},
-              {{cheese_day,{storage,0,1,1}},{cheese_left,0}}]
-    State: {cheese_day,{storage,-1,1,1}}
+    Shrinking ....(4 time(s))
+    [{set,{var,2},{call,food_fsm,hungry,[]}},
+     {set,{var,4},{call,food_fsm,hungry,[]}},
+     {set,{var,5},{call,food_fsm,hungry,[]}},
+     {set,{var,6},{call,food_fsm,hungry,[]}}]
+    History: [{{cheese_day,{storage,3,3,3}},{cheese_left,3}},
+              {{cheese_day,{storage,2,3,3}},{cheese_left,2}},
+              {{cheese_day,{storage,1,3,3}},{cheese_left,1}},
+              {{cheese_day,{storage,0,3,3}},{cheese_left,0}}]
+    State: {cheese_day,{storage,-1,3,3}}
     Result: {postcondition,false}
     false
 
-Therefore, the creature does run out of supplies. Assuming it takes care of
+In case of non-stop eating, the creature eventually runs out of food.
+What is more, as we can see from the `State` variable, the quantity of
+available food starts taking negative values. We will correct our code
+to prevent this from happening.
+
+    :::erlang
+    cheese_day(eat, Caller, #storage{cheese = Cheese} = S) ->
+        gen_fsm:reply(Caller, {cheese_left, Cheese}),
+        case Cheese > 0 of
+            true ->
+                {next_state, cheese_day, S#storage{cheese = Cheese - 1}};
+            false ->
+                {next_state, cheese_day, S}
+        end.
+    
+    lettuce_day(eat, Caller, #storage{lettuce = Lettuce} = S) ->
+        gen_fsm:reply(Caller, {lettuce_left, Lettuce}),
+        case Lettuce > 0 of
+            true ->
+                {next_state, lettuce_day, S#storage{lettuce = Lettuce - 1}};
+            false ->
+                {next_state, lettuce_day, S}
+        end.
+
+    grapes_day(eat, Caller, #storage{grapes = Grapes} = S) ->
+        gen_fsm:reply(Caller, {grapes_left, Grapes}),
+    	case Grapes > 0 of
+            true ->
+                {next_state, grapes_day, S#storage{grapes = Grapes - 1}};
+            false ->
+                {next_state, grapes_day, S}
+        end.
+
+Let us now assume that the creature is clever enough it takes care of
 that. This can be modeled by moving this condition as a precondition.
     
     :::erlang
