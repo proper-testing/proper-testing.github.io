@@ -262,7 +262,7 @@ generation, but in this way we would be copying and not actually testing how
 passwords are created.
 
 We can take a different approach: since passwords are available to the
-users as the result of creating a new account (i.e. `create_count/1` calls),
+users as the result of creating a new account (i.e. `create_acount/1` calls),
 they should be treated and tested exactly as such. In order to achieve this, we
 will use the state of the abstract state machine. This is defined as follows:
 
@@ -281,7 +281,7 @@ tests. The choice depends on what we are interested in testing.)
 Being interested only in valid passwords, we define:
 
     :::erlang
-    password(#model_state{users = Passwords}) ->
+    password(#state{users = Passwords}) ->
         elements(Passwords).
 
 
@@ -311,8 +311,8 @@ The model state is initialized via the callback function `initial_state/0`.
 
     :::erlang    
     initial_state() ->
-        #model_state{users  = [],
-                     rented = []}.
+        #state{users  = [],
+               rented = []}.
 
 
 Since each command might change the state, we need a way to keep track of these
