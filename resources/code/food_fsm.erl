@@ -6,7 +6,7 @@
 
 -export([start/1, stop/0, hungry/0, buy/2, new_day/1]).
 
--export([init/1, handle_sync_event/4, terminate/3, code_change/3]).
+-export([init/1, handle_sync_event/4, terminate/3, code_change/4]).
 -export([cheese_day/2, lettuce_day/2, grapes_day/2]).
 -export([cheese_day/3, lettuce_day/3, grapes_day/3]).
 
@@ -17,15 +17,16 @@
 -type day() :: 'cheese_day' | 'lettuce_day' | 'grapes_day'.
 -type quantity() :: non_neg_integer().
 
--record(storage, {cheese  = 1 :: quantity(),
-		  lettuce = 1 :: quantity(),
-		  grapes  = 1 :: quantity()}).
+-record(storage, {cheese  = 5 :: quantity(),
+		  lettuce = 5 :: quantity(),
+		  grapes  = 5 :: quantity()}).
 
 
 %%%===========================================================================
 %%% API
 %%%===========================================================================
 
+-spec start(day()) -> {'ok', pid()} | {'error', {'already_started', pid()}}.
 start(Day) ->
     gen_fsm:start({local, creature}, ?MODULE, [Day], []).
 
@@ -118,8 +119,8 @@ grapes_day({new_day, lettuce}, S) ->
 terminate(_, _, _) ->
     ok.
 
-code_change(_OldVsn, State, _Extra) ->
-    {ok, State}.
+code_change(_OldVsn, StateName, StateData, _Extra) ->
+    {ok, StateName, StateData}.
 
 
 %%%===========================================================================
