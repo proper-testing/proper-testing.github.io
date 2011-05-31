@@ -175,12 +175,15 @@ out of food in the storage.
                     start(cheese_day), %% could also be grapes_day or lettuce_day,
                                        %% but the same kind of day should be used
                                        %% to initialize the model state
-                    {H,S,Res} = proper_fsm:run_commands(?MODULE, Cmds),
+                    {History, State, Result} =
+                        proper_fsm:run_commands(?MODULE, Cmds),
                     stop(),
                     ?WHENFAIL(
-                        io:format("H: ~w\nS: ~w\nR: ~w\n", [H,S,Res]),
-                                  Res =:= ok)
+                       io:format("History: ~w\nState: ~w\nResult: ~w\n",
+                                 [History, State, Result]),
+                       Result =:= ok)
                 end).
+
 
 Defining the PropEr finite state machine
 ----------------------------------------
@@ -203,9 +206,9 @@ represents and takes the _state data_ as argument.
 The state is initialized via the `initial_state/0` and `initial_state_data/0`
 callbacks. The former specifies the initial state of the finite state machine,
 while the latter specifies what the state data should initially contain.
-Let us start on a `cheese_day` with `5` portions of each kind of food available
-in the storage, since the initial state of our model should coincide with the
-initial state of the system under test.
+Let us start on a `cheese_day` with the default portions of each kind of food
+available in the storage, since the initial state of our model should coincide
+with the initial state of the system under test.
 
     :::erlang
     initial_state() -> cheese_day.
