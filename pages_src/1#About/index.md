@@ -22,4 +22,9 @@ onMouseOver="document.getElementById('photo').src='/images/devs-manolis.jpg';"
 onMouseOut="document.getElementById('photo').src='/images/devs.jpg';" />
 </map>
 
+For a humourous summary of the developers' bios see
+[this issue of PhD Comics][1].
+
+[1]: http://www.phdcomics.com/comics/archive.php?comicid=748
+
 <!-- kate: replace-tabs-save on; replace-tabs on; tab-width 8; -->

@@ -128,6 +128,7 @@ Help/Support
 *   links to (preferably locally saved) talks and papers (+bibliography info)
 *   separate "Talks" tab (not only academic talks, but also presentations,
     podcasts etc.)
+*   humorous version of presentation with "times said 'proper'" counter
 *   EDoc pages color theme that resembles the main page
 
 
