@@ -5,6 +5,11 @@ body{
     font-family: sans-serif;
 }
 
+.caption {
+    font-size: small;
+    text-align: center;
+}
+
 #header, #nav, #content, #footer{
     background-color: white;
     margin-top: 0px;

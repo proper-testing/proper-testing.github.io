@@ -23,7 +23,11 @@ A finite state machine example
 
 Consider the following state diagram that describes the life of a strange
 creature that feeds on cheese, grapes and lettuce but never eats the same kind
-of food on two consecutive days. ![](/images/creature.png)
+of food on two consecutive days.
+
+![State Diagram of creature's behaviour](
+    /images/creature.png "Creature's behaviour"
+)
 
 As we can see from the state diagram, days are categorized into `cheese_days`,
 `lettuce_days` and `grapes_days`. On a `cheese_day` the creature eats only
@@ -53,7 +57,7 @@ Let us now describe the API of the finite state machine:
     which it will be started.
 
         :::erlang
-        -type day() :: 'cheese_day' | 'lettuce_day' | 'grapes_day'. 
+        -type day() :: 'cheese_day' | 'lettuce_day' | 'grapes_day'.
 
         -spec start(day()) -> {'ok', pid()} | {'error', {'already_started', pid()}}.
         start(Day) ->
@@ -145,7 +149,7 @@ Let us now describe the API of the finite state machine:
         cheese_day({new_day, grapes}, S) ->
             {next_state, grapes_day, S}.
 
-        lettuce_day({new_day, cheese}, S) -> 
+        lettuce_day({new_day, cheese}, S) ->
             {next_state, cheese_day, S};
         lettuce_day({new_day, grapes}, S) ->
             {next_state, grapes_day, S}.
@@ -307,7 +311,7 @@ function.
             cheese ->
                 S#state{cheese = S#state.cheese + Quantity};
             lettuce ->
-                S#state{lettuce = S#state.lettuce + Quantity};    
+                S#state{lettuce = S#state.lettuce + Quantity};
             grapes ->
                 S#state{grapes = S#state.grapes + Quantity}
         end;
@@ -316,10 +320,10 @@ function.
             cheese_day->
                 S#state{cheese = S#state.cheese - 1};
             lettuce_day ->
-                S#state{lettuce = S#state.lettuce - 1};    
+                S#state{lettuce = S#state.lettuce - 1};
             grapes_day ->
                 S#state{grapes = S#state.grapes - 1}
-        end; 
+        end;
     next_state_data(_From, _Target, StateData, _Result, {call,_,_,_}) ->
         StateData.
 
@@ -352,7 +356,7 @@ However, the precondition callback may return true for at most one of these
 target states. Otherwise, PropEr will not be able to detect which transition
 was chosen and an exception will be raised. In our case, we have to specify
 the following preconditions to associate each possible argument of `new_day/1`
-with the correct target state. 
+with the correct target state.
 
     :::erlang
     precondition(Day, Day, _, {call,_,new_day,_}) ->
@@ -400,7 +404,7 @@ failing attempts to produce a positive integer less than five.
 And again we run the test:
 
     :::erl
-    10> proper:quickcheck(food_fsm:prop_doesnt_run_out_of_supplies()).     
+    10> proper:quickcheck(food_fsm:prop_doesnt_run_out_of_supplies()).
     .........................................................................
     ...........................
     OK: Passed 100 test(s).
@@ -431,7 +435,7 @@ The property is now instrumented to collect statistics about how often
 each transition was tested. Let's try it:
 
     :::erl
-    12> proper:quickcheck(food_fsm:prop_doesnt_run_out_of_supplies()).     
+    12> proper:quickcheck(food_fsm:prop_doesnt_run_out_of_supplies()).
     .........................................................................
     ...........................
     OK: Passed 100 test(s).
@@ -453,7 +457,7 @@ trusted. We can instruct PropEr to choose `hungry/0` calls more often by
 assigning weights to transitions. The optional callback `weight/3` serves
 exactly this purpose.
 
-`weight(From, Target, Call)` assigns an integer weight to transitions from 
+`weight(From, Target, Call)` assigns an integer weight to transitions from
 `From` state to `Target` state triggered by `Call`. Each transition is now
 chosen with probability proportional to the weight assigned.
 
@@ -524,7 +528,7 @@ code to prevent this from happening.
             false ->
                 {next_state, cheese_day, S}
         end.
-    
+
     lettuce_day(eat, Caller, #storage{lettuce = Lettuce} = S) ->
         gen_fsm:reply(Caller, {lettuce_left, Lettuce}),
         case Lettuce > 0 of
@@ -546,14 +550,14 @@ code to prevent this from happening.
 Let us now assume that the creature is wise enough to take care of
 buying food before it gets hungry. This can be modeled by adding the
 following precondition.
-    
+
     :::erlang
     precondition(Today, _, S, {call,_,hungry,[]}) ->
         case Today of
             cheese_day->
                 S#storage.cheese > 0;
             lettuce_day ->
-                S#storage.lettuce > 0;    
+                S#storage.lettuce > 0;
             grapes_day ->
                 S#storage.grapes > 0
         end;
@@ -580,7 +584,7 @@ this is not the case. Nevertheless, we can instruct PropEr to choose an
         store_transition() ++ eat_transition(S#storage.lettuce) ++
             [{lettuce_day, {call,?MODULE,new_day,[lettuce]}},
              {cheese_day, {call,?MODULE,new_day,[cheese]}}].
-    
+
     eat_transition(Food_left) ->
         [{history, {call,?MODULE,hungry,[]}} || Food_left > 0].
 

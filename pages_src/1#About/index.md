@@ -1,7 +1,7 @@
 Summary: Information about PropEr and its developers
 
-Meet the developers!
---------------------
+Meet the PropEr developers!
+---------------------------
 
 <img id="photo"
 alt="Photograph of PropEr's developers" title="PropEr's developers"
@@ -22,9 +22,8 @@ onMouseOver="document.getElementById('photo').src='/images/devs-manolis.jpg';"
 onMouseOut="document.getElementById('photo').src='/images/devs.jpg';" />
 </map>
 
-<center><font size=-1>For a humourous summary of the developers' bios see
-[this issue of PhD Comics][1].</font></center>
-
-[1]: http://www.phdcomics.com/comics/archive.php?comicid=748
+<p class="caption">For a humourous summary of the developers' bios see
+<a href="http://www.phdcomics.com/comics/archive.php?comicid=748">this issue of
+PhD Comics</a>.</p>
 
 <!-- kate: replace-tabs-save on; replace-tabs on; tab-width 8; -->
