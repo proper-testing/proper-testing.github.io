@@ -292,9 +292,13 @@ the callbacks in `proper_fsm` take into account the origin of a transition
 (_From state_), the target of a transition (_Target state_) and the
 _state data_.
 
+Initially, let's not have any preconditions.
+
     :::erlang
     precondition(_From, _Target, _StateData, {call,_,_,_}) ->
         true.
+
+However, postconditions are needed.
 
     :::erlang
     postcondition(cheese_day, _, S, {call,_,hungry,[]}, Result) ->
@@ -386,8 +390,7 @@ We run the test one more time:
     :::erl
     8> proper:quickcheck(food_fsm:prop_doesnt_run_out_of_supplies()).
     .................................................
-    Error: Couldn't produce an instance that satisfies all strict constraints after
-    50 tries.
+    Error: Couldn't produce an instance that satisfies all strict constraints after 50 tries.
     {error,cant_generate}
 
 Ooops! Now we have triggered another kind of error.
