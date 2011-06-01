@@ -1,4 +1,4 @@
-Summary: More information about PropEr
+Summary: Information about PropEr and its developers
 
 Meet the developers!
 --------------------
