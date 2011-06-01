@@ -258,14 +258,23 @@ this is specified by having `history` as the target state.
     store_transition() ->
         [{history, {call,?MODULE,buy,[food(), quantity()]}}].
 
+    eat_transition() ->
+        [{history, {call,?MODULE,hungry,[]}}].
+
+We also need to define the generators `food()` and `quantity()`.
+A possible definition of them is given below:
+
+    :::erlang
     food() ->
         oneof([cheese, lettuce, grapes]).
 
     quantity() ->
         ?SUCHTHAT(I, pos_integer(), I < 5).
 
-    eat_transition() ->
-        [{history, {call,?MODULE,hungry,[]}}].
+Note that we could have defined `quantity()` more simply as `range(1,4)`.
+Actually, this would have been a better choice here but, just so as to
+show how to deal with some possible error situations, let us stick to
+this definition for the rest of this tutorial.
 
 At command generation time, the callback function corresponding to the current
 state of the finite state machine will be called to return the list of
