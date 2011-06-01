@@ -330,7 +330,7 @@ function.
         end;
     next_state_data(Today, _, S, _, {call,_,hungry,[]}) ->
         case Today of
-            cheese_day->
+            cheese_day ->
                 S#state{cheese = S#state.cheese - 1};
             lettuce_day ->
                 S#state{lettuce = S#state.lettuce - 1};
@@ -566,7 +566,7 @@ following precondition.
     :::erlang
     precondition(Today, _, S, {call,_,hungry,[]}) ->
         case Today of
-            cheese_day->
+            cheese_day ->
                 S#storage.cheese > 0;
             lettuce_day ->
                 S#storage.lettuce > 0;

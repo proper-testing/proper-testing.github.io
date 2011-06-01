@@ -209,7 +209,7 @@ next_state_data(_From, _Target, StateData, _Result, {call,_,_,_}) ->
 
 precondition(Today, _, S, {call,_,hungry,[]}) ->
     case Today of
-	cheese_day->
+	cheese_day ->
 	    S#storage.cheese > 0;
 	lettuce_day ->
 	    S#storage.lettuce > 0;
