@@ -49,6 +49,9 @@ Editing the site
     version of EDoc.
 *   Other resources (images, style sheets, pdfs etc.) can be found in the
     'resources' directory.
+*   To specify the width and/or height of included images, import them using
+    the HTML tag directly:
+        <img src="..." alt="..." title="..." width="..." height="..." />
 
 [1]: http://daringfireball.net/projects/markdown/
 [2]: http://www.freewisdom.org/projects/python-markdown/Available_Extensions
@@ -84,7 +87,8 @@ Header
 
 *   icon and (fancy) "PropEr" logo that link to the main page
 *   Erlang icon must be lower (and bigger)
-*   shirt icon: "PropEr" on the shirt tag, size = "42"
+*   shirt icon: "PropEr" on the shirt tag, size = "42", Erlang logo smaller and
+    a little lower, watch the perspective
 *   more modern (and austere) font for logo (e.g. SansSerif)
 *   Horizontal navigation bar (have extra "Home" link?)
 *   Second level of structure, for the current sub-directory
@@ -121,7 +125,9 @@ Help/Support
     open-source projects, ...)
 *   re2 extended demo (full process of specification, re vs re2, generators from
     regexps, generators or even native types as string,regexp,options)
-*   links to (preferably locally saved) talks and papers
+*   links to (preferably locally saved) talks and papers (+bibliography info)
+*   separate "Talks" tab (not only academic talks, but also presentations,
+    podcasts etc.)
 *   EDoc pages color theme that resembles the main page
 
 
@@ -186,5 +192,6 @@ Infrastructure
 *   make the width 900px?
 *   fully justified text?
 *   group on rsync is wrong?
+*   fixes on CSS to allow for floating images
 
 <!-- kate: replace-tabs-save on; replace-tabs on; tab-width 8; -->
