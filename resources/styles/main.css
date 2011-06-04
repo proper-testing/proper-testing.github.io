@@ -89,7 +89,6 @@ body{
 }
 
 #footer{
-    border-top: 1px solid black;
     font-size: x-small;
     background-color: red;
     background-image: url('/images/gradient.jpg');

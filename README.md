@@ -194,5 +194,8 @@ Infrastructure
 *   fully justified text?
 *   group on rsync is wrong?
 *   fixes on CSS to allow for floating images
+*   favicon = resized PropEr logo / new logo
+*   titles on all pages should contain "PropEr"
+*   more/fewer categories
 
 <!-- kate: replace-tabs-save on; replace-tabs on; tab-width 8; -->
