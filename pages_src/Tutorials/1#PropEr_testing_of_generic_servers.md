@@ -1,5 +1,6 @@
 Summary: a PropEr statem tutorial
 Author: Eirini Arvaniti and Kostis Sagonas
+kate: replace-tabs-save on; replace-tabs on; tab-width 8;
 
 Testing purely functional code is usually not enough for industrial Erlang
 applications like telecom software or http servers. In this tutorial, we will
@@ -887,5 +888,3 @@ The resulting distribution is:
     17% {movie_server,create_account,1}
      8% {movie_server,delete_account,1}
     true
-
-<!-- kate: replace-tabs-save on; replace-tabs on; tab-width 8; -->

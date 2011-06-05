@@ -1,5 +1,6 @@
 Summary: a PropEr fsm tutorial
 Author: Eirini Arvaniti and Kostis Sagonas
+kate: replace-tabs-save on; replace-tabs on; tab-width 8;
 
 In this tutorial we will use PropEr to test a finite state machine
 specification. The testcases produced using the PropEr fsm library
@@ -618,5 +619,3 @@ The property now successfully passes 1000 tests.
      7% {lettuce_day,{food_fsm,buy,2}}
      7% {grapes_day,{food_fsm,buy,2}}
     true
-
-<!-- kate: replace-tabs-save on; replace-tabs on; tab-width 8; -->

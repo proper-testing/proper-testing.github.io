@@ -1,4 +1,5 @@
 Summary: Information on Kostis Sagonas
+kate: replace-tabs-save on; replace-tabs on; tab-width 8;
 
 ![Photograph of Kostis Sagonas](/images/kostis.jpg "Kostis Sagonas")
 
@@ -21,5 +22,3 @@ he has designed and implemented many software development tools for Erlang
  [Tidier](http://tidier.softlab.ntua.gr),
  [PropEr](http://proper.softlab.ntua.gr), ...)
 and has contributed bug fixes to many open-source Erlang projects.
-
-<!-- kate: replace-tabs-save on; replace-tabs on; tab-width 8; -->

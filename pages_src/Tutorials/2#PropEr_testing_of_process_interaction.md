@@ -1,5 +1,6 @@
 Summary: yet another PropEr statem tutorial
 Author: Eirini Arvaniti and Kostis Sagonas
+kate: replace-tabs-save on; replace-tabs on; tab-width 8;
 
 In this tutorial, we will use PropEr to test a group of interacting processes.
 The system under test consists of one master and multiple slave processes. The
@@ -459,5 +460,3 @@ And now the property successfully passes the tests:
     16% {ping_pong,play_tennis,1}
     16% {ping_pong,get_score,1}
     true
-
-<!-- kate: replace-tabs-save on; replace-tabs on; tab-width 8; -->
