@@ -12,9 +12,13 @@ that nowadays is part of [Erlang/OTP](http://www.erlang.org). Together with
 his students, first at Uppsala University in Sweden and more recently
 at the National Technical University of Athens in Greece,
 he has proposed various changes and additions to the Erlang language (most
-notably, bit-level pattern matching and bit-stream comprehensions, and the
-language of type and spec declarations), and has contributed to its compiler
-and runtime system.
+notably,
+[algorithms for binary pattern matching](http://user.it.uu.se/~kostis/Papers/JFP_06.pdf),
+the extension for [bit-level pattern matching and bit-stream
+ comprehensions](http://user.it.uu.se/~kostis/Papers/binary_comprehensions.pdf), and
+the language of [type and spec declarations](http://user.it.uu.se/~kostis/Papers/contracts.pdf)),
+and has contributed to its compiler and
+[runtime system](http://user.it.uu.se/~kostis/Papers/scp_mm.pdf).
 Besides [HiPE](http://www.erlang.org/doc/apps/hipe/index.html),
 he has designed and implemented many software development tools for Erlang
 ([Dialyzer](http://dialyzer.softlab.ntua.gr),
