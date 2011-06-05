@@ -1,4 +1,5 @@
 Summary: a PropEr statem tutorial
+Author: Eirini Arvaniti and Kostis Sagonas
 
 Testing purely functional code is usually not enough for industrial Erlang
 applications like telecom software or http servers. In this tutorial, we will
@@ -21,11 +22,11 @@ Nevertheless, for the most part of this tutorial we only need to understand
 the server's API. We describe it below:
 
 *   _Create a new account_
-  
+
     We just say our name (e.g., 'Bond', 'James Bond'), and a new account is
     created for us. The server will return us a password for the new account.
     This password can be used for all future requests.
-    
+
         :::erlang
         -spec create_account(name()) -> password().
         create_account(Name) ->
@@ -33,7 +34,7 @@ the server's API. We describe it below:
 
 
 *   _Delete an account_
-  
+
     We can delete an account by giving its password. If the password doesn't
     correspond to a registered user, the server will reply `not_a_client`.
     Beware that if we still have some rented movies at home, the server won't
@@ -48,7 +49,7 @@ the server's API. We describe it below:
 
 
 *   _Rent a dvd_
-  
+
      When we ask for a movie, the server will check if there is a copy
      available at the moment and return the list of movies that we have
      currently rented. (It's a polite way of reminding us that we should
@@ -76,9 +77,9 @@ the server's API. We describe it below:
 
 
 *   _And some pop-corn, please_
-  
+
     Everybody can buy pop-corn at the dvd-club.
-    
+
         :::erlang
         -spec ask_for_popcorn() -> 'bon_appetit'.
         ask_for_popcorn() ->
@@ -178,7 +179,7 @@ for testing a generic server with PropEr:
     :::erlang
     prop_server_works_fine() ->
         ?FORALL(Cmds, commands(?MODULE),
-                begin 
+                begin
                     ?SERVER:start_link(),
                     {_,_,Result} = run_commands(?MODULE, Cmds),
                     ?SERVER:stop(),
@@ -299,7 +300,7 @@ but in a rather unusual way:
               [{call, ?SERVER, rent_dvd, [password(S), movie()]} || Users] ++
               [{call, ?SERVER, return_dvd, [password(S), movie()]} || Users]).
 
-   
+
 So, that's it! Our command generator is ready. In the next section we will talk
 in more detail about the model state, which was so useful for password
 generation.
@@ -309,7 +310,7 @@ generation.
 
 The model state is initialized via the callback function `initial_state/0`.
 
-    :::erlang    
+    :::erlang
     initial_state() ->
         #state{users  = [],
                rented = []}.
@@ -338,7 +339,7 @@ raise an exception. Instead, `next_state/3` should return:
 
     :::erlang
     S#state{users = [{call,erlang,hd,[V]}|S#state.users]}
-  
+
 The state transitions for the other calls are less tricky to define. Since the
 password generator that we use produces only valid passwords, we expect the
 server to respond to all requests and not ignore them with a `not_a_client`
@@ -357,7 +358,7 @@ there is an available copy, the server should allocate it to the user who asked
 for it and mark it as rented. If there are no copies of that movie available
 at that moment, the state shouldn't change. The function `is_available/2`
 checks the availability of a movie based on the current model state and on the
-list of initially available movies `?AVAILABLE_MOVIES`. 
+list of initially available movies `?AVAILABLE_MOVIES`.
 
     :::erlang
     next_state(S, _V, {call,_,rent_dvd,[Password,Movie]}) ->
@@ -371,8 +372,8 @@ list of initially available movies `?AVAILABLE_MOVIES`.
 
 In a similar way, when a user returns a movie, the server should delete it from
 the user's account and mark it as available again.
-        
-    :::erlang       
+
+    :::erlang
     next_state(S, _V, {call, _, return_dvd, [Password,Movie]}) ->
         S#state{rented = lists:delete({Password,Movie}, S#state.rented)};
 
@@ -410,7 +411,7 @@ When creating an account, a _new_ password is always returned.
 
 
 Since our testcases include only valid passwords, deleting an account
-always succeeds. 
+always succeeds.
 
     :::erlang
     postcondition(_S, {call,_,delete_account,[_Password]}, Result) ->
@@ -419,7 +420,7 @@ always succeeds.
 
 When someone asks for a movie, then if it's available it's added to her list,
 otherwise not.
-         
+
     :::erlang
     postcondition(S, {call,_,rent_dvd,[_Password,Movie]}, Result) ->
         case is_available(Movie, S) of
@@ -454,10 +455,10 @@ property:
     2> proper:quickcheck(movie_statem:prop_server_works_fine()).
     ....
     =ERROR REPORT==== 29-May-2011::22:28:16 ===
-    ** Generic server movie_server terminating 
+    ** Generic server movie_server terminating
     ** Last message in was {return,1,inception}
     ** When Server state == {state,53265,49168,2}
-    ** Reason for termination == 
+    ** Reason for termination ==
     ** {badarg,[{ets,lookup_element,[49168,inception,2]},
                 {movie_server,handle_call,3},
                 {gen_server,handle_msg,5},
@@ -551,7 +552,7 @@ And run the property once more:
      {set,{var,5},{call,movie_server,rent_dvd,[{var,1},peter_pan]}},
      {set,{var,6},{call,movie_server,rent_dvd,[{var,1},titanic]}},
      {set,{var,7},{call,movie_server,ask_for_popcorn,[]}},
-     {set,{var,8},{call,movie_server,delete_account,[{var,1}]}}] 
+     {set,{var,8},{call,movie_server,delete_account,[{var,1}]}}]
 
     Shrinking ....(4 time(s))
     [{set,{var,1},{call,movie_server,create_account,[mary]}},
@@ -563,7 +564,7 @@ contains three commands. Although we might suspect the cause of failure,
 we would like to be more certain about it. Thus, we decide to add debugging
 information to our property, using the `?WHENFAIL` macro. The second
 argument of `?WHENFAIL` should be a boolean clause. In case it evaluates to
-false, the `Action` specified as the first argument will be executed. 
+false, the `Action` specified as the first argument will be executed.
 
     :::erlang
     prop_server_works_fine() ->
@@ -820,7 +821,7 @@ Let us rewrite:
 
 and check that the counterexample now passes the test:
 
-    :::erl 
+    :::erl
     41> proper:check(movie_server:prop_server_works_fine(), proper:counterexample()).
     OK: The input passed the test.
     true
@@ -860,7 +861,7 @@ If we run the test now:
 We can easily notice that `return_dvd/2` calls are rarely tested. This happens
 because of the precondition that allows us to only return movies we have
 previously rented. To remedy the situation, we will modify the command
-generator so that `return_dvd/2` calls can be selected more frequently. 
+generator so that `return_dvd/2` calls can be selected more frequently.
 
     :::erlang
     command(S) ->

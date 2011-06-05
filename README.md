@@ -35,11 +35,14 @@ Editing the site
 *   Every directory must contain an 'index.md' file. The contents of that file
     will be automatically appended with a list of the pages and sub-directories
     inside that directory.
-*   The meta-information on the top of source files is used to construct the
-    link lists inside index files. The description of each page in that list
-    will be the value of its 'Summary' attribute. The description of each
-    sub-directory will be the value of the 'Summary' attribute of that
-    directory's index page.
+*   The lines at the top of source files are meta-information:
+    'Summary' (mandatory)
+    :   used to construct the link lists inside index files (the description of
+        a page will be the value of its 'Summary' attribute, the description of
+        a sub-directory will be the value of the 'Summary' attribute of its
+        index page)
+    'Author' (optional)
+    :   if present, author information will be added under the page's header
 *   The lines:
         <!-- kate: replace-tabs-save on; replace-tabs on; tab-width 8; -->
         (the corresponding line for Emacs)

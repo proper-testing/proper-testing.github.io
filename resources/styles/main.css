@@ -5,9 +5,14 @@ body{
     font-family: sans-serif;
 }
 
-.caption {
+p.caption {
     font-size: small;
     text-align: center;
+}
+
+p.author_info {
+    font-size: large;
+    font-style: italic;
 }
 
 #header, #nav, #content, #footer{

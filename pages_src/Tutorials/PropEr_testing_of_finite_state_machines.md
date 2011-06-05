@@ -1,4 +1,5 @@
 Summary: a PropEr fsm tutorial
+Author: Eirini Arvaniti and Kostis Sagonas
 
 In this tutorial we will use PropEr to test a finite state machine
 specification. The testcases produced using the PropEr fsm library

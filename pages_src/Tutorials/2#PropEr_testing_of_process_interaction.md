@@ -1,4 +1,5 @@
 Summary: yet another PropEr statem tutorial
+Author: Eirini Arvaniti and Kostis Sagonas
 
 In this tutorial, we will use PropEr to test a group of interacting processes.
 The system under test consists of one master and multiple slave processes. The
@@ -28,7 +29,7 @@ External clients can make the following requests:
 *   stop the ping-pong master
 
         :::erlang
-        stop() -> 
+        stop() ->
             gen_server:cast(?MASTER, stop).
 
         handle_cast(stop, Dict) ->
@@ -194,7 +195,7 @@ system. As usual, it specifies:
 
         name(S) -> elements(S#state.players).
 
- 
+
 *   _State updates_:
 
         :::erlang
@@ -211,7 +212,7 @@ system. As usual, it specifies:
                     scores  = dict:erase(Name, S#state.scores)};
         next_state(S = #state{scores = Sc}, _V, {call,_,play_ping_pong,[Name]}) ->
             S#state{scores = dict:update_counter(Name, 1, Sc)};
-        next_state(S, _, _) ->    
+        next_state(S, _, _) ->
             S.
 
 

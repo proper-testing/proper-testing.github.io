@@ -31,8 +31,8 @@ def build(fs_path, title, extra, template):
         index_extra = add_content(extras[0], link_list)
         return build(fs_paths[0], title, index_extra, template)
     else:
-        (summary, content) = parse_file(fs_path)
-        write_html(fs_path, title, content, extra, template)
+        (summary, author, content) = parse_file(fs_path)
+        write_html(fs_path, title, author, content, extra, template)
         return summary
 
 #===============================================================================
@@ -124,12 +124,17 @@ def parse_file(fs_path):
     md = markdown.Markdown(extensions = ['extra','meta','codehilite','toc'])
     content = md.convert(text)
     summary = ' '.join(md.Meta['summary'])
-    return (summary, content)
+    author = ' '.join(md.Meta.get('author', ['']))
+    return (summary, author, content)
 
-def write_html(fs_path, title, content, extra, template):
+def write_html(fs_path, title, author, content, extra, template):
     out_fs_path = switch_base_dir(fs_path)
+    if author <> '':
+        author = '<p class="author_info">by ' + author + '</p>'
     html = template.replace(
                '#TITLE#', title
+           ).replace(
+               '#AUTHOR_INFO#', author
            ).replace(
                '#PRI_NAVBAR#', extra['pri_navbar']
            ).replace(
