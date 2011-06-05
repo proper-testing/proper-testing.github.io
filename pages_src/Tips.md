@@ -3,17 +3,17 @@ Summary: Tips on how to use PropEr effectively
 Tips on testing stateful code
 ------------------------------
 
-* When writing properties for stateful systems, we should not forget to include
+* When writing properties for stateful systems, one should not forget to include
   some clean-up code that will be executed after a command sequence is run.
   This is important because side-effects from previous tests may cause
   subsequent tests to behave non-deterministically.
 
-* When specifying a model for the system under test, we should not forget to
-  validate it. That is, think about what is actually tested in our properties
+* When specifying a model for the system under test, one should not forget to
+  validate it. That is, think about what is actually tested in your properties
   and also how often each operation is tested. One suggestion is to use the
   `proper_gen:pick/2` function so as to inspect the content of generated
   testcases for different values of the `size` parameter. When tests start
-  passing, it is  important to collect statistics about testcase distribution
+  passing, it is important to collect statistics about testcase distribution
   using functions such as `proper:aggregate/2`.
 
 * Parallel testing with PropEr is currently not fully automated. The abstract
