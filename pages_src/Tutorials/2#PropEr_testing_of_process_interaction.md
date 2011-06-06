@@ -1,5 +1,5 @@
 Summary: yet another PropEr statem tutorial
-Author: Eirini Arvaniti and Kostis Sagonas
+Author: Eirini Arvaniti &ndash; some additions and fixes by Kostis Sagonas
 kate: replace-tabs-save on; replace-tabs on; tab-width 8;
 
 In this tutorial, we will use PropEr to test a group of interacting processes.
@@ -141,8 +141,8 @@ is the following:
         end.
 
 
-It's ping-pong time
--------------------
+It's ping-pong time!
+--------------------
 
 It's now time to test that the system behaves as expected when the ping-pong
 players interact with the master. To this end, we will specify an abstract
@@ -172,7 +172,7 @@ system. As usual, it specifies:
 *   The _initial state_ of the model:
 
         :::erlang
-        -type name()  :: atom().
+        -type name() :: atom().
 
         -record(state, {players = []         :: [name()],
                         scores  = dict:new() :: dict()}).
@@ -254,15 +254,15 @@ this property to pass the tests:
     prop_ping_pong_works() ->
         ?FORALL(Cmds, commands(?MODULE),
                 ?TRAPEXIT(
-                   begin
-                       ?MASTER:start_link(),
-                       {History,State,Result} = run_commands(?MODULE, Cmds),
-                       ?MASTER:stop(),
-                       ?WHENFAIL(
-                          io:format("History: ~w\nState: ~w\nResult: ~w\n",
-                                    [History, State, Result]),
-                          aggregate(command_names(Cmds), Result =:= ok))
-                   end)).
+                    begin
+                        ?MASTER:start_link(),
+                        {History,State,Result} = run_commands(?MODULE, Cmds),
+                        ?MASTER:stop(),
+                        ?WHENFAIL(
+                            io:format("History: ~w\nState: ~w\nResult: ~w\n",
+                                      [History, State, Result]),
+                            aggregate(command_names(Cmds), Result =:= ok))
+                    end)).
 
 But...
 
