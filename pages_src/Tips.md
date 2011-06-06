@@ -1,4 +1,5 @@
 Summary: Tips on how to use PropEr effectively
+kate: replace-tabs-save on; replace-tabs on; tab-width 8;
 
 Tips on testing stateful code
 ------------------------------
@@ -33,5 +34,3 @@ Tips on testing stateful code
   removing preconditions, we need to catch the exceptions raised from invalid
   operations. Then, in the postconditions, we should check that when executing
   an invalid operation, the expected kind of exception is indeed raised.
-
-<!-- kate: replace-tabs-save on; replace-tabs on; tab-width 8; -->

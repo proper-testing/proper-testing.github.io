@@ -1,4 +1,5 @@
 Summary: Information about PropEr and its developers
+kate: replace-tabs-save on; replace-tabs on; tab-width 8;
 
 Meet the PropEr developers!
 ---------------------------
@@ -25,5 +26,3 @@ onMouseOut="document.getElementById('photo').src='/images/devs.jpg';" />
 <p class="caption">For a humourous summary of the developers' bios see
 <a href="http://www.phdcomics.com/comics/archive.php?comicid=748">this issue of
 PhD Comics</a>.</p>
-
-<!-- kate: replace-tabs-save on; replace-tabs on; tab-width 8; -->

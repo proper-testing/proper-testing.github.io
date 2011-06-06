@@ -43,10 +43,10 @@ Editing the site
         index page)
     'Author' (optional)
     :   if present, author information will be added under the page's header
-*   The lines:
-        <!-- kate: replace-tabs-save on; replace-tabs on; tab-width 8; -->
-        (the corresponding line for Emacs)
-    must be copied to the bottom of each .md file.
+    'kate'
+    :   must have the value:
+        'replace-tabs-save on; replace-tabs on; tab-width 8;'
+        to avoid complications when editing the file in the editor Kate
 *   EDoc-generated documentation must be copied manually to 'resources/doc'
     periodically, by running 'make update_docs' on a system that has a recent
     version of EDoc.
