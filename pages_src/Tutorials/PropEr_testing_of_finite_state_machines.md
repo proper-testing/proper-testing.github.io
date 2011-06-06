@@ -181,13 +181,11 @@ out of food in the storage.
                     start(cheese_day), %% could also be grapes_day or lettuce_day,
                                        %% but the same kind of day should be used
                                        %% to initialize the model state
-                    {History, State, Result} =
-                        proper_fsm:run_commands(?MODULE, Cmds),
+                    {History, State, Result} = proper_fsm:run_commands(?MODULE, Cmds),
                     stop(),
-                    ?WHENFAIL(
-                       io:format("History: ~w\nState: ~w\nResult: ~w\n",
-                                 [History, State, Result]),
-                       Result =:= ok)
+                    ?WHENFAIL(io:format("History: ~w\nState: ~w\nResult: ~w\n",
+                                        [History, State, Result]),
+                              Result =:= ok)
                 end).
 
 
@@ -238,7 +236,7 @@ lettuce and grapes in the food storage.
     :::erlang
     cheese_day(_S) ->
         store_transition() ++ eat_transition() ++
-            [{grapes_day, {call,?MODULE,new_day,[grapes]}},
+            [{grapes_day,  {call,?MODULE,new_day,[grapes]}},
              {lettuce_day, {call,?MODULE,new_day,[lettuce]}}].
 
     lettuce_day(_S) ->
@@ -249,7 +247,7 @@ lettuce and grapes in the food storage.
     grapes_day(_S) ->
         store_transition() ++ eat_transition() ++
             [{lettuce_day, {call,?MODULE,new_day,[lettuce]}},
-             {cheese_day, {call,?MODULE,new_day,[cheese]}}].
+             {cheese_day,  {call,?MODULE,new_day,[cheese]}}].
 
 A `store_transition` is triggered every time the creature buys some food,
 whereas an `eat_transition` is triggered every time it is hungry.
@@ -434,15 +432,13 @@ have a look at the testcase distribution.
                     start(cheese_day), %% could also be grapes_day or lettuce_day,
                                        %% but the same kind of day should be used
                                        %% to initialize the model state
-                    {History, State, Result} =
-                        proper_fsm:run_commands(?MODULE, Cmds),
+                    {History, State, Result} = proper_fsm:run_commands(?MODULE, Cmds),
                     stop(),
-                    ?WHENFAIL(
-                       io:format("History: ~w\nState: ~w\nResult: ~w\n",
-                                 [History, State, Result]),
-                       aggregate(zip(proper_fsm:state_names(History),
-                                     command_names(Cmds)),
-                       Result =:= ok))
+                    ?WHENFAIL(io:format("History: ~w\nState: ~w\nResult: ~w\n",
+                                        [History, State, Result]),
+                              aggregate(zip(proper_fsm:state_names(History),
+                                            command_names(Cmds)),
+                              Result =:= ok))
                 end).
 
 The property is now instrumented to collect statistics about how often
@@ -586,7 +582,7 @@ this is not the case. Nevertheless, we can instruct PropEr to choose an
     :::erlang
     cheese_day(S) ->
         store_transition() ++ eat_transition(S#storage.cheese) ++
-            [{grapes_day, {call,?MODULE,new_day,[grapes]}},
+            [{grapes_day,  {call,?MODULE,new_day,[grapes]}},
              {lettuce_day, {call,?MODULE,new_day,[lettuce]}}].
 
     lettuce_day(S) ->
@@ -597,7 +593,7 @@ this is not the case. Nevertheless, we can instruct PropEr to choose an
     grapes_day(S) ->
         store_transition() ++ eat_transition(S#storage.lettuce) ++
             [{lettuce_day, {call,?MODULE,new_day,[lettuce]}},
-             {cheese_day, {call,?MODULE,new_day,[cheese]}}].
+             {cheese_day,  {call,?MODULE,new_day,[cheese]}}].
 
     eat_transition(Food_left) ->
         [{history, {call,?MODULE,hungry,[]}} || Food_left > 0].

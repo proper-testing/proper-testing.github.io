@@ -375,7 +375,7 @@ In a similar way, when a user returns a movie, the server should delete it from
 the user's account and mark it as available again.
 
     :::erlang
-    next_state(S, _V, {call, _, return_dvd, [Password,Movie]}) ->
+    next_state(S, _V, {call,_,return_dvd,[Password,Movie]}) ->
         S#state{rented = lists:delete({Password,Movie}, S#state.rented)};
 
 
@@ -700,11 +700,11 @@ failure while ensuring that all preconditions still hold. Thus, we add the
 following preconditions:
 
     :::erlang
-    precondition(S, {call, _, return_dvd, [Password,Movie]}) ->
+    precondition(S, {call,_,return_dvd,[Password,Movie]}) ->
         lists:member({Password,Movie}, S#state.rented);
-    precondition(S, {call, _, rent_dvd, [Password,_Movie]}) ->
+    precondition(S, {call,_,rent_dvd,[Password,_Movie]}) ->
         lists:member(Password, S#state.users);
-    precondition(S, {call, _, delete_account, [Password]}) ->
+    precondition(S, {call,_,delete_account,[Password]}) ->
         lists:member(Password, S#state.users);
     precondition(_, _) ->
         true.

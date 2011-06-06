@@ -258,10 +258,9 @@ this property to pass the tests:
                         ?MASTER:start_link(),
                         {History,State,Result} = run_commands(?MODULE, Cmds),
                         ?MASTER:stop(),
-                        ?WHENFAIL(
-                            io:format("History: ~w\nState: ~w\nResult: ~w\n",
-                                      [History, State, Result]),
-                            aggregate(command_names(Cmds), Result =:= ok))
+                        ?WHENFAIL(io:format("History: ~w\nState: ~w\nResult: ~w\n",
+                                            [History, State, Result]),
+                                  aggregate(command_names(Cmds), Result =:= ok))
                     end)).
 
 But...
@@ -338,10 +337,9 @@ output more informative debugging information.
                         ?MASTER:start_link(),
                         {History,State,Result} = run_commands(?MODULE, Cmds),
                         ?MASTER:stop(),
-                        ?WHENFAIL(
-                         io:format("History: ~w\nState: ~w\nRes: ~w\n",
-                                   [pretty_history(History), pretty_state(State), Result]),
-                         aggregate(command_names(Cmds), Result =:= ok))
+                        ?WHENFAIL(io:format("History: ~w\nState: ~w\nRes: ~w\n",
+                                           [pretty_history(History), pretty_state(State), Result]),
+                                  aggregate(command_names(Cmds), Result =:= ok))
                     end)).
 
 And run the test once more:
