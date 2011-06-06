@@ -8,37 +8,65 @@ body {
        	color: #000000;
        	background-color: #ffffff;
 }
+
 h1,h2 {
  	margin-left: -0.2in;
 }
-div.navbar {
-	background-color: #add8e6;
-	padding: 0.2em;
+h2 a {
+    text-decoration:none;
+    color : black;
 }
+
+div.navbar {
+	background-color: #B22222;
+	padding: 0.2em;
+	color: white;
+}
+    
 h2.indextitle {
 	padding: 0.4em;
-	background-color: #add8e6;
+	background-color: #B22222;
+	color : white;
 }
-h3.function,h3.typedecl {
-	background-color: #add8e6;
+
+h3.function, h3.typedecl{
+	background-color: #B22222;
  	padding-left: 1em;
 }
+h3.function a{
+	color: white;
+}
+h3.typedecl a{
+	color: white;
+}
 div.spec {
- 	margin-left: 2em;
-	background-color: #eeeeee;
+    margin-left: 2em;
+    background-color: #ffffff;
 }
-a.module,a.package {
-	text-decoration:none
+a.module, a.package{
+	text-decoration:none;
+	color:#B22222;
 }
-a.module:hover,a.package:hover {
-	background-color: #eeeeee;
+a.module:hover, a.package:hover {
+	background-color: red;
 }
+
 ul.definitions {
 	list-style-type: none;
 }
 ul.index {
 	list-style-type: none;
-	background-color: #eeeeee;
+	background-color: #B22222
+}
+a {
+    color: #B22222;
+}
+.index a{
+    color: white;
+}
+
+.navbar a{
+    color: white;
 }
 
 /*
