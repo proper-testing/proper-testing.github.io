@@ -1,62 +1,67 @@
 /* standard EDoc style sheet */
 body {
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-      	margin-left: .25in;
-       	margin-right: .2in;
-       	margin-top: 0.2in;
-       	margin-bottom: 0.2in;
-       	color: #000000;
-       	background-color: #ffffff;
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    margin-left: .25in;
+    margin-right: .2in;
+    margin-top: 0.2in;
+    margin-bottom: 0.2in;
+    color: #000000;
+    background-color: #ffffff;
 }
 
 h1,h2 {
- 	margin-left: -0.2in;
+    margin-left: -0.2in;
 }
 h2 a {
-    text-decoration:none;
+    color : black;
+}
+h3 a {
+    color : black;
+}
+h4 a {
     color : black;
 }
 
 div.navbar {
-	background-color: #B22222;
-	padding: 0.2em;
-	color: white;
+    background-color: #B22222;
+    padding: 0.2em;
+    color: white;
 }
     
 h2.indextitle {
-	padding: 0.4em;
-	background-color: #B22222;
-	color : white;
+    padding: 0.4em;
+    background-color: #B22222;
+    color : white;
 }
 
 h3.function, h3.typedecl{
-	background-color: #B22222;
- 	padding-left: 1em;
+    background-color: #B22222;
+    padding-left: 1em;
 }
 h3.function a{
-	color: white;
+    color: white;
 }
 h3.typedecl a{
-	color: white;
+    color: white;
 }
 div.spec {
     margin-left: 2em;
     background-color: #ffffff;
 }
 a.module, a.package{
-	text-decoration:none;
-	color:#B22222;
+    text-decoration:none;
+    color:#B22222;
 }
 a.module:hover, a.package:hover {
-	background-color: red;
+    background-color: red;
 }
 
 ul.definitions {
-	list-style-type: none;
+    list-style-type: none;
 }
 ul.index {
-	list-style-type: none;
-	background-color: #B22222
+    list-style-type: none;
+    background-color: #B22222
 }
 a {
     color: #B22222;
@@ -73,11 +78,11 @@ a {
  * Minor style tweaks
  */
 ul {
-	list-style-type: square;
+    list-style-type: square;
 }
 table {
-	border-collapse: collapse;
+    border-collapse: collapse;
 }
 td {
-	padding: 3
+    padding: 3
 }
