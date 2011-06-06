@@ -11,5 +11,3 @@ Erlang and  got involved in the development of PropEr. She has implemented the
 PropEr library modules that offer support for model based testing of stateful
 reactive systems. Starting September 2011 she will be a graduate student at
 ETH Zurich, in the area of Computational Biology and Bioinformatics.
-
-You can contact her at <eirinibob@gmail.com>.

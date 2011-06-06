@@ -16,8 +16,6 @@ of Computer Science][cs-sf] of [Stanford University][sf].
 Outside of academia, he is a FOSS enthusiast, die-hard KDE fanboy and former
 gamer.
 
-You can contact him at <manopapad@gmail.com>.
-
 [ece-ntua]: http://www.ece.ntua.gr/
 [ntua]: http://www.ntua.gr/
 [kostis]: Kostis_Sagonas.html

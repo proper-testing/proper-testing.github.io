@@ -11,12 +11,10 @@
 <h1>Module proper_types</h1>
 <ul class="index"><li><a href="#description">Description</a></li><li><a href="#types">Data Types</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>Type manipulation functions and predefined types are contained in this
   	 module.
-<p>Copyright © 2010-2011 Manolis Papadakis &lt;manopapad@gmail.com&gt;,
-                        Eirini Arvaniti &lt;eirinibob@gmail.com&gt;
-                    and Kostis Sagonas &lt;kostis@cs.ntua.gr&gt;</p>
+<p>Copyright © 2010-2011 Manolis Papadakis, Eirini Arvaniti and Kostis Sagonas</p>
 
-<p><b>Version:</b> May 30 2011 00:37:36</p>
-<p><b>Authors:</b> Manolis Papadakis (<a href="mailto:manopapad@gmail.com"><tt>manopapad@gmail.com</tt></a>).</p>
+<p><b>Version:</b> Jun 6 2011 17:40:42</p>
+<p><b>Authors:</b> Manolis Papadakis.</p>
 
 <h2><a name="description">Description</a></h2>Type manipulation functions and predefined types are contained in this
   	 module.
@@ -43,68 +41,86 @@
 
 
 <h2><a name="index">Function Index</a></h2>
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#any-0">any/0</a></td><td></td></tr>
-<tr><td valign="top"><a href="#arity-0">arity/0</a></td><td></td></tr>
-<tr><td valign="top"><a href="#atom-0">atom/0</a></td><td></td></tr>
-<tr><td valign="top"><a href="#binary-0">binary/0</a></td><td></td></tr>
-<tr><td valign="top"><a href="#binary-1">binary/1</a></td><td></td></tr>
-<tr><td valign="top"><a href="#bitstring-0">bitstring/0</a></td><td></td></tr>
-<tr><td valign="top"><a href="#bitstring-1">bitstring/1</a></td><td></td></tr>
-<tr><td valign="top"><a href="#bool-0">bool/0</a></td><td></td></tr>
-<tr><td valign="top"><a href="#boolean-0">boolean/0</a></td><td></td></tr>
-<tr><td valign="top"><a href="#byte-0">byte/0</a></td><td></td></tr>
-<tr><td valign="top"><a href="#char-0">char/0</a></td><td></td></tr>
-<tr><td valign="top"><a href="#choose-2">choose/2</a></td><td></td></tr>
-<tr><td valign="top"><a href="#default-2">default/2</a></td><td></td></tr>
-<tr><td valign="top"><a href="#elements-1">elements/1</a></td><td></td></tr>
-<tr><td valign="top"><a href="#exactly-1">exactly/1</a></td><td></td></tr>
-<tr><td valign="top"><a href="#fixed_list-1">fixed_list/1</a></td><td></td></tr>
-<tr><td valign="top"><a href="#float-0">float/0</a></td><td></td></tr>
-<tr><td valign="top"><a href="#float-2">float/2</a></td><td></td></tr>
-<tr><td valign="top"><a href="#frequency-1">frequency/1</a></td><td></td></tr>
-<tr><td valign="top"><a href="#function-2">function/2</a></td><td></td></tr>
-<tr><td valign="top"><a href="#function0-1">function0/1</a></td><td></td></tr>
-<tr><td valign="top"><a href="#function1-1">function1/1</a></td><td></td></tr>
-<tr><td valign="top"><a href="#function2-1">function2/1</a></td><td></td></tr>
-<tr><td valign="top"><a href="#function3-1">function3/1</a></td><td></td></tr>
-<tr><td valign="top"><a href="#function4-1">function4/1</a></td><td></td></tr>
-<tr><td valign="top"><a href="#int-0">int/0</a></td><td></td></tr>
-<tr><td valign="top"><a href="#integer-0">integer/0</a></td><td></td></tr>
-<tr><td valign="top"><a href="#integer-2">integer/2</a></td><td></td></tr>
-<tr><td valign="top"><a href="#largeint-0">largeint/0</a></td><td></td></tr>
-<tr><td valign="top"><a href="#le-2">le/2</a></td><td></td></tr>
-<tr><td valign="top"><a href="#list-0">list/0</a></td><td></td></tr>
-<tr><td valign="top"><a href="#list-1">list/1</a></td><td></td></tr>
-<tr><td valign="top"><a href="#loose_tuple-1">loose_tuple/1</a></td><td></td></tr>
-<tr><td valign="top"><a href="#nat-0">nat/0</a></td><td></td></tr>
-<tr><td valign="top"><a href="#neg_integer-0">neg_integer/0</a></td><td></td></tr>
-<tr><td valign="top"><a href="#non_empty-1">non_empty/1</a></td><td></td></tr>
-<tr><td valign="top"><a href="#non_neg_float-0">non_neg_float/0</a></td><td></td></tr>
-<tr><td valign="top"><a href="#non_neg_integer-0">non_neg_integer/0</a></td><td></td></tr>
-<tr><td valign="top"><a href="#noshrink-1">noshrink/1</a></td><td></td></tr>
-<tr><td valign="top"><a href="#number-0">number/0</a></td><td></td></tr>
-<tr><td valign="top"><a href="#oneof-1">oneof/1</a></td><td></td></tr>
-<tr><td valign="top"><a href="#orderedlist-1">orderedlist/1</a></td><td></td></tr>
-<tr><td valign="top"><a href="#parameter-1">parameter/1</a></td><td></td></tr>
-<tr><td valign="top"><a href="#parameter-2">parameter/2</a></td><td></td></tr>
-<tr><td valign="top"><a href="#pos_integer-0">pos_integer/0</a></td><td></td></tr>
-<tr><td valign="top"><a href="#range-2">range/2</a></td><td></td></tr>
-<tr><td valign="top"><a href="#real-0">real/0</a></td><td></td></tr>
-<tr><td valign="top"><a href="#resize-2">resize/2</a></td><td></td></tr>
-<tr><td valign="top"><a href="#return-1">return/1</a></td><td></td></tr>
-<tr><td valign="top"><a href="#shrink_list-1">shrink_list/1</a></td><td></td></tr>
-<tr><td valign="top"><a href="#string-0">string/0</a></td><td></td></tr>
-<tr><td valign="top"><a href="#term-0">term/0</a></td><td></td></tr>
-<tr><td valign="top"><a href="#timeout-0">timeout/0</a></td><td></td></tr>
-<tr><td valign="top"><a href="#tuple-0">tuple/0</a></td><td></td></tr>
-<tr><td valign="top"><a href="#tuple-1">tuple/1</a></td><td></td></tr>
-<tr><td valign="top"><a href="#union-1">union/1</a></td><td></td></tr>
-<tr><td valign="top"><a href="#vector-2">vector/2</a></td><td></td></tr>
-<tr><td valign="top"><a href="#weighted_default-2">weighted_default/2</a></td><td></td></tr>
-<tr><td valign="top"><a href="#weighted_union-1">weighted_union/1</a></td><td></td></tr>
-<tr><td valign="top"><a href="#with_parameter-3">with_parameter/3</a></td><td></td></tr>
-<tr><td valign="top"><a href="#with_parameters-2">with_parameters/2</a></td><td></td></tr>
-<tr><td valign="top"><a href="#wunion-1">wunion/1</a></td><td></td></tr>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#any-0">any/0</a></td><td>All Erlang terms (that PropEr can produce).</td></tr>
+<tr><td valign="top"><a href="#arity-0">arity/0</a></td><td>Equivalent to <code>range(0, 255)</code>, instances shrink towards <code>0</code>.</td></tr>
+<tr><td valign="top"><a href="#atom-0">atom/0</a></td><td>All atoms, except those starting with '<code>$</code>'.</td></tr>
+<tr><td valign="top"><a href="#binary-0">binary/0</a></td><td>All binaries, instances shrink towards the empty binary, <code>&lt;&lt;&gt;&gt;</code>.</td></tr>
+<tr><td valign="top"><a href="#binary-1">binary/1</a></td><td>All binaries with a byte size of <code>Len</code>.</td></tr>
+<tr><td valign="top"><a href="#bitstring-0">bitstring/0</a></td><td>All bitstrings, instances shrink towards the empty bitstring, <code>&lt;&lt;&gt;&gt;</code>.</td></tr>
+<tr><td valign="top"><a href="#bitstring-1">bitstring/1</a></td><td>All bitstrings with a bit size of <code>Len</code>.</td></tr>
+<tr><td valign="top"><a href="#bool-0">bool/0</a></td><td>Equivalent to <a href="#boolean-1"><code>boolean/1</code></a>.</td></tr>
+<tr><td valign="top"><a href="#boolean-0">boolean/0</a></td><td>The atoms <code>true</code> or <code>false</code>, instances shrink towards <code>false</code>.</td></tr>
+<tr><td valign="top"><a href="#byte-0">byte/0</a></td><td>All integers between <code>0</code> and <code>255</code>, instances shrink towards <code>0</code></td></tr>
+<tr><td valign="top"><a href="#char-0">char/0</a></td><td>All integers between <code>0</code> and <code>16#10ffff</code>,
+  instances shrink towards the NUL character, <code>\000</code>.</td></tr>
+<tr><td valign="top"><a href="#choose-2">choose/2</a></td><td>Equivalent to <a href="#integer-2"><code>integer/2</code></a>.</td></tr>
+<tr><td valign="top"><a href="#default-2">default/2</a></td><td>Adds a default value, <code>Default</code>, to <code>OtherType</code>.</td></tr>
+<tr><td valign="top"><a href="#elements-1">elements/1</a></td><td>Equivalent to <a href="#union-1"><code>union/1</code></a>.</td></tr>
+<tr><td valign="top"><a href="#exactly-1">exactly/1</a></td><td>Singleton type consisting only of <code>E</code>, that must be an evaluated term.</td></tr>
+<tr><td valign="top"><a href="#fixed_list-1">fixed_list/1</a></td><td>All lists whose i-th element is an instance of the type at index i of
+  <code>ListOfTypes</code>, also written simply as <code>ListOfTypes</code>.</td></tr>
+<tr><td valign="top"><a href="#float-0">float/0</a></td><td>All floating point numbers, instances shrink towards <code>0.0</code>.</td></tr>
+<tr><td valign="top"><a href="#float-2">float/2</a></td><td>All floats between <code>Low</code> and <code>High</code>, bounds included.</td></tr>
+<tr><td valign="top"><a href="#frequency-1">frequency/1</a></td><td>Equivalent to <a href="#weighted_union-1"><code>weighted_union/1</code></a>.</td></tr>
+<tr><td valign="top"><a href="#function-2">function/2</a></td><td>All pure functions that map instances of <code>ArgTypes</code> to instances of
+  <code>RetType</code>.</td></tr>
+<tr><td valign="top"><a href="#function0-1">function0/1</a></td><td>Equivalent to <code>function(0, RawRetType)</code>.</td></tr>
+<tr><td valign="top"><a href="#function1-1">function1/1</a></td><td>Equivalent to <code>function(1, RawRetType)</code>.</td></tr>
+<tr><td valign="top"><a href="#function2-1">function2/1</a></td><td>Equivalent to <code>function(2, RawRetType)</code>.</td></tr>
+<tr><td valign="top"><a href="#function3-1">function3/1</a></td><td>Equivalent to <code>function(3, RawRetType)</code>.</td></tr>
+<tr><td valign="top"><a href="#function4-1">function4/1</a></td><td>Equivalent to <code>function(4, RawRetType)</code>.</td></tr>
+<tr><td valign="top"><a href="#int-0">int/0</a></td><td>Small integers (bound by the current value of the <code>size</code> parameter),
+  instances shrink towards <code>0</code>.</td></tr>
+<tr><td valign="top"><a href="#integer-0">integer/0</a></td><td>All integers.</td></tr>
+<tr><td valign="top"><a href="#integer-2">integer/2</a></td><td>All integers between <code>Low</code> and <code>High</code>, bounds included.</td></tr>
+<tr><td valign="top"><a href="#largeint-0">largeint/0</a></td><td>Equivalent to <a href="#integer-1"><code>integer/1</code></a>.</td></tr>
+<tr><td valign="top"><a href="#list-0">list/0</a></td><td>Equivalent to <code>list(any())</code>.</td></tr>
+<tr><td valign="top"><a href="#list-1">list/1</a></td><td>All lists containing elements of type <code>RawElemType</code>,
+  instances shrink towards the empty list, <code>[]</code>.</td></tr>
+<tr><td valign="top"><a href="#loose_tuple-1">loose_tuple/1</a></td><td>All tuples whose elements are all of type <code>ElemType</code>,
+  instances shrink towards <code>{}</code>.</td></tr>
+<tr><td valign="top"><a href="#nat-0">nat/0</a></td><td>Small non-negative integers (bound by the current value of the <code>size</code>
+  parameter), instances shrink towards <code>0</code>.</td></tr>
+<tr><td valign="top"><a href="#neg_integer-0">neg_integer/0</a></td><td>All negative integers, instances shrink towards <code>-1</code>.</td></tr>
+<tr><td valign="top"><a href="#non_empty-1">non_empty/1</a></td><td>This is a predefined constraint that can be applied to random-length
+  list and binary types (e.g.</td></tr>
+<tr><td valign="top"><a href="#non_neg_float-0">non_neg_float/0</a></td><td>All non-negative floats, instances shrink towards <code>0.0</code>.</td></tr>
+<tr><td valign="top"><a href="#non_neg_integer-0">non_neg_integer/0</a></td><td>All non-negative integers, instances shrink towards <code>0</code>.</td></tr>
+<tr><td valign="top"><a href="#noshrink-1">noshrink/1</a></td><td>Creates a new type which is equivalent to <code>RawType</code>, but whose
+  instances are never shrunk by the shrinking subsystem.</td></tr>
+<tr><td valign="top"><a href="#number-0">number/0</a></td><td>All numbers (integers and floats), instances shrink towards zero
+  (<code>0</code> or <code>0.0</code>).</td></tr>
+<tr><td valign="top"><a href="#oneof-1">oneof/1</a></td><td>Equivalent to <a href="#union-1"><code>union/1</code></a>.</td></tr>
+<tr><td valign="top"><a href="#orderedlist-1">orderedlist/1</a></td><td>All sorted lists containing elements of type RawElemType,
+  instances shrink towards the empty list, <code>[]</code>.</td></tr>
+<tr><td valign="top"><a href="#parameter-1">parameter/1</a></td><td>Equivalent to <code>parameter(Parameter_name, undefined)</code>.</td></tr>
+<tr><td valign="top"><a href="#parameter-2">parameter/2</a></td><td>Returns the value associated with <code>Parameter</code>, or <code>Default</code> in case
+  <code>Parameter</code> is not associated with any value.</td></tr>
+<tr><td valign="top"><a href="#pos_integer-0">pos_integer/0</a></td><td>All positive integers, instances shrink towards <code>1</code>.</td></tr>
+<tr><td valign="top"><a href="#range-2">range/2</a></td><td>Equivalent to <a href="#integer-2"><code>integer/2</code></a>.</td></tr>
+<tr><td valign="top"><a href="#real-0">real/0</a></td><td>Equivalent to <a href="#float-1"><code>float/1</code></a>.</td></tr>
+<tr><td valign="top"><a href="#resize-2">resize/2</a></td><td>Overrides the <code>size</code> parameter used when generating instances of
+  <code>RawType</code> with <code>NewSize</code>.</td></tr>
+<tr><td valign="top"><a href="#return-1">return/1</a></td><td>Equivalent to <a href="#exactly-1"><code>exactly/1</code></a>.</td></tr>
+<tr><td valign="top"><a href="#shrink_list-1">shrink_list/1</a></td><td>A type that generates exactly the list <code>List</code>.</td></tr>
+<tr><td valign="top"><a href="#string-0">string/0</a></td><td>All lists of characters, instances shrink towards the empty string, "".</td></tr>
+<tr><td valign="top"><a href="#term-0">term/0</a></td><td>Equivalent to <a href="#any-0"><code>any/0</code></a>.</td></tr>
+<tr><td valign="top"><a href="#timeout-0">timeout/0</a></td><td>Equivalent to <code>union([non_neg_integer() | 'infinity'])</code>,
+  instances shrink towards <code>0</code>.</td></tr>
+<tr><td valign="top"><a href="#tuple-0">tuple/0</a></td><td>Equivalent to <code>loose_tuple(any())</code>.</td></tr>
+<tr><td valign="top"><a href="#tuple-1">tuple/1</a></td><td>Equivalent to <code>loose_tuple(any())</code>.</td></tr>
+<tr><td valign="top"><a href="#union-1">union/1</a></td><td>The union of all types in <code>ListOfTypes</code>.</td></tr>
+<tr><td valign="top"><a href="#vector-2">vector/2</a></td><td>All lists of length <code>Len</code> containing elements of type <code>ElemType</code>.</td></tr>
+<tr><td valign="top"><a href="#weighted_default-2">weighted_default/2</a></td><td>A specialization of <code>default(Default, OtherType)</code>, where <code>Default</code> and
+  <code>Type</code> are assigned weights to be considered by the random instance
+  generator.</td></tr>
+<tr><td valign="top"><a href="#weighted_union-1">weighted_union/1</a></td><td>A specialization of <a href="#union-1"><code>union/1</code></a>, where each type in <code>ListOfTypes</code> is
+  assigned a frequency.</td></tr>
+<tr><td valign="top"><a href="#with_parameter-3">with_parameter/3</a></td><td>Associates the atom key <code>Parameter</code> with the value <code>Value</code> while
+  generating instances of <code>Type</code>.</td></tr>
+<tr><td valign="top"><a href="#with_parameters-2">with_parameters/2</a></td><td>Similar to <a href="#with_parameter-3"><code>with_parameter/3</code></a>, but accepts a list of
+  <code>{Parameter, Value}</code> pairs.</td></tr>
+<tr><td valign="top"><a href="#wunion-1">wunion/1</a></td><td>Equivalent to <a href="#weighted_union-1"><code>weighted_union/1</code></a>.</td></tr>
 </table>
 
 <h2><a name="functions">Function Details</a></h2>
@@ -112,336 +128,390 @@
 <h3 class="function"><a name="any-0">any/0</a></h3>
 <div class="spec">
 <p><pre>any() -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
+</div><p>All Erlang terms (that PropEr can produce). Functions are never produced
+  as instances.<br>
+  CAUTION: Instances of this type are expensive to produce, shrink and instance-
+  check, both in terms of processing time and consumed memory. Only use this
+  type if you are certain that you need it.</p>
 
 <h3 class="function"><a name="arity-0">arity/0</a></h3>
 <div class="spec">
 <p><pre>arity() -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
+</div><p>Equivalent to <code>range(0, 255)</code>, instances shrink towards <code>0</code>.
+  See also <a href="#range-2"><code>range/2</code></a>.</p>
 
 <h3 class="function"><a name="atom-0">atom/0</a></h3>
 <div class="spec">
 <p><pre>atom() -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
+</div><p>All atoms, except those starting with '<code>$</code>'. You should not use any
+  atoms starting with a '<code>$</code>', as these may clash with atoms used internally
+  by PropEr. Instances shrink towards the empty atom, ''.</p>
 
 <h3 class="function"><a name="binary-0">binary/0</a></h3>
 <div class="spec">
 <p><pre>binary() -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
+</div><p>All binaries, instances shrink towards the empty binary, <code>&lt;&lt;&gt;&gt;</code>.</p>
 
 <h3 class="function"><a name="binary-1">binary/1</a></h3>
 <div class="spec">
 <p><pre>binary(Len :: <a href="#type-length">length()</a>) -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
+</div><p>All binaries with a byte size of <code>Len</code>.
+  <code>Len</code> must be an Erlang expression that evaluates to a non-negative integer.
+  Instances shrink towards binaries of zeroes.</p>
 
 <h3 class="function"><a name="bitstring-0">bitstring/0</a></h3>
 <div class="spec">
 <p><pre>bitstring() -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
+</div><p>All bitstrings, instances shrink towards the empty bitstring, <code>&lt;&lt;&gt;&gt;</code>.</p>
 
 <h3 class="function"><a name="bitstring-1">bitstring/1</a></h3>
 <div class="spec">
 <p><pre>bitstring(Len :: <a href="#type-length">length()</a>) -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
+</div><p>All bitstrings with a bit size of <code>Len</code>.
+  <code>Len</code> must be an Erlang expression that evaluates to a non-negative integer,
+  instances shrink towards bitstrings of zeroes</p>
 
 <h3 class="function"><a name="bool-0">bool/0</a></h3>
 <div class="spec">
 <p><pre>bool() -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
+</div><p>Equivalent to <a href="#boolean-1"><code>boolean/1</code></a>.</p>
 
 <h3 class="function"><a name="boolean-0">boolean/0</a></h3>
 <div class="spec">
 <p><pre>boolean() -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
+</div><p>The atoms <code>true</code> or <code>false</code>, instances shrink towards <code>false</code>.</p>
 
 <h3 class="function"><a name="byte-0">byte/0</a></h3>
 <div class="spec">
 <p><pre>byte() -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
+</div><p>All integers between <code>0</code> and <code>255</code>, instances shrink towards <code>0</code></p>
 
 <h3 class="function"><a name="char-0">char/0</a></h3>
 <div class="spec">
 <p><pre>char() -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
+</div><p>All integers between <code>0</code> and <code>16#10ffff</code>,
+  instances shrink towards the NUL character, <code>\000</code>.</p>
 
 <h3 class="function"><a name="choose-2">choose/2</a></h3>
 <div class="spec">
 <p><pre>choose(Low :: integer() | inf, High :: integer() | inf) -&gt;
           <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
+</div><p>Equivalent to <a href="#integer-2"><code>integer/2</code></a>.</p>
 
 <h3 class="function"><a name="default-2">default/2</a></h3>
 <div class="spec">
 <p><pre>default(Default :: <a href="#type-raw_type">raw_type()</a>, OtherType :: <a href="#type-raw_type">raw_type()</a>) -&gt;
            <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
+</div><p>Adds a default value, <code>Default</code>, to <code>OtherType</code>.
+  The default serves as a primary shrinking target for instances, while it
+  is also chosen by the random instance generation subsystem half the time.</p>
 
 <h3 class="function"><a name="elements-1">elements/1</a></h3>
 <div class="spec">
 <p><pre>elements(Choices :: [<a href="#type-raw_type">raw_type()</a>, ...]) -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
+</div><p>Equivalent to <a href="#union-1"><code>union/1</code></a>.</p>
 
 <h3 class="function"><a name="exactly-1">exactly/1</a></h3>
 <div class="spec">
 <p><pre>exactly(E :: term()) -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
+</div><p>Singleton type consisting only of <code>E</code>, that must be an evaluated term.
+  Also written simply as <code>E</code>.</p>
 
 <h3 class="function"><a name="fixed_list-1">fixed_list/1</a></h3>
 <div class="spec">
-<p><pre>fixed_list(MaybeImproperRawFields ::
+<p><pre>fixed_list(ListOfTypes ::
                maybe_improper_list(<a href="#type-raw_type">raw_type()</a>, <a href="#type-raw_type">raw_type()</a> | [])) -&gt;
               <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
+</div><p>All lists whose i-th element is an instance of the type at index i of
+  <code>ListOfTypes</code>, also written simply as <code>ListOfTypes</code>.</p>
 
 <h3 class="function"><a name="float-0">float/0</a></h3>
 <div class="spec">
 <p><pre>float() -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
+</div><p>All floating point numbers, instances shrink towards <code>0.0</code>.</p>
 
 <h3 class="function"><a name="float-2">float/2</a></h3>
 <div class="spec">
 <p><pre>float(Low :: number() | inf, High :: number() | inf) -&gt;
          <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
+</div><p>All floats between <code>Low</code> and <code>High</code>, bounds included.
+  <code>Low</code> and <code>High</code> must be Erlang expressions that evaluate to floats, with
+  <code>Low =&lt; High</code>. Instances shrink towards the bound with the smallest
+  absolute value.</p>
 
 <h3 class="function"><a name="frequency-1">frequency/1</a></h3>
 <div class="spec">
 <p><pre>frequency(FreqChoices :: [{<a href="#type-frequency">frequency()</a>, <a href="#type-raw_type">raw_type()</a>}, ...]) -&gt;
              <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
+</div><p>Equivalent to <a href="#weighted_union-1"><code>weighted_union/1</code></a>.</p>
 
 <h3 class="function"><a name="function-2">function/2</a></h3>
 <div class="spec">
-<p><pre>function(Arity :: [<a href="#type-raw_type">raw_type()</a>] | arity(),
+<p><pre>function(ArgTypes :: [<a href="#type-raw_type">raw_type()</a>] | arity(),
          RawRetType :: <a href="#type-raw_type">raw_type()</a>) -&gt;
             <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
+</div><p>All pure functions that map instances of <code>ArgTypes</code> to instances of
+  <code>RetType</code>. The syntax <code>function(Arity, RetType)</code> is also acceptable.</p>
 
 <h3 class="function"><a name="function0-1">function0/1</a></h3>
 <div class="spec">
 <p><pre>function0(RawRetType :: <a href="#type-raw_type">raw_type()</a>) -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
+</div><p>Equivalent to <code>function(0, RawRetType)</code>. See also <a href="#function-2"><code>function/2</code></a>.</p>
 
 <h3 class="function"><a name="function1-1">function1/1</a></h3>
 <div class="spec">
 <p><pre>function1(RawRetType :: <a href="#type-raw_type">raw_type()</a>) -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
+</div><p>Equivalent to <code>function(1, RawRetType)</code>. See also <a href="#function-2"><code>function/2</code></a>.</p>
 
 <h3 class="function"><a name="function2-1">function2/1</a></h3>
 <div class="spec">
 <p><pre>function2(RawRetType :: <a href="#type-raw_type">raw_type()</a>) -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
+</div><p>Equivalent to <code>function(2, RawRetType)</code>. See also <a href="#function-2"><code>function/2</code></a>.</p>
 
 <h3 class="function"><a name="function3-1">function3/1</a></h3>
 <div class="spec">
 <p><pre>function3(RawRetType :: <a href="#type-raw_type">raw_type()</a>) -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
+</div><p>Equivalent to <code>function(3, RawRetType)</code>. See also <a href="#function-2"><code>function/2</code></a>.</p>
 
 <h3 class="function"><a name="function4-1">function4/1</a></h3>
 <div class="spec">
 <p><pre>function4(RawRetType :: <a href="#type-raw_type">raw_type()</a>) -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
+</div><p>Equivalent to <code>function(4, RawRetType)</code>. See also <a href="#function-2"><code>function/2</code></a>.</p>
 
 <h3 class="function"><a name="int-0">int/0</a></h3>
 <div class="spec">
 <p><pre>int() -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
+</div><p>Small integers (bound by the current value of the <code>size</code> parameter),
+  instances shrink towards <code>0</code>.</p>
 
 <h3 class="function"><a name="integer-0">integer/0</a></h3>
 <div class="spec">
 <p><pre>integer() -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
+</div><p>All integers. The shrinking subsystem will attempt to shrink instances
+  of this type to values as close as possible to <code>0</code>.</p>
 
 <h3 class="function"><a name="integer-2">integer/2</a></h3>
 <div class="spec">
 <p><pre>integer(Low :: integer() | inf, High :: integer() | inf) -&gt;
            <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
+</div><p>All integers between <code>Low</code> and <code>High</code>, bounds included.
+  <code>Low</code> and <code>High</code> must be Erlang expressions that evaluate to integers, with
+  <code>Low =&lt; High</code>. Instances shrink towards the bound with the smallest
+  absolute value.</p>
 
 <h3 class="function"><a name="largeint-0">largeint/0</a></h3>
 <div class="spec">
 <p><pre>largeint() -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
-
-<h3 class="function"><a name="le-2">le/2</a></h3>
-<div class="spec">
-<p><pre>le(A :: number() | inf, B :: number() | inf) -&gt; boolean()</pre></p>
-</div>
+</div><p>Equivalent to <a href="#integer-1"><code>integer/1</code></a>.</p>
 
 <h3 class="function"><a name="list-0">list/0</a></h3>
 <div class="spec">
 <p><pre>list() -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
+</div><p>Equivalent to <code>list(any())</code>. See also <a href="#list-1"><code>list/1</code></a>, <a href="#any-0"><code>any/0</code></a>.</p>
 
 <h3 class="function"><a name="list-1">list/1</a></h3>
 <div class="spec">
 <p><pre>list(RawElemType :: <a href="#type-raw_type">raw_type()</a>) -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
+</div><p>All lists containing elements of type <code>RawElemType</code>,
+  instances shrink towards the empty list, <code>[]</code>.</p>
 
 <h3 class="function"><a name="loose_tuple-1">loose_tuple/1</a></h3>
 <div class="spec">
-<p><pre>loose_tuple(RawElemType :: <a href="#type-raw_type">raw_type()</a>) -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
+<p><pre>loose_tuple(ElemType :: <a href="#type-raw_type">raw_type()</a>) -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div><p>All tuples whose elements are all of type <code>ElemType</code>,
+  instances shrink towards <code>{}</code>.</p>
 
 <h3 class="function"><a name="nat-0">nat/0</a></h3>
 <div class="spec">
 <p><pre>nat() -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
+</div><p>Small non-negative integers (bound by the current value of the <code>size</code>
+  parameter), instances shrink towards <code>0</code>.</p>
 
 <h3 class="function"><a name="neg_integer-0">neg_integer/0</a></h3>
 <div class="spec">
 <p><pre>neg_integer() -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
+</div><p>All negative integers, instances shrink towards <code>-1</code>.</p>
 
 <h3 class="function"><a name="non_empty-1">non_empty/1</a></h3>
 <div class="spec">
 <p><pre>non_empty(RawListType :: <a href="#type-raw_type">raw_type()</a>) -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
+</div><p>This is a predefined constraint that can be applied to random-length
+  list and binary types (e.g. <a href="#list-0"><code>list/0</code></a>, <a href="#string-0"><code>string/0</code></a>,
+  <a href="#binary-0"><code>binary/0</code></a>) to ensure that the produced values are not empty.</p>
 
 <h3 class="function"><a name="non_neg_float-0">non_neg_float/0</a></h3>
 <div class="spec">
 <p><pre>non_neg_float() -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
+</div><p>All non-negative floats, instances shrink towards <code>0.0</code>.</p>
 
 <h3 class="function"><a name="non_neg_integer-0">non_neg_integer/0</a></h3>
 <div class="spec">
 <p><pre>non_neg_integer() -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
+</div><p>All non-negative integers, instances shrink towards <code>0</code>.</p>
 
 <h3 class="function"><a name="noshrink-1">noshrink/1</a></h3>
 <div class="spec">
 <p><pre>noshrink(RawType :: <a href="#type-raw_type">raw_type()</a>) -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
+</div><p>Creates a new type which is equivalent to <code>RawType</code>, but whose
+  instances are never shrunk by the shrinking subsystem.</p>
 
 <h3 class="function"><a name="number-0">number/0</a></h3>
 <div class="spec">
 <p><pre>number() -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
+</div><p>All numbers (integers and floats), instances shrink towards zero
+  (<code>0</code> or <code>0.0</code>).</p>
 
 <h3 class="function"><a name="oneof-1">oneof/1</a></h3>
 <div class="spec">
 <p><pre>oneof(Choices :: [<a href="#type-raw_type">raw_type()</a>, ...]) -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
+</div><p>Equivalent to <a href="#union-1"><code>union/1</code></a>.</p>
 
 <h3 class="function"><a name="orderedlist-1">orderedlist/1</a></h3>
 <div class="spec">
 <p><pre>orderedlist(RawElemType :: <a href="#type-raw_type">raw_type()</a>) -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
+</div><p>All sorted lists containing elements of type RawElemType,
+  instances shrink towards the empty list, <code>[]</code>.</p>
 
 <h3 class="function"><a name="parameter-1">parameter/1</a></h3>
 <div class="spec">
-<p><pre>parameter(Param :: atom()) -&gt; term()</pre></p>
-</div>
+<p><pre>parameter(Parameter :: atom()) -&gt; term()</pre></p>
+</div><p>Equivalent to <code>parameter(Parameter_name, undefined)</code>.</p>
 
 <h3 class="function"><a name="parameter-2">parameter/2</a></h3>
 <div class="spec">
-<p><pre>parameter(Param :: atom(), Default :: term()) -&gt; term()</pre></p>
-</div>
+<p><pre>parameter(Parameter :: atom(), Default :: term()) -&gt; term()</pre></p>
+</div><p>Returns the value associated with <code>Parameter</code>, or <code>Default</code> in case
+  <code>Parameter</code> is not associated with any value.</p>
 
 <h3 class="function"><a name="pos_integer-0">pos_integer/0</a></h3>
 <div class="spec">
 <p><pre>pos_integer() -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
+</div><p>All positive integers, instances shrink towards <code>1</code>.</p>
 
 <h3 class="function"><a name="range-2">range/2</a></h3>
 <div class="spec">
 <p><pre>range(Low :: integer() | inf, High :: integer() | inf) -&gt;
          <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
+</div><p>Equivalent to <a href="#integer-2"><code>integer/2</code></a>.</p>
 
 <h3 class="function"><a name="real-0">real/0</a></h3>
 <div class="spec">
 <p><pre>real() -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
+</div><p>Equivalent to <a href="#float-1"><code>float/1</code></a>.</p>
 
 <h3 class="function"><a name="resize-2">resize/2</a></h3>
 <div class="spec">
-<p><pre>resize(Size :: <a href="#type-size">size()</a>, RawType :: <a href="#type-raw_type">raw_type()</a>) -&gt;
+<p><pre>resize(NewSize :: <a href="#type-size">size()</a>, RawType :: <a href="#type-raw_type">raw_type()</a>) -&gt;
           <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
+</div><p>Overrides the <code>size</code> parameter used when generating instances of
+  <code>RawType</code> with <code>NewSize</code>. It has no effect on size-less types, such as
+  unions. Also, this will not affect the generation of any internal types
+  contained in <code>RawType</code>, such as the elements of a list - those will still be
+  generated using the test-wide value of <code>size</code>. One use of this function is
+  to modify types to grow faster or slower, like so:
+  <pre>     ?SIZED(Size, resize(Size * 2, list(integer()))</pre>
+  The above specifies a list type that grows twice as fast as normal lists.</p>
 
 <h3 class="function"><a name="return-1">return/1</a></h3>
 <div class="spec">
 <p><pre>return(X :: term()) -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
+</div><p>Equivalent to <a href="#exactly-1"><code>exactly/1</code></a>.</p>
 
 <h3 class="function"><a name="shrink_list-1">shrink_list/1</a></h3>
 <div class="spec">
 <p><pre>shrink_list(List :: [term()]) -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
+</div><p>A type that generates exactly the list <code>List</code>. Instances
+  shrink towards shorter sublists of the original list.</p>
 
 <h3 class="function"><a name="string-0">string/0</a></h3>
 <div class="spec">
 <p><pre>string() -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
+</div><p>All lists of characters, instances shrink towards the empty string, "".</p>
 
 <h3 class="function"><a name="term-0">term/0</a></h3>
 <div class="spec">
 <p><pre>term() -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
+</div><p>Equivalent to <a href="#any-0"><code>any/0</code></a>.</p>
 
 <h3 class="function"><a name="timeout-0">timeout/0</a></h3>
 <div class="spec">
 <p><pre>timeout() -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
+</div><p>Equivalent to <code>union([non_neg_integer() | 'infinity'])</code>,
+  instances shrink towards <code>0</code>. See also <a href="#union-1"><code>union/1</code></a>,
+  <a href="#non_neg_integer-0"><code>non_neg_integer/0</code></a>.</p>
 
 <h3 class="function"><a name="tuple-0">tuple/0</a></h3>
 <div class="spec">
 <p><pre>tuple() -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
+</div><p>Equivalent to <code>loose_tuple(any())</code>. See also <a href="#loose_tuple-1"><code>loose_tuple/1</code></a>,
+  <a href="#any-0"><code>any/0</code></a>.</p>
 
 <h3 class="function"><a name="tuple-1">tuple/1</a></h3>
 <div class="spec">
 <p><pre>tuple(RawFields :: [<a href="#type-raw_type">raw_type()</a>]) -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
+</div><p>Equivalent to <code>loose_tuple(any())</code>.</p>
+<p><b>See also:</b> <a href="#loose_tuple-1">loose_tuple/1</a>.</p>
 
 <h3 class="function"><a name="union-1">union/1</a></h3>
 <div class="spec">
-<p><pre>union(RawChoices :: [<a href="#type-raw_type">raw_type()</a>, ...]) -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
+<p><pre>union(ListOfTypes :: [<a href="#type-raw_type">raw_type()</a>, ...]) -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div><p>The union of all types in <code>ListOfTypes</code>. <code>ListOfTypes</code> can't be empty,
+  the random instance generator is equally likely to choose any one of the
+  types in <code>ListOfTypes</code>. The shrinking subsystem will always try to shrink an
+  instance of a type union to an instance of the first type in <code>ListOfTypes</code>,
+  thus you should write the simplest case first.</p>
 
 <h3 class="function"><a name="vector-2">vector/2</a></h3>
 <div class="spec">
 <p><pre>vector(Len :: <a href="#type-length">length()</a>, RawElemType :: <a href="#type-raw_type">raw_type()</a>) -&gt;
           <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
+</div><p>All lists of length <code>Len</code> containing elements of type <code>ElemType</code>.
+  <code>Len</code> must be an Erlang expression that evaluates to a non-negative integer.</p>
 
 <h3 class="function"><a name="weighted_default-2">weighted_default/2</a></h3>
 <div class="spec">
 <p><pre>weighted_default(Default :: {<a href="#type-frequency">frequency()</a>, <a href="#type-raw_type">raw_type()</a>},
                  OtherType :: {<a href="#type-frequency">frequency()</a>, <a href="#type-raw_type">raw_type()</a>}) -&gt;
                     <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
+</div><p>A specialization of <code>default(Default, OtherType)</code>, where <code>Default</code> and
+  <code>Type</code> are assigned weights to be considered by the random instance
+  generator. The shrinking subsystem will ignore the weights and try to shrink
+  using the default value.</p>
 
 <h3 class="function"><a name="weighted_union-1">weighted_union/1</a></h3>
 <div class="spec">
-<p><pre>weighted_union(RawFreqChoices :: [{<a href="#type-frequency">frequency()</a>, <a href="#type-raw_type">raw_type()</a>}, ...]) -&gt;
+<p><pre>weighted_union(ListOfTypes :: [{<a href="#type-frequency">frequency()</a>, <a href="#type-raw_type">raw_type()</a>}, ...]) -&gt;
                   <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
+</div><p>A specialization of <a href="#union-1"><code>union/1</code></a>, where each type in <code>ListOfTypes</code> is
+  assigned a frequency. Frequencies must be Erlang expressions that evaluate to
+  positive integers. Types with larger frequencies are more likely to be chosen
+  by the random instance generator. The shrinking subsystem will ignore the
+  frequencies and try to shrink towards the first type in the list.</p>
 
 <h3 class="function"><a name="with_parameter-3">with_parameter/3</a></h3>
 <div class="spec">
-<p><pre>with_parameter(Param :: atom(),
+<p><pre>with_parameter(Parameter :: atom(),
                Value :: term(),
-               RawType :: <a href="#type-raw_type">raw_type()</a>) -&gt;
+               Type :: <a href="#type-raw_type">raw_type()</a>) -&gt;
                   <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
+</div><p>Associates the atom key <code>Parameter</code> with the value <code>Value</code> while
+  generating instances of <code>Type</code>.</p>
 
 <h3 class="function"><a name="with_parameters-2">with_parameters/2</a></h3>
 <div class="spec">
-<p><pre>with_parameters(PVlist :: [{atom(), term()}],
-                RawType :: <a href="#type-raw_type">raw_type()</a>) -&gt;
+<p><pre>with_parameters(PVlist :: [{atom(), term()}], Type :: <a href="#type-raw_type">raw_type()</a>) -&gt;
                    <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
+</div><p>Similar to <a href="#with_parameter-3"><code>with_parameter/3</code></a>, but accepts a list of
+  <code>{Parameter, Value}</code> pairs.</p>
 
 <h3 class="function"><a name="wunion-1">wunion/1</a></h3>
 <div class="spec">
 <p><pre>wunion(FreqChoices :: [{<a href="#type-frequency">frequency()</a>, <a href="#type-raw_type">raw_type()</a>}, ...]) -&gt;
           <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
+</div><p>Equivalent to <a href="#weighted_union-1"><code>weighted_union/1</code></a>.</p>
 <hr>
 
 <div class="navbar"><a name="#navbar_bottom"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
-<p><i>Generated by EDoc, May 30 2011, 00:37:36.</i></p>
+<p><i>Generated by EDoc, Jun 6 2011, 17:40:42.</i></p>
 </body>
 </html>
