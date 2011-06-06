@@ -178,6 +178,29 @@ About
 *   Image map and separate page for each dev
 
 
+Humor
+-----
+
+*   Change the page descriptions to something funnier:
+    About
+    :   The PropEr developers
+    API
+    :   Browse our PropEr API
+    Download
+    :    PropEr instructions how to do this
+    FAQ
+    :    Frequently Asked Questions with PropEr Answers
+    Publications
+    :    PropEr papers and talks
+    Tips
+    :    PropEr suggestions for effective use of the tool
+    Tutorials
+    :    PropEr tutorials
+*   What people have said about PropEr:
+    -   Stavros Aronis: "PropEr is a QuickCheck parody."
+    -   Kostis Sagonas: "Good job, now make it produce properties from specs."
+
+
 Infrastructure
 --------------
 

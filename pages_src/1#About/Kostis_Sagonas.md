@@ -26,3 +26,5 @@ he has designed and implemented many software development tools for Erlang
  [Tidier](http://tidier.softlab.ntua.gr),
  [PropEr](http://proper.softlab.ntua.gr), ...)
 and has contributed bug fixes to many open-source Erlang projects.
+
+You can contact him at <kostis@cs.ntua.gr>.
