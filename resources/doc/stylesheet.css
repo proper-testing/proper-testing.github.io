@@ -9,6 +9,10 @@ body {
     background-color: #ffffff;
 }
 
+a {
+    color: #B22222;
+}
+
 h1,h2 {
     margin-left: -0.2in;
 }
@@ -29,11 +33,14 @@ h2.indextitle {
 }
 
 h3.function, h3.typedecl{
-    background-color: #B22222;
+    background-color: #eeeeee;
     padding-left: 1em;
 }
 .index a, .navbar a, h3.function a, h3.typedecl a{
     color: white;
+}
+h3.function a, h3.typedecl a{
+    color: black;
 }
 
 div.spec {
@@ -45,6 +52,9 @@ a.module, a.package{
 }
 a.module:hover, a.package:hover {
     background-color: #eeeeee;
+}
+a.module:active, a.package:active {
+    color: purple;
 }
 
 ul.definitions {
