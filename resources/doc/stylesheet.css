@@ -12,13 +12,7 @@ body {
 h1,h2 {
     margin-left: -0.2in;
 }
-h2 a {
-    color : black;
-}
-h3 a {
-    color : black;
-}
-h4 a {
+h2 a, h3 a, h4 a {
     color : black;
 }
 
@@ -35,25 +29,22 @@ h2.indextitle {
 }
 
 h3.function, h3.typedecl{
-    background-color: #B22222;
+    background-color: #dc9c9c;
     padding-left: 1em;
 }
-h3.function a{
+.index a, .navbar a, h3.function a, h3.typedecl a {
     color: white;
 }
-h3.typedecl a{
-    color: white;
-}
+
 div.spec {
     margin-left: 2em;
     background-color: #ffffff;
 }
 a.module, a.package{
     text-decoration:none;
-    color:#B22222;
 }
 a.module:hover, a.package:hover {
-    background-color: red;
+    background-color: #eeeeee;
 }
 
 ul.definitions {
@@ -63,16 +54,7 @@ ul.index {
     list-style-type: none;
     background-color: #B22222
 }
-a {
-    color: #B22222;
-}
-.index a{
-    color: white;
-}
 
-.navbar a{
-    color: white;
-}
 
 /*
  * Minor style tweaks
