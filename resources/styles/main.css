@@ -38,7 +38,10 @@ p.author_info {
     list-style-type: none;
     margin: 0px;
     padding: 0px;
-    background-color: red;
+}
+
+#nav ul, #footer{
+    background-color: #B22222; /*firebrick*/
     background-image: url('/images/gradient.jpg');
 }
 
@@ -95,8 +98,6 @@ p.author_info {
 
 #footer{
     font-size: x-small;
-    background-color: red;
-    background-image: url('/images/gradient.jpg');
     color: white;
 }
 

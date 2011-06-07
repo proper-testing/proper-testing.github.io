@@ -5,11 +5,7 @@ include username.mk
 default: build
 
 update_docs:
-	if ! test -d proper; then git clone https://github.com/manopapad/proper.git; fi
-	cd proper; git pull origin master
-	$(MAKE) -C proper distclean doc
-	rm -rf resources/doc
-	cp -r proper/doc resources
+	./update_docs.sh
 
 clean:
 	rm -f `find . -name '*~' -or -name '\#*\#'`
