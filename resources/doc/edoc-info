@@ -1,4 +1,0 @@
-{application,proper}.
-{packages,[]}.
-{modules,[proper,proper_fsm,proper_gen,proper_statem,proper_symb,
-          proper_transformer,proper_types,proper_typeserver,strip_types]}.

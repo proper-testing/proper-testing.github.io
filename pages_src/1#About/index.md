@@ -26,3 +26,14 @@ onMouseOut="document.getElementById('photo').src='/images/devs.jpg';" />
 <p class="caption">For a humourous summary of the developers' bios see
 <a href="http://www.phdcomics.com/comics/archive.php?comicid=748">this issue of
 PhD Comics</a>.</p>
+
+<script type="text/javascript">
+document.write('<p>You can contact the developers at ');
+noSPAMemail("proper", "softlab", "ntua.gr", "inlineLink");
+document.write('.</p>');
+</script>
+<noscript class="inlineLink">
+<p>If you would like to contact the developers, please
+<a href="http://www.google.com/recaptcha/mailhide/d?k=01EZDn-7A4sQtkIrB6LfqzmQ==&c=1xy1zHkS31b76wEYeKATRHGATZYqyfwbUwYQbA-MxKE=">
+solve this CAPTCHA</a>.</p>
+</noscript>
