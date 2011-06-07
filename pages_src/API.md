@@ -1,4 +1,4 @@
-Summary: Browse PropEr's API documentation
+Summary: The PropEr API and its documentation
 kate: replace-tabs-save on; replace-tabs on; tab-width 8;
 
 Click [here](/doc "PropEr API Documentation") for a recent build of PropEr's

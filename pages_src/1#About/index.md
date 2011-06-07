@@ -1,4 +1,4 @@
-Summary: Information about PropEr and its developers
+Summary: The PropEr developers
 kate: replace-tabs-save on; replace-tabs on; tab-width 8;
 
 Meet the PropEr developers!

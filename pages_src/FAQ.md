@@ -1,4 +1,4 @@
-Summary: Frequently Asked Questions with Answers
+Summary: Frequently Asked Questions with PropEr Answers
 kate: replace-tabs-save on; replace-tabs on; tab-width 8;
 
 [TOC]
