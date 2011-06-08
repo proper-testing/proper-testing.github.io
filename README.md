@@ -187,7 +187,7 @@ Humor
     API
     :   Browse our PropEr API
     Download
-    :    PropEr instructions how to do this
+    :    PropEr instructions on how to do this
     FAQ
     :    Frequently Asked Questions with PropEr Answers
     Publications
