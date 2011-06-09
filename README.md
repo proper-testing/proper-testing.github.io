@@ -27,8 +27,8 @@ Editing the site
     with an index of the form '42#', in order to override the default alphabetic
     ordering of pages. This prefix will be removed when building the site.
 *   The site's structure is reflected in the directory hierarchy.
-*   Support/User_Guide.md is copied from PropEr's README file. Do not edit this
-    file directly: any changes you make will be overwritten.
+*   pages_src/User_Guide.md is copied from PropEr's README.md file. Do not edit
+    this file directly: any changes you make will be overwritten.
 *   Headers and footers will be added to each page automatically. The template
     for these can be found in the 'template.html' file.
 *   A title and heading will be added to each page, according to its file name.
@@ -131,7 +131,6 @@ Help/Support
 *   links to (preferably locally saved) talks and papers (+bibliography info)
 *   separate "Talks" tab (not only academic talks, but also presentations,
     podcasts etc.)
-*   humorous version of presentation with "times said 'proper'" counter
 *   EDoc pages color theme that resembles the main page
 
 
@@ -157,7 +156,6 @@ Download
 --------
 
 *   Packaged versions
-*   link to project page on github (bleeding edge version)
 
 
 About
@@ -172,7 +170,6 @@ About
     - e-mail
     - personal webpage
 *   PropEr's users
-*   (Humorous) reviews
 *   "Icon by Gordon Irving"
 *   link to QuviQ's site
 *   Image map and separate page for each dev
@@ -196,10 +193,13 @@ Humor
     :    PropEr suggestions for effective use of the tool
     Tutorials
     :    PropEr tutorials
-*   What people have said about PropEr:
+*   About page: humorous reviews:
+    What people have said about PropEr:
     -   Stavros Aronis: "PropEr is a QuickCheck parody."
     -   Kostis Sagonas: "Good job, now make it produce properties from specs."
-
+*   Talks: humorous version of EF'11 London presentation with "times said
+    'proper'" counter
+*   Comics from the presentation
 
 Infrastructure
 --------------

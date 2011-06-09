@@ -9,26 +9,26 @@
 <hr>
 
 <h1>Module proper_symb</h1>
-<ul class="index"><li><a href="#description">Description</a></li><li><a href="#types">Data Types</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>This module contains functions used when symbolically generating
-   datatypes.
+<ul class="index"><li><a href="#description">Description</a></li><li><a href="#types">Data Types</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>Symbolic datatypes handling functions.
 <p>Copyright © 2010-2011 Manolis Papadakis, Eirini Arvaniti and Kostis Sagonas</p>
 
-<p><b>Version:</b> Jun 9 2011 09:11:40</p>
+<p><b>Version:</b> Jun 10 2011 01:33:40</p>
 <p><b>Authors:</b> Manolis Papadakis.</p>
 
-<h2><a name="description">Description</a></h2>This module contains functions used when symbolically generating
-   datatypes. When writing properties that involve abstract data types,
-   such as dicts or sets, it is usually best to avoid dealing with the ADTs'
-   internal representations directly. Working, instead, with a symbolic
-   representation of an ADT's construction process (series of API calls)
-   has several benefits:
+<h2><a name="description">Description</a></h2><p>Symbolic datatypes handling functions.</p>
+  
+   <h3><a name="Symbolic_datatypes">Symbolic datatypes</a></h3>
+   When writing properties that involve abstract data types, such as dicts or
+   sets, it is usually best to avoid dealing with the ADTs' internal
+   representation directly. Working, instead, with a symbolic representation of
+   the ADT's construction process (series of API calls) has several benefits:
    <ul>
-   <li>Failing testcases are easier to read and understand. Compare:<br>
-     <pre>        {call,sets,from_list,[[1,2,3]]}</pre>
+   <li>Failing testcases are easier to read and understand. Compare:
+     <pre>         {call,sets,from_list,[[1,2,3]]}</pre>
      with:
-     <pre>        {set,3,16,16,8,80,48,
-  	      {[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]},
-  	      {{[],[3],[],[],[],[],[2],[],[],[],[],[1],[],[],[],[]}}}</pre></li>
+     <pre>         {set,3,16,16,8,80,48,
+              {[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]},
+              {{[],[3],[],[],[],[],[2],[],[],[],[],[1],[],[],[],[]}}}</pre></li>
    <li>Failing testcases are easier to shrink.</li>
    <li>It is especially useful when testing the datatype itself: Certain
      implementation errors may depend on some particular selection and
@@ -38,21 +38,97 @@
   
    PropEr supports the symbolic representation of datatypes, using the
    following syntax:
+   <dl>
+   <dt><code>{call,Module,Function,Arguments}</code></dt>
+   <dd>This represents a call to the API function <code>Module:Function</code> with
+     arguments <code>Arguments</code>. Each of the arguments may be a symbolic call itself
+     or contain other symbolic calls in lists or tuples of arbitrary
+     depth.</dd>
+   <dt id="$call"><code>{'$call',Module,Function,Arguments}</code></dt>
+   <dd>Identical to the above, but gets evaluated automatically before being
+     applied to a property.</dd>
+   <dt id="var"><code>{var,</code><code><a href="#type-var_id">var_id()</a></code><code>}</code></dt>
+   <dd>This contruct serves as a placeholder for values that are not known at
+     type construction time. It will be replaced by the actual value of the
+     variable during evaluation.</dd>
+   </dl>
+  
+   <p>When including the PropEr header file, all
+   <a href="#index">API functions</a> of this module are automatically
+   imported, unless <code>PROPER_NO_IMPORTS</code> is defined.</p>
+  
+   <h3><a name="Auto-ADT">Auto-ADT</a></h3><p>
+   To simplify the symbolic testing of ADTs, PropEr comes with the Auto-ADT
+   subsystem: An opaque native type, if exported from its module, is assumed
+   to be an abstract data type, causing PropEr to ignore its internal
+   representation and instead construct symbolic instances of the type. The
+   API functions used in these symbolic instances are extracted from the ADT's
+   defining module, which is expected to contain one or more <code>-spec</code>ed and
+   exported functions that can be used to construct instances of the ADT.
+   Specifically, PropEr will use all functions that return at least one
+   instance of the ADT. As with recursive native types, the base case is
+   automatically detected (in the case of ADTs, calls to functions like
+   <code>new/0</code> and <code>from_list/1</code> would be considered the base case). The produced
+   symbolic calls will be <a href="#$call"><code>$call</code> tuples</a>, which are
+   automatically evaluated, thus no call to <a href="#eval-1"><code>eval/1</code></a> is required inside
+   the property. Produced instances are guaranteed to evaluate successfully.
+   Parametric ADTs are supported, so long as they appear fully instantiated
+   inside <code>?FORALL</code>s.</p>
+  
+   <p>ADTs hard-coded in the Erlang type system (<code>array</code>, <code>dict</code>, <code>digraph</code>,
+   <code>gb_set</code>, <code>gb_tree</code>, <code>queue</code>, and <code>set</code>) are automatically detected and
+   handled as such. PropEr also accepts parametric versions of the above ADTs
+   in <code>?FORALL</code>s (<code>array/1</code>, <code>dict/2</code>, <code>gb_set/1</code>, <code>gb_tree/2</code>, <code>queue/1</code>,
+   <code>set/1</code>, also <code>orddict/2</code> and <code>ordset/1</code>). If you would like to use these
+   parametric versions in <code>-type</code> and <code>-spec</code> declarations as well, to better
+   document your code and facilitate spec testing, you can include the
+   complementary header file <code>proper/include/proper_param_adts.hrl</code>, which
+   provides the corresponding <code>-type</code> definitions. Please note that Dialyzer   
+currenty treats these the same way as their non-parametric counterparts.</p>
+  
+   The use of Auto-ADT is currently subject to the following limitations:
    <ul>
-   <li><code>{call,Module,Function,Arguments}</code>: This represents a call to the
-     API function <code>Module:Function</code> with arguments <code>Arguments</code>. Each of
-     the arguments may be a symbolic call itself or contain other symbolic
-     calls in lists or tuples of arbitrary depth.</li>
-   <li><code>{'$call',Module,Function,Arguments}</code>: Identical to the above,
-     but gets evaluated automatically before being applied to a property.</li>
-   <li><code>{var,</code><code><a href="#type-var_id">var_id()</a></code><code>}</code>: This contruct serves as a placeholder for
-     values that are not known at type construction time. It will be replaced
-     by the actual value of the variable during evaluation.</li>
+   <li>In the ADT's <code>-opaque</code> declaration, as in all types' declarations,
+     only type variables should be used as parameters in the LHS. None of
+     these variables can be the special <code>_</code> variable and no variable should
+     appear more than once in the parameters.</li>
+   <li>ADTs inside specs can only have simple variables as parameters. These
+     variables cannot be bound by any is_subtype constraint. Also, the special
+     <code>_</code> variable is not allowed in ADT parameters. If this would result in
+     singleton variables, as in the specs of functions like <code>new/0</code>, use
+     variable names that begin with an underscore.</li>
+   <li>Specs that introduce an implicit binding among the parameters of an
+     ADT are rejected, e.g.:
+     <pre>         -spec foo(mydict(T,S),mydict(S,T)) -&gt; mydict(T,S).</pre>
+     This includes using the same type variable twice in the parameters of
+     an ADT.</li>
+   <li>While parsing the return type of specs in search of ADT references,
+     PropEr only recurses into tuples, unions and lists; all other constructs
+     are ignored. This prohibits, among others, indirect references to the ADT
+     through other custom types and records.</li>
+   <li>When encountering a union in the return type, PropEr will pick the
+     first choice that can return an ADT. This choice must be distinguishable
+     from the others either by having a unique term structure or by having a
+     unique tag (if it's a tagged tuple).</li>
+   <li>When parsing multi-clause specs, only the first clause is considered.
+     </li>
+   <li>The only spec constraints we accept are <code>is_subtype</code> constraints whose
+     first argument is a simple, non-<code>_</code> variable. It is not checked whether or
+     not these variables actually appear in the spec. The second argument of an
+     <code>is_subtype</code> constraint cannot contain any non-<code>_</code> variables. Multiple
+     constraints for the same variable are not supported.</li>
+   <li> Unexported opaques and opaques with no suitable specs to serve as API
+     calls are silently discarded. Those will be treated like ordinary types.
+     </li>
+   <li>Unexported or unspecced functions are silently rejected.</li>
+   <li>Functions with unsuitable return values are silently rejected.</li>
+   <li>Specs that make bad use of variables are silently rejected.</li>
    </ul>
   
-   When including the <code>"proper/include/proper.hrl"</code> header file,
-   all <a href="#index">API functions </a> of proper_symb are automatically
-   imported, unless <code>PROPER_NO_IMPORTS</code> is defined.
+   For an example on how to write Auto-ADT-compatible parametric specs, see
+   the <code>examples/stack</code> module, which contains a simple implementation of a
+   stack, or the <code>proper/proper_dict module</code>, which wraps the <code>STDLIB</code> <code>dict</code>
+   ADT.
 <h2><a name="types">Data Types</a></h2>
 
 <h3 class="typedecl"><a name="type-symb_term">symb_term()</a></h3>
@@ -68,19 +144,18 @@
 
 
 <h2><a name="index">Function Index</a></h2>
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#defined-1">defined/1</a></td><td>Returns true if the symbolic instance can be successfully evaluated
-      (its evaluation doesn't raise an error or exception).</td></tr>
-<tr><td valign="top"><a href="#eval-1">eval/1</a></td><td>Intended for use inside the property-testing code, this function
-       evaluates a symbolic instance.</td></tr>
-<tr><td valign="top"><a href="#eval-2">eval/2</a></td><td>Same as <a href="#eval-1"><code>eval/1</code></a>, but accepts a proplist of variable names and
-       values, to be replaced anywhere inside the symbolic instance before
-       proceeding with the evaluation.</td></tr>
-<tr><td valign="top"><a href="#pretty_print-1">pretty_print/1</a></td><td>Similar in calling convention to <a href="#eval-1"><code>eval/1</code></a> but returns a string
-       representation of the call sequence instead of evaluating it.</td></tr>
-<tr><td valign="top"><a href="#pretty_print-2">pretty_print/2</a></td><td>Similar in calling convention to <a href="#eval-2"><code>eval/2</code></a> but returns a string
-       representation of the call sequence instead of evaluating it.</td></tr>
-<tr><td valign="top"><a href="#well_defined-1">well_defined/1</a></td><td>An attribute which can be applied to symbolic generators that may
-       produce invalid sequences of operations when called.</td></tr>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#defined-1">defined/1</a></td><td>Returns true if the <code>SymbTerm</code> symbolic instance can be successfully
+  evaluated (its evaluation doesn't raise an error or exception).</td></tr>
+<tr><td valign="top"><a href="#eval-1">eval/1</a></td><td>Equivalent to <a href="#eval-2"><tt>eval([], SymbTerm)</tt></a>.
+</td></tr>
+<tr><td valign="top"><a href="#eval-2">eval/2</a></td><td>Intended for use inside the property-testing code, this function
+  evaluates a symbolic instance <code>SymbTerm</code>.</td></tr>
+<tr><td valign="top"><a href="#pretty_print-1">pretty_print/1</a></td><td>Equivalent to <a href="#pretty_print-2"><tt>pretty_print([], SymbTerm)</tt></a>.
+</td></tr>
+<tr><td valign="top"><a href="#pretty_print-2">pretty_print/2</a></td><td>Similar in calling convention to <a href="#eval-2"><code>eval/2</code></a>, but returns a string
+  representation of the call sequence <code>SymbTerm</code> instead of evaluating it.</td></tr>
+<tr><td valign="top"><a href="#well_defined-1">well_defined/1</a></td><td>An attribute which can be applied to any symbolic generator <code>SymbType</code>
+  that may produce invalid sequences of operations when called.</td></tr>
 </table>
 
 <h2><a name="functions">Function Details</a></h2>
@@ -88,45 +163,47 @@
 <h3 class="function"><a name="defined-1">defined/1</a></h3>
 <div class="spec">
 <p><pre>defined(SymbTerm :: <a href="#type-symb_term">symb_term()</a>) -&gt; boolean()</pre></p>
-</div><p>Returns true if the symbolic instance can be successfully evaluated
-      (its evaluation doesn't raise an error or exception).</p>
+</div><p>Returns true if the <code>SymbTerm</code> symbolic instance can be successfully
+  evaluated (its evaluation doesn't raise an error or exception).</p>
 
 <h3 class="function"><a name="eval-1">eval/1</a></h3>
 <div class="spec">
 <p><pre>eval(SymbTerm :: <a href="#type-symb_term">symb_term()</a>) -&gt; term()</pre></p>
-</div><p>Intended for use inside the property-testing code, this function
-       evaluates a symbolic instance.</p>
+</div><p>Equivalent to <a href="#eval-2"><tt>eval([], SymbTerm)</tt></a>.</p>
+
 
 <h3 class="function"><a name="eval-2">eval/2</a></h3>
 <div class="spec">
 <p><pre>eval(VarValues :: <a href="#type-var_values">var_values()</a>, SymbTerm :: <a href="#type-symb_term">symb_term()</a>) -&gt; term()</pre></p>
-</div><p>Same as <a href="#eval-1"><code>eval/1</code></a>, but accepts a proplist of variable names and
-       values, to be replaced anywhere inside the symbolic instance before
-       proceeding with the evaluation.</p>
+</div><p>Intended for use inside the property-testing code, this function
+  evaluates a symbolic instance <code>SymbTerm</code>. It also accepts a proplist
+  <code>VarValues</code> that maps variable names to values, which is used to replace any
+  <a href="#var">var tuples</a> inside <code>SymbTerm</code> before proceeding with its
+  evaluation.</p>
 
 <h3 class="function"><a name="pretty_print-1">pretty_print/1</a></h3>
 <div class="spec">
 <p><pre>pretty_print(SymbTerm :: <a href="#type-symb_term">symb_term()</a>) -&gt; string()</pre></p>
-</div><p>Similar in calling convention to <a href="#eval-1"><code>eval/1</code></a> but returns a string
-       representation of the call sequence instead of evaluating it.</p>
+</div><p>Equivalent to <a href="#pretty_print-2"><tt>pretty_print([], SymbTerm)</tt></a>.</p>
+
 
 <h3 class="function"><a name="pretty_print-2">pretty_print/2</a></h3>
 <div class="spec">
 <p><pre>pretty_print(VarValues :: <a href="#type-var_values">var_values()</a>, SymbTerm :: <a href="#type-symb_term">symb_term()</a>) -&gt;
                 string()</pre></p>
-</div><p>Similar in calling convention to <a href="#eval-2"><code>eval/2</code></a> but returns a string
-       representation of the call sequence instead of evaluating it.</p>
+</div><p>Similar in calling convention to <a href="#eval-2"><code>eval/2</code></a>, but returns a string
+  representation of the call sequence <code>SymbTerm</code> instead of evaluating it.</p>
 
 <h3 class="function"><a name="well_defined-1">well_defined/1</a></h3>
 <div class="spec">
 <p><pre>well_defined(SymbType :: <a href="proper_types.html#type-raw_type">proper_types:raw_type()</a>) -&gt;
                 <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div><p>An attribute which can be applied to symbolic generators that may
-       produce invalid sequences of operations when called. The resulting type
-       is guaranteed to only produce well-defined symbolic instances.</p>
+</div><p>An attribute which can be applied to any symbolic generator <code>SymbType</code>
+  that may produce invalid sequences of operations when called. The resulting
+  generator is guaranteed to only produce well-defined symbolic instances.</p>
 <hr>
 
 <div class="navbar"><a name="#navbar_bottom"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="/" target="_top"><img src="/images/proper_tiny.png" align="right" border="0" alt="PropEr logo"></a></td></tr></table></div>
-<p><i>Generated by EDoc, Jun 9 2011, 09:11:40.</i></p>
+<p><i>Generated by EDoc, Jun 10 2011, 01:33:40.</i></p>
 </body>
 </html>

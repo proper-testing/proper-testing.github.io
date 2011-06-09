@@ -9,110 +9,88 @@
 <hr>
 
 <h1>Module proper_gen</h1>
-<ul class="index"><li><a href="#description">Description</a></li><li><a href="#types">Data Types</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>The generator subsystem and generators for basic types are contained
-  	 in this module.
+<ul class="index"><li><a href="#description">Description</a></li><li><a href="#types">Data Types</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>Generator subsystem and generators for basic types.
 <p>Copyright © 2010-2011 Manolis Papadakis, Eirini Arvaniti and Kostis Sagonas</p>
 
-<p><b>Version:</b> Jun 9 2011 09:11:40</p>
+<p><b>Version:</b> Jun 10 2011 01:33:40</p>
 <p><b>Authors:</b> Manolis Papadakis.</p>
 
-<h2><a name="description">Description</a></h2>The generator subsystem and generators for basic types are contained
-  	 in this module.
+<h2><a name="description">Description</a></h2><p>Generator subsystem and generators for basic types.</p>
+  
+   <p>You can use <a href="#index">these</a> functions to try out the random   
+instance generation and shrinking subsystems.</p>
+  
+   CAUTION: These functions should never be used inside properties. They are
+   meant for demonstration purposes only.
 <h2><a name="types">Data Types</a></h2>
-
-<h3 class="typedecl"><a name="type-alt_gens">alt_gens()</a></h3>
-<p><pre>alt_gens() = fun(() -&gt; [<a href="#type-imm_instance">imm_instance()</a>])</pre></p>
-
-
-<h3 class="typedecl"><a name="type-combine_fun">combine_fun()</a></h3>
-<p><pre>combine_fun() = fun((<a href="#type-instance">instance()</a>) -&gt; <a href="#type-imm_instance">imm_instance()</a>)</pre></p>
-
-
-<h3 class="typedecl"><a name="type-generator">generator()</a></h3>
-<p><pre>generator() = <a href="#type-sized_generator">sized_generator()</a> | <a href="#type-nosize_generator">nosize_generator()</a></pre></p>
-
-
-<h3 class="typedecl"><a name="type-imm_instance">imm_instance()</a></h3>
-<p><pre>imm_instance() = <a href="proper_types.html#type-raw_type">proper_types:raw_type()</a>
-               | <a href="#type-instance">instance()</a>
-               | {'$used', <a href="#type-imm_instance">imm_instance()</a>, <a href="#type-imm_instance">imm_instance()</a>}
-               | {'$to_part', <a href="#type-imm_instance">imm_instance()</a>}</pre></p>
-
 
 <h3 class="typedecl"><a name="type-instance">instance()</a></h3>
 <p><pre>instance() = term()</pre></p>
-
-
-<h3 class="typedecl"><a name="type-nosize_generator">nosize_generator()</a></h3>
-<p><pre>nosize_generator() = fun(() -&gt; <a href="#type-imm_instance">imm_instance()</a>)</pre></p>
-
-
-<h3 class="typedecl"><a name="type-reverse_gen">reverse_gen()</a></h3>
-<p><pre>reverse_gen() = fun((<a href="#type-instance">instance()</a>) -&gt; <a href="#type-imm_instance">imm_instance()</a>)</pre></p>
-
+<p>  A value produced by the random instance generator.</p>
 
 <h3 class="typedecl"><a name="type-size">size()</a></h3>
 <p><pre>size() = non_neg_integer()</pre></p>
 
 
-<h3 class="typedecl"><a name="type-sized_generator">sized_generator()</a></h3>
-<p><pre>sized_generator() = fun((<a href="#type-size">size()</a>) -&gt; <a href="#type-imm_instance">imm_instance()</a>)</pre></p>
-
-
 <h2><a name="index">Function Index</a></h2>
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#pick-1">pick/1</a></td><td>Equivqlent to <code>pick(RawType, 10)</code>.</td></tr>
-<tr><td valign="top"><a href="#pick-2">pick/2</a></td><td>Generates a random instance of <code>RawType</code>, of size <code>Size</code>.</td></tr>
-<tr><td valign="top"><a href="#sample-1">sample/1</a></td><td>Equivalent to <code>sample(RawType, 10, 20)</code>.</td></tr>
-<tr><td valign="top"><a href="#sample-3">sample/3</a></td><td>Generates and prints one random instance of <code>RawType</code> for each size
-  from <code>StartSize</code> up to <code>EndSize</code>.</td></tr>
-<tr><td valign="top"><a href="#sampleshrink-1">sampleshrink/1</a></td><td>Equivalent to <code>sampleshrink(RawType, 10)</code>.</td></tr>
-<tr><td valign="top"><a href="#sampleshrink-2">sampleshrink/2</a></td><td>Generates a random instance of <code>RawType</code>, of size <code>Size</code>, then shrinks
-  it as far as it goes.</td></tr>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#pick-1">pick/1</a></td><td>Equivalent to <a href="#pick-2"><tt>pick(Type, 10)</tt></a>.
+</td></tr>
+<tr><td valign="top"><a href="#pick-2">pick/2</a></td><td>Generates a random instance of <code>Type</code>, of size <code>Size</code>.</td></tr>
+<tr><td valign="top"><a href="#sample-1">sample/1</a></td><td>Equivalent to <a href="#sample-3"><tt>sample(Type, 10, 20)</tt></a>.
+</td></tr>
+<tr><td valign="top"><a href="#sample-3">sample/3</a></td><td>Generates and prints one random instance of <code>Type</code> for each size from
+  <code>StartSize</code> up to <code>EndSize</code>.</td></tr>
+<tr><td valign="top"><a href="#sampleshrink-1">sampleshrink/1</a></td><td>Equivalent to <a href="#sampleshrink-2"><tt>sampleshrink(Type, 10)</tt></a>.
+</td></tr>
+<tr><td valign="top"><a href="#sampleshrink-2">sampleshrink/2</a></td><td>Generates a random instance of <code>Type</code>, of size <code>Size</code>, then shrinks it
+  as far as it goes.</td></tr>
 </table>
 
 <h2><a name="functions">Function Details</a></h2>
 
 <h3 class="function"><a name="pick-1">pick/1</a></h3>
 <div class="spec">
-<p><pre>pick(RawType :: <a href="proper_types.html#type-raw_type">proper_types:raw_type()</a>) -&gt;
-        {ok, <a href="#type-instance">instance()</a>} | error</pre></p>
-</div><p>Equivqlent to <code>pick(RawType, 10)</code>.</p>
+<p><pre>pick(Type :: <a href="proper_types.html#type-raw_type">proper_types:raw_type()</a>) -&gt; {ok, <a href="#type-instance">instance()</a>} | error</pre></p>
+</div><p>Equivalent to <a href="#pick-2"><tt>pick(Type, 10)</tt></a>.</p>
+
 
 <h3 class="function"><a name="pick-2">pick/2</a></h3>
 <div class="spec">
-<p><pre>pick(RawType :: <a href="proper_types.html#type-raw_type">proper_types:raw_type()</a>, Size :: <a href="#type-size">size()</a>) -&gt;
+<p><pre>pick(Type :: <a href="proper_types.html#type-raw_type">proper_types:raw_type()</a>, Size :: <a href="#type-size">size()</a>) -&gt;
         {ok, <a href="#type-instance">instance()</a>} | error</pre></p>
-</div><p>Generates a random instance of <code>RawType</code>, of size <code>Size</code>.</p>
+</div><p>Generates a random instance of <code>Type</code>, of size <code>Size</code>.</p>
 
 <h3 class="function"><a name="sample-1">sample/1</a></h3>
 <div class="spec">
-<p><pre>sample(RawType :: <a href="proper_types.html#type-raw_type">proper_types:raw_type()</a>) -&gt; ok</pre></p>
-</div><p>Equivalent to <code>sample(RawType, 10, 20)</code>.</p>
+<p><pre>sample(Type :: <a href="proper_types.html#type-raw_type">proper_types:raw_type()</a>) -&gt; ok</pre></p>
+</div><p>Equivalent to <a href="#sample-3"><tt>sample(Type, 10, 20)</tt></a>.</p>
+
 
 <h3 class="function"><a name="sample-3">sample/3</a></h3>
 <div class="spec">
-<p><pre>sample(RawType :: <a href="proper_types.html#type-raw_type">proper_types:raw_type()</a>,
+<p><pre>sample(Type :: <a href="proper_types.html#type-raw_type">proper_types:raw_type()</a>,
        StartSize :: <a href="#type-size">size()</a>,
        EndSize :: <a href="#type-size">size()</a>) -&gt;
           ok</pre></p>
-</div><p>Generates and prints one random instance of <code>RawType</code> for each size
-  from <code>StartSize</code> up to <code>EndSize</code>.</p>
+</div><p>Generates and prints one random instance of <code>Type</code> for each size from
+  <code>StartSize</code> up to <code>EndSize</code>.</p>
 
 <h3 class="function"><a name="sampleshrink-1">sampleshrink/1</a></h3>
 <div class="spec">
-<p><pre>sampleshrink(RawType :: <a href="proper_types.html#type-raw_type">proper_types:raw_type()</a>) -&gt; ok</pre></p>
-</div><p>Equivalent to <code>sampleshrink(RawType, 10)</code>.</p>
+<p><pre>sampleshrink(Type :: <a href="proper_types.html#type-raw_type">proper_types:raw_type()</a>) -&gt; ok</pre></p>
+</div><p>Equivalent to <a href="#sampleshrink-2"><tt>sampleshrink(Type, 10)</tt></a>.</p>
+
 
 <h3 class="function"><a name="sampleshrink-2">sampleshrink/2</a></h3>
 <div class="spec">
-<p><pre>sampleshrink(RawType :: <a href="proper_types.html#type-raw_type">proper_types:raw_type()</a>, Size :: <a href="#type-size">size()</a>) -&gt;
+<p><pre>sampleshrink(Type :: <a href="proper_types.html#type-raw_type">proper_types:raw_type()</a>, Size :: <a href="#type-size">size()</a>) -&gt;
                 ok</pre></p>
-</div><p>Generates a random instance of <code>RawType</code>, of size <code>Size</code>, then shrinks
-  it as far as it goes. The value produced on each step of the shrinking
-  process is printed on the screen.</p>
+</div><p>Generates a random instance of <code>Type</code>, of size <code>Size</code>, then shrinks it
+  as far as it goes. The value produced on each step of the shrinking process
+  is printed on the screen.</p>
 <hr>
 
 <div class="navbar"><a name="#navbar_bottom"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="/" target="_top"><img src="/images/proper_tiny.png" align="right" border="0" alt="PropEr logo"></a></td></tr></table></div>
-<p><i>Generated by EDoc, Jun 9 2011, 09:11:40.</i></p>
+<p><i>Generated by EDoc, Jun 10 2011, 01:33:40.</i></p>
 </body>
 </html>
