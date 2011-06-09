@@ -45,7 +45,7 @@ External clients can make the following requests:
 
         :::erlang
         add_player(Name) ->
-            gen_server:call(?MODULE, {add_player, Name}).
+            gen_server:call(?MASTER, {add_player, Name}).
 
         handle_call({add_player, Name}, _From, Dict) ->
             case whereis(Name) of
@@ -62,7 +62,7 @@ External clients can make the following requests:
 
         :::erlang
         remove_player(Name) ->
-            gen_server:call(?MODULE, {remove_player, Name}).
+            gen_server:call(?MASTER, {remove_player, Name}).
 
         handle_call({remove_player, Name}, _From, Dict) ->
             Pid = whereis(Name),
@@ -74,7 +74,7 @@ External clients can make the following requests:
 
         :::erlang
         ping(FromName) ->
-            gen_server:call(?MODULE, {ping, FromName}).
+            gen_server:call(?MASTER, {ping, FromName}).
 
         handle_call({ping, FromName}, _From, Dict) ->
             {reply, pong, dict:update_counter(FromName, 1, Dict)};
@@ -84,7 +84,7 @@ External clients can make the following requests:
 
         :::erlang
         get_score(Name) ->
-            gen_server:call(?MODULE, {get_score, Name}).
+            gen_server:call(?MASTER, {get_score, Name}).
 
         handle_call({get_score, Name}, _From, Dict) ->
             Score = dict:fetch(Name, Dict),
