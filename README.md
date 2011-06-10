@@ -27,8 +27,8 @@ Editing the site
     with an index of the form '42#', in order to override the default alphabetic
     ordering of pages. This prefix will be removed when building the site.
 *   The site's structure is reflected in the directory hierarchy.
-*   Support/User_Guide.md is copied from PropEr's README file. Do not edit this
-    file directly: any changes you make will be overwritten.
+*   pages_src/User_Guide.md is copied from PropEr's README.md file. Do not edit
+    this file directly: any changes you make will be overwritten.
 *   Headers and footers will be added to each page automatically. The template
     for these can be found in the 'template.html' file.
 *   A title and heading will be added to each page, according to its file name.
@@ -47,9 +47,9 @@ Editing the site
     :   must have the value:
         'replace-tabs-save on; replace-tabs on; tab-width 8;'
         to avoid complications when editing the file in the editor Kate
-*   EDoc-generated documentation must be copied manually to 'resources/doc'
-    periodically, by running 'make update_docs' on a system that has a recent
-    version of EDoc.
+*   The User Guide and the EDoc-generated API documentation must be copied
+    manually from the PropEr source tree periodically, by running
+    `make update_docs` on a system that has a recent version of EDoc.
 *   Other resources (images, style sheets, pdfs etc.) can be found in the
     'resources' directory.
 *   To specify the width and/or height of included images, import them using
@@ -64,13 +64,13 @@ Workflow
 --------
 
 1.  Make your changes.
-2.  Run 'make' to compile the pages.
-3.  Run 'make test' to launch a minimal web server that will serve the site. The
+2.  Run `make` to compile the pages.
+3.  Run `make test` to launch a minimal web server that will serve the site. The
     site's pages will be available in any browser at [http://localhost:8080].
     When you're done, give Ctrl+C to stop the server.
 4.  If you're not happy with the result, go back to step 1.
 5.  Commit and push your changes.
-6.  Run 'make upload' to upload the changes to the web.
+6.  Run `make upload` to upload the changes to the web.
 
 
 Stuff to add
@@ -88,15 +88,8 @@ Front Page
 Header
 ------
 
-*   icon and (fancy) "PropEr" logo that link to the main page
-*   Erlang icon must be lower (and bigger)
-*   shirt icon: "PropEr" on the shirt tag, size = "42", Erlang logo smaller and
-    a little lower, watch the perspective
-*   more modern (and austere) font for logo (e.g. SansSerif)
-*   Horizontal navigation bar (have extra "Home" link?)
+*   more breathing room for logo
 *   Second level of structure, for the current sub-directory
-*   The documentation / FAQ, etc. could be more visible, not hidden under
-    support: flat navbar layout (for now)
 
 
 Footer
@@ -107,32 +100,82 @@ Footer
 *   "Powered by ..."
 *   "Valid HTML ..."
 *   "This page was last edited on ..." (make this more fine-grained?)
-*   page author information (read from meta-information)
+*   page author information here?
 
 
 Help/Support
 ------------
 
-*   link to external resources on PropEr (interviews, podcasts, tutorials,
-    chapter in Learn You Some Erlang, QuickCheck stuff, ...)
-*   link to issues page on github
-*   link to contact information, in case of problems
-*   Quickstart, User Guide,  Common Problems (same as PropEr's README)
-*   EDoc-powered documentation
-*   FAQ, How-To
-*   Tips, Common mistakes/blunders
-*   Tutorials (e.g. simple lists properties, re2, proc_dict statem, combining
-    PropEr and EUnit: go from EUnit to PropEr or integrate PropEr in EUnit ...)
+*   what to do when you need assistance (contact information, issues page on
+    github)
 *   Demos, Sample Properties, showcase of QC-mode and PropEr-exclusive features
     (various demos from presentations, Kresten's properties, ec_dictionary, from
     open-source projects, ...)
+
+
+Tutorials
+---------
+
+*   tutorial(s) on the simple use of PropEr (writing properties for testing
+    purely functional code), e.g. simple lists properties
+*   tutorial(s) on the use of PropEr-specific extensions (types as generators,
+    spec testing, Auto-ADT)
+*   tutorial on combining PropEr and EUnit: combine their use, go from EUnit to
+    PropEr, use PropEr counterexamples as unit tests, ...
 *   re2 extended demo (full process of specification, re vs re2, generators from
     regexps, generators or even native types as string,regexp,options)
-*   links to (preferably locally saved) talks and papers (+bibliography info)
-*   separate "Talks" tab (not only academic talks, but also presentations,
-    podcasts etc.)
-*   humorous version of presentation with "times said 'proper'" counter
-*   EDoc pages color theme that resembles the main page
+*   quickstart (head-first) tutorial: include the header file, you only need
+    ?FORALL and some basic types ...
+
+
+Tips
+----
+
+*   tips on using PropEr, generators, Erlang types, ...
+*   where to put properties: in separate files, or in the same file, but
+    surrounded by ifdef(TEST)
+*   stuff from the paper's "Practical Experiences" chapter (both printed and
+    commented out) should be added to "Tips"
+*   Quickstart, Common problems, How-Tos, Common mistakes/blunders, Common user
+    errors, Comments on received tests, User misunderstandings
+
+
+API
+---
+
+*   no-frames version of API?
+*   what is the main proper header?
+*   what is a raw_type?
+*   fix variable names (RawType vs. Type etc.)
+*   background in code listings?
+*   copy function descriptions from the paper (and other sources...)
+
+
+Publications
+------------
+
+*   talks and papers: bibliography info, bibtex, full text/slides (locally
+    saved), abstract, link to video
+*   Manolis' and Eirini's diploma theses
+
+
+Links
+-----
+
+*   link to external resources on PropEr (interviews, podcasts, tutorials,
+    chapter in Learn You Some Erlang, QuickCheck stuff, non-academic talks --
+    Kostis' too, presentations, podcasts etc.
+*   Kostis Sagonas: "Cool Tools for Modern Erlang Program Development" talk:
+        http://erlang-factory.com/conference/SFBay2011/speakers/KostisSagonas
+    Trapexit: QuickCheck tutorials:
+        http://www.trapexit.org/Category:QuickCheck
+    Minute With Riak: Property Based Testing podcast:
+        http://riak.minutewith.com/pages/20110128
+    Torben Hoffmann: "Property Based Testing For Unit Testers" tutorial:
+        https://docs.google.com/document/pub?id=1kTLvLKDpYBBKgo0S0W4sXUI5-BzAIDYFFfqqklEawao
+    Cretors of QuickCheck: main QC site: tutorials:
+        http://quviq.com/
+*   link to QuickCheck talks?
 
 
 Code highlighting
@@ -151,13 +194,14 @@ Code highlighting
 *   alternatively, left-indent code blocks (via the margin-left or border-left
     CSS property?) (also add corresponding right-indentation?)
 *   fix python-markdown fenced-code & codehilite incompatibility
+*   patch pygments to parse specs, records etc.
 
 
 Download
 --------
 
-*   Packaged versions
-*   link to project page on github (bleeding edge version)
+*   Packaged versions (for each versions, or automatically produced using a
+    post-hook)
 
 
 About
@@ -168,14 +212,14 @@ About
     - name
     - photo
     - bio (funny version?)
+    - CV?
     - part written
-    - e-mail
+    - e-mail?
     - personal webpage
 *   PropEr's users
-*   (Humorous) reviews
-*   "Icon by Gordon Irving"
+*   Acknowledgments:
+    -   "Icon by Gordon Irving, edited by Thanos Tintinidis"
 *   link to QuviQ's site
-*   Image map and separate page for each dev
 
 
 Humor
@@ -196,9 +240,13 @@ Humor
     :    PropEr suggestions for effective use of the tool
     Tutorials
     :    PropEr tutorials
-*   What people have said about PropEr:
+*   About page: humorous reviews:
+    What people have said about PropEr:
     -   Stavros Aronis: "PropEr is a QuickCheck parody."
     -   Kostis Sagonas: "Good job, now make it produce properties from specs."
+*   Talks: humorous version of EF'11 London presentation with "times said
+    'proper'" counter
+*   history of PropEr (with comics from the EF2011 London comics)
 
 
 Infrastructure
@@ -223,5 +271,11 @@ Infrastructure
 *   favicon = resized PropEr logo / new logo
 *   titles on all pages should contain "PropEr"
 *   more/fewer categories
+*   Support for floating images: img without extra information is floating, if
+    it is of some specific class, it's block-level. Then, images given using
+    Markdown notation are floating, while images given with an HTML tag can have
+    the class declaration and be block-level.
+*   give some breathing room to the logo
+
 
 <!-- kate: replace-tabs-save on; replace-tabs on; tab-width 8; -->

@@ -16,8 +16,6 @@ distclean: clean
 build: distclean
 	mkdir -p build
 	cp -r resources/* build
-	#wget --no-check-certificate -O pages_src/Support/User_Guide.md \
-	#	https://github.com/manopapad/proper/raw/master/README.md
 	python compile_pages.py
 
 test:
