@@ -8,15 +8,15 @@ dynamic. How can I extract specific parts of the result of an API call, if
 I am not allowed to pattern match?**
 
 Information has to be extracted in a symbolic way, i.e. by performing a symbolic
-call. For example, suppose that the result of a call was a non-empty list of
-integers and that we  wanted to use the first element of the list, so as to
-update the model state. An attempt to extract it using `hd/1` would raise an
-exception. Instead, assuming the model state is a record `#state{}` with a field
-named `head`, we should write:
+call. For example, suppose that the `Result` of a `Call` was a tuple with at
+least one element and that we wanted to use the first element, so as to update
+the model state. An attempt to extract it using `erlang:element/2` would raise
+an exception. Instead, assuming the model state is a record `#state{}` with a
+field named `foo`, we should write:
 
     :::erlang
     next_state(S, Result, Call) ->
-        S#state{head = {call,erlang,hd,[Result]}}.
+        S#state{foo = {call,erlang,element,[1, Result]}}.
 
 PropEr will automatically evaluate the symbolic call during command
 execution, therefore no extra action needs to be taken.
