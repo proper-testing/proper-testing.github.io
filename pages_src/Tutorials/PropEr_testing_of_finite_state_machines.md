@@ -138,6 +138,9 @@ Let us now describe the API of the finite state machine:
                      S#storage{grapes = S#storage.grapes + Quantity}}
             end;
 
+    Note that we will add more clauses to these functions (see below)
+    hence the semicolons at the end of these clauses.
+
 *   Last but not least, we can simulate the beginning of a new day by
     specifying the creature's food for that day.
 
