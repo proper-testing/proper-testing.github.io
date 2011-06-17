@@ -9,19 +9,19 @@ I am not allowed to pattern match?**
 
 Information has to be extracted in a symbolic way, i.e. by performing a symbolic
 call. For example, suppose that the `Result` of a `Call` was a tuple with at
-least one element and that we wanted to use the first element, so as to update
+least one element and that you wanted to use the first element, so as to update
 the model state. An attempt to extract it using `erlang:element/2` would return
-a wrong result (in this case, the atom `var` because of `Result` being a
-symbolic variable `{var,N}` during command generation).
+a wrong result (in this case, the atom `var` because `Result` is a symbolic
+variable `{var,N}` during command generation).
 Instead, assuming the model state is a record `#state{}` with a field named
-`foo`, we should write:
+`foo`, you should write:
 
     :::erlang
     next_state(S, Result, Call) ->
         S#state{foo = {call,erlang,element,[1, Result]}}.
 
-PropEr will automatically evaluate the symbolic call during command
-execution, therefore no extra action needs to be taken.
+PropEr will automatically evaluate the symbolic call during command execution,
+therefore no extra action needs to be taken.
 
 **Shouldn't there be more questions here?**
 
