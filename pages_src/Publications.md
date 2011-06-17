@@ -1,4 +1,4 @@
-Summary: PropEr papers and talks
+Summary: Papers and talks about PropEr
 kate: replace-tabs-save on; replace-tabs on; tab-width 8;
 
 None yet, but hopefully some will appear here soon.
