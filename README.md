@@ -55,6 +55,9 @@ Editing the site
 *   To specify the width and/or height of included images, import them using
     the HTML tag directly:
         <img src="..." alt="..." title="..." width="..." height="..." />
+*   Anything inside the `private` folder will not be copied to the site. You can
+    use this folder to track things that we don't want to make public (like .ppt
+    sources of slides).
 
 [1]: http://daringfireball.net/projects/markdown/
 [2]: http://www.freewisdom.org/projects/python-markdown/Available_Extensions
@@ -244,6 +247,7 @@ Humor
     What people have said about PropEr:
     -   Stavros Aronis: "PropEr is a QuickCheck parody."
     -   Kostis Sagonas: "Good job, now make it produce properties from specs."
+*   About page: tweets (good and bad)
 *   Talks: humorous version of EF'11 London presentation with "times said
     'proper'" counter
 *   history of PropEr (with comics from the EF2011 London comics)
