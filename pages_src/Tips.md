@@ -1,4 +1,4 @@
-Summary: For the effective use of PropEr
+Summary: Tips on the effective use of PropEr
 kate: replace-tabs-save on; replace-tabs on; tab-width 8;
 
 Tips on testing stateful code

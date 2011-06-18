@@ -1,4 +1,4 @@
-Summary: Showing the tool's PropEr use
+Summary: Tutorials on the PropEr use of this tool
 kate: replace-tabs-save on; replace-tabs on; tab-width 8;
 
 Currently, this section contains tutorials on how to test stateful systems.
