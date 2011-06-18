@@ -19,6 +19,4 @@ for file in resources/doc/*.html; do
 done
 sed --in-place -e "s|</body>|$MAIN_PAGE_LINK</body>|" resources/doc/modules-frame.html
 echo $USER_GUIDE_META_DATA > pages_src/User_Guide.md
-wget --quiet --no-check-certificate --output-document=- \
-    https://github.com/manopapad/proper/raw/master/README.md \
-    >> pages_src/User_Guide.md
+cat proper/README.md >> pages_src/User_Guide.md
