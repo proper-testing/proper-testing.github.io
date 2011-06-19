@@ -77,7 +77,7 @@ Let us now describe the API of the finite state machine:
 
         -spec hungry() -> {food_left(), quantity()}.
         hungry() ->
-            gen_fsm:send_event(creature, eat).
+            gen_fsm:sync_send_event(creature, eat).
 
         cheese_day(eat, Caller, #storage{cheese = Cheese} = S) ->
             gen_fsm:reply(Caller, {cheese_left, Cheese}),
