@@ -1,6 +1,18 @@
 Summary: Papers and talks about PropEr
 kate: replace-tabs-save on; replace-tabs on; tab-width 8;
 
+*   Manolis Papadakis and Konstantinos Sagonas,
+    "A PropEr Integration of Types and Function Specifications with
+    Property-Based Testing",
+    to appear at the
+    [10th ACM SIGPLAN Erlang Workshop](http://www.erlang.org/workshop/2011/),
+    Tokyo, Japan, September 23, 2011.
+    [[PDF]](/papers/proper_types.pdf)
+    [[Abstract]](/papers/proper_types.txt)
+
+Diploma Theses
+==============
+
 *   Manolis Papadakis,
     "Automatic Random Testing of Function Properties from Specifications",
     Diploma thesis, October 2010.
@@ -13,14 +25,6 @@ kate: replace-tabs-save on; replace-tabs on; tab-width 8;
     [[PDF]](/papers/eirini-thesis.pdf)
     [[Abstract]](/papers/eirini-thesis.txt)
     [[BIB]](/papers/eirini-thesis.bib)
-*   Manolis Papadakis and Konstantinos Sagonas,
-    "A PropEr Integration of Types and Function Specifications with
-    Property-Based Testing",
-    to appear at the
-    [10th ACM SIGPLAN Erlang Workshop](http://www.erlang.org/workshop/2011/),
-    Tokyo, Japan, September 23, 2011.
-    [[PDF]](/papers/proper_types.pdf)
-    [[Abstract]](/papers/proper_types.txt)
 
 Talks
 =====
