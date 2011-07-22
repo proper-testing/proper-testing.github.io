@@ -159,7 +159,6 @@ Publications
 
 *   talks and papers: bibliography info, bibtex, full text/slides (locally
     saved), abstract, link to video
-*   Manolis' and Eirini's diploma theses
 
 
 Links
@@ -222,6 +221,7 @@ About
 *   PropEr's users
 *   Acknowledgments:
     -   "Icon by Gordon Irving, edited by Thanos Tintinidis"
+    -   "Tutorial illustrations by ..., creator of Learn You Some Erlang (link)"
 *   link to QuviQ's site
 
 
