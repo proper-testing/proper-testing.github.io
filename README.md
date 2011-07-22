@@ -159,6 +159,16 @@ Publications
 
 *   talks and papers: bibliography info, bibtex, full text/slides (locally
     saved), abstract, link to video
+*   diploma theses: could also just remove Greek pages
+*   ACM Papers: Must include the following notice both embedded within the full
+    text file and in the accompanying citation display as well:
+    "© ACM, (YEAR). This is the author’s version of the work. It is posted here
+    by permission of ACM for your personal use. Not for redistribution. The
+    definitive version was published in PUBLICATION, {VOL#, ISS#, (DATE)}
+    http://doi.acm.org/10.1145/{nnnnnn.nnnnnn}".
+    The nnnnnn.nnnnnn number for the article's DOIs can be found on its citation
+    page in the ACM Digital Library.
+*   add h2 "Papers" header? (and make "Talks" and "Diploma Theses" h2)?
 
 
 Links
@@ -230,19 +240,20 @@ Humor
 
 *   Change the page descriptions to something funnier:
     About
-    :   The PropEr developers
+    :   "The PropEr developers"
     API
-    :   Browse our PropEr API
+    :   "Browse our PropEr API", or "The PropEr API and its documentation"
     Download
-    :    PropEr instructions on how to do this
+    :    "PropEr instructions on how to do this"
     FAQ
-    :    Frequently Asked Questions with PropEr Answers
+    :   Frequently Asked Questions with PropEr Answers
     Publications
-    :    PropEr papers and talks
+    :   PropEr papers and talks
     Tips
-    :    PropEr suggestions for effective use of the tool
+    :   "PropEr suggestions for effective use of the tool", or
+        For the effective use of PropEr
     Tutorials
-    :    PropEr tutorials
+    :   "PropEr tutorials", or "Showing the tool's PropEr use"
 *   About page: humorous reviews:
     What people have said about PropEr:
     -   Stavros Aronis: "PropEr is a QuickCheck parody."

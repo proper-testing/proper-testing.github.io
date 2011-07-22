@@ -10,8 +10,11 @@ kate: replace-tabs-save on; replace-tabs on; tab-width 8;
     [[PDF]](/papers/proper_types.pdf)
     [[Abstract]](/papers/proper_types.txt)
 
+
 Diploma Theses
 ==============
+
+The first few pages are in Greek, but the main text is in English.
 
 *   Manolis Papadakis,
     "Automatic Random Testing of Function Properties from Specifications",
@@ -25,6 +28,7 @@ Diploma Theses
     [[PDF]](/papers/eirini-thesis.pdf)
     [[Abstract]](/papers/eirini-thesis.txt)
     [[BIB]](/papers/eirini-thesis.bib)
+
 
 Talks
 =====
