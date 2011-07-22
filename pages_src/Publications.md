@@ -18,13 +18,13 @@ The first few pages are in Greek, but the main text is in English.
 
 *   Manolis Papadakis,
     "Automatic Random Testing of Function Properties from Specifications",
-    Diploma thesis, October 2010.
+    October 2010.
     [[PDF]](/papers/manolis-thesis.pdf)
     [[Abstract]](/papers/manolis-thesis.txt)
     [[BIB]](/papers/manolis-thesis.bib)
 *   Eirini Arvaniti,
     "Automated Random Model-Based Testing of Stateful Systems",
-    Diploma thesis, July 2011.
+    July 2011.
     [[PDF]](/papers/eirini-thesis.pdf)
     [[Abstract]](/papers/eirini-thesis.txt)
     [[BIB]](/papers/eirini-thesis.bib)
@@ -33,7 +33,7 @@ The first few pages are in Greek, but the main text is in English.
 Talks
 =====
 
-*   Kostis Sagonas, "A PropEr Talk", at [Erlang Factory
+*   Kostis Sagonas, "A PropEr Talk", [Erlang Factory
     London](http://www.erlang-factory.com/conference/London2011), June 2011.
     [[Slides]](/talks/proper_talk@London-11.pdf)
     [[Video]](http://vimeo.com/26575963)

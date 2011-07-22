@@ -188,6 +188,7 @@ Links
     Cretors of QuickCheck: main QC site: tutorials:
         http://quviq.com/
 *   link to QuickCheck talks?
+*   link to PropEr announcement?
 
 
 Code highlighting
