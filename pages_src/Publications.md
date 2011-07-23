@@ -6,7 +6,7 @@ kate: replace-tabs-save on; replace-tabs on; tab-width 8;
     Property-Based Testing",
     to appear at the
     [10th ACM SIGPLAN Erlang Workshop](http://www.erlang.org/workshop/2011/),
-    Tokyo, Japan, September 23, 2011.
+    Tokyo, Japan, September 2011.
     [[PDF]](/papers/proper_types.pdf)
     [[Abstract]](/papers/proper_types.txt)
 
@@ -14,7 +14,8 @@ kate: replace-tabs-save on; replace-tabs on; tab-width 8;
 Diploma Theses
 ==============
 
-The first few pages are in Greek, but the main text is in English.
+Do not be put off by the first few pages which are in Greek.
+The main text of the theses is in English.
 
 *   Manolis Papadakis,
     "Automatic Random Testing of Function Properties from Specifications",
