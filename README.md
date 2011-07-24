@@ -143,6 +143,12 @@ Tips
     errors, Comments on received tests, User misunderstandings
 
 
+FAQ
+---
+
+*   GPL/license question(s) (see issue, mailing list, FSF correspondance)
+
+
 API
 ---
 
@@ -168,6 +174,7 @@ Publications
     http://doi.acm.org/10.1145/{nnnnnn.nnnnnn}".
     The nnnnnn.nnnnnn number for the article's DOIs can be found on its citation
     page in the ACM Digital Library.
+*   fill in bibliography information for types paper
 *   add h2 "Papers" header? (and make "Talks" and "Diploma Theses" h2)?
 
 

@@ -1,7 +1,9 @@
 Summary: The main PropEr page
 kate: replace-tabs-save on; replace-tabs on; tab-width 8;
 
-Welcome to PropEr's website!
+PropEr is a tool for the automated, semi-random, property-based testing of
+Erlang programs. It is fully integrated with Erlang's type language, and can
+also be used for the model-based random testing of stateful systems.
 
 To learn more about PropEr, see the [User Guide](/User_Guide.html).
 Afterwards, you can [download a copy of PropEr](/Download.html),
