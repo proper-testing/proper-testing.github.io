@@ -4,9 +4,10 @@
 
 import os
 import os.path
+import commands
 import codecs
 import copy
-import datetime
+from datetime import date
 import markdown
 
 #===============================================================================
@@ -131,6 +132,9 @@ def write_html(fs_path, title, author, content, extra, template):
     out_fs_path = switch_base_dir(fs_path)
     if author <> '':
         author = '<p class="author_info">by ' + author + '</p>'
+    timestamp_command = 'git log -1 --format=format:"%at%n" "' + fs_path + '"'
+    timestamp = int(commands.getoutput(timestamp_command))
+    edit_date = date.fromtimestamp(timestamp).isoformat()
     html = template.replace(
                '#TITLE#', title
            ).replace(
@@ -139,6 +143,8 @@ def write_html(fs_path, title, author, content, extra, template):
                '#PRI_NAVBAR#', extra['pri_navbar']
            ).replace(
                '#CONTENT#', content + extra['content']
+           ).replace(
+               '#EDIT_DATE#', edit_date
            )
     out_file = codecs.open(out_fs_path, 'w', 'utf8')
     out_file.write(html)
@@ -149,5 +155,4 @@ def write_html(fs_path, title, author, content, extra, template):
 template_file = codecs.open('template.html', 'r', 'utf8')
 template = template_file.read()
 template_file.close()
-template = template.replace('#EDIT_DATE#', datetime.date.today().isoformat())
 build('pages_src', 'PropEr', empty_extra(), template)
