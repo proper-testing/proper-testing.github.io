@@ -73,7 +73,8 @@ Workflow
     When you're done, give Ctrl+C to stop the server.
 4.  If you're not happy with the result, go back to step 1.
 5.  Commit and push your changes.
-6.  Run `make upload` to upload the changes to the web.
+6.  Compile the pages once more (using `make`) to get the last edit dates right.
+7.  Run `make upload` to upload the changes to the website.
 
 
 Stuff to add
@@ -299,6 +300,7 @@ Infrastructure
     Markdown notation are floating, while images given with an HTML tag can have
     the class declaration and be block-level.
 *   give some breathing room to the logo
-
+*   add a post-commit hook on greedy, to automatically build and upload the site
+    on each commit (pull?)
 
 <!-- kate: replace-tabs-save on; replace-tabs on; tab-width 8; -->
