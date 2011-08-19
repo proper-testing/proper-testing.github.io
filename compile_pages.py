@@ -7,6 +7,7 @@ import os.path
 import commands
 import codecs
 import copy
+import time
 from datetime import date
 import markdown
 
@@ -133,7 +134,11 @@ def write_html(fs_path, title, author, content, extra, template):
     if author <> '':
         author = '<p class="author_info">by ' + author + '</p>'
     timestamp_command = 'git log -1 --format=format:"%at%n" "' + fs_path + '"'
-    timestamp = int(commands.getoutput(timestamp_command))
+    timestamp_string = commands.getoutput(timestamp_command)
+    if timestamp_string == '':
+        timestamp = time.time()
+    else:
+        timestamp = int(timestamp_string)
     edit_date = date.fromtimestamp(timestamp).isoformat()
     html = template.replace(
                '#TITLE#', title
