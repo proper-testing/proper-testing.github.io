@@ -15,6 +15,11 @@ p.author_info {
     font-style: italic;
 }
 
+.question {
+    font-size: large;
+    background-color: #e0e0e0;
+}
+
 #header, #nav, #content, #footer{
     background-color: white;
     margin-top: 0px;
