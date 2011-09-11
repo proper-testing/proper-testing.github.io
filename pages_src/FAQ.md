@@ -23,6 +23,24 @@ while we agree that this discrepancy is a bit confusing, it's occasionally
 something that comes very handy when wanting specific list generators.
 
 <h2 class="question" markdown="1">
+I am writing some recursive generators but I am phasing some problems.
+I am wondering, what is the PropEr way to deal with recursive types?
+</h2>
+
+The PropEr way to deal with recursive types is to delay writing your
+own generators for as long as possible. You can start by writing just
+the recursive type definitions and use them as a <i>for free</i>
+generator. If that proves not to be adequate for your application, you
+can try to globally limit the recursion depth by passing an
+appropriate value for the `max_size` option to the `proper:quickcheck`
+function. Only if even that is not enough for some reason should you
+try to resort to writing your own recursive generators using `?SIZED`,
+`?LAZY`, `frequency`, `resize` and friends. If you encounter any
+problem at any point in the above we would like to hear about it,
+preferably with a small test that exhibits the problem in an easily
+reproducible way.
+
+<h2 class="question" markdown="1">
 I'm writing an abstract state machine specification for a stateful system.
 I know that I should use the `next_state/3` callback to update the model
 state and that all data related to this callback can be either symbolic or
