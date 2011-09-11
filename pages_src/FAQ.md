@@ -23,7 +23,7 @@ while we agree that this discrepancy is a bit confusing, it's occasionally
 something that comes very handy when wanting specific list generators.
 
 <h2 class="question" markdown="1">
-I am writing some recursive generators but I am phasing some problems.
+I am writing some recursive generators but I am facing some problems.
 I am wondering, what is the PropEr way to deal with recursive types?
 </h2>
 
