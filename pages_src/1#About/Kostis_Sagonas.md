@@ -24,5 +24,6 @@ he has designed and implemented many software development tools for Erlang
 ([Dialyzer](http://dialyzer.softlab.ntua.gr),
  Typer<!-- (http://www.erlang.org/doc/typer.html)-->,
  [Tidier](http://tidier.softlab.ntua.gr),
- [PropEr](http://proper.softlab.ntua.gr), ...)
+ [PropEr](http://proper.softlab.ntua.gr),
+ Concuerror, ...)
 and has contributed bug fixes to many open-source Erlang projects.
