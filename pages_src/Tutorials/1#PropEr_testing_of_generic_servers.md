@@ -496,7 +496,7 @@ revise the property:
 Let's try it again:
 
     :::erl
-    4> proper:quickcheck(movie_server:prop_server_works_fine()).
+    4> proper:quickcheck(movie_statem:prop_server_works_fine()).
     ....................!
     Failed: After 21 test(s).
     A linked process died with reason
@@ -823,7 +823,7 @@ Let us rewrite:
 and check that the counterexample now passes the test:
 
     :::erl
-    41> proper:check(movie_server:prop_server_works_fine(), proper:counterexample()).
+    41> proper:check(movie_statem:prop_server_works_fine(), proper:counterexample()).
     OK: The input passed the test.
     true
 
@@ -848,7 +848,7 @@ to collect statistics about how often each command was executed.
 If we run the test now:
 
     :::erl
-    41> proper:quickcheck(movie_server:prop_server_works_fine(), 1000).
+    41> proper:quickcheck(movie_statem:prop_server_works_fine(), 1000).
     <...1000 dots....>
     OK: Passed 3000 test(s).
 
@@ -878,7 +878,7 @@ generator so that `return_dvd/2` calls can be selected more frequently.
 The resulting distribution is:
 
     :::erl
-    42> proper:quickcheck(movie_server:prop_server_works_fine(), 3000).
+    42> proper:quickcheck(movie_statem:prop_server_works_fine(), 3000).
     <...3000 dots....>
     OK: Passed 3000 test(s).
 
@@ -888,3 +888,9 @@ The resulting distribution is:
     17% {movie_server,create_account,1}
      8% {movie_server,delete_account,1}
     true
+
+You can get the complete final code of this tutorial by clicking on
+the following links:
+  <a href="/code/movies/movie_server.erl">movie_server</a>
+and
+  <a href="/code/movies/movie_statem.erl">movie_statem</a>.

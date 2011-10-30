@@ -458,3 +458,10 @@ And now the property successfully passes the tests:
     16% {ping_pong,play_tennis,1}
     16% {ping_pong,get_score,1}
     true
+
+You can get the complete final code of this tutorial by clicking on
+the following links:
+  <a href="/code/ping_pong/master_statem.erl">master_statem</a>,
+  <a href="/code/ping_pong/ping_pong.erl">ping_pong</a>
+and
+  <a href="/code/ping_pong/ping_pong_statem.erl">ping_pong_statem</a>.

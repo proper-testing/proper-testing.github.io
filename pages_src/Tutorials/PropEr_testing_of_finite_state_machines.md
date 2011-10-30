@@ -618,3 +618,6 @@ The property now successfully passes 1000 tests.
      7% {lettuce_day,{food_fsm,buy,2}}
      7% {grapes_day,{food_fsm,buy,2}}
     true
+
+You can get the complete final code of this tutorial by clicking on
+the following link: <a href="/code/food_fsm.erl">food_fsm</a>.
