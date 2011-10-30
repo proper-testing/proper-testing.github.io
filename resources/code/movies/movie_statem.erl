@@ -26,12 +26,12 @@
 %%--------------------------------------------------------------------
 
 test() ->
-    proper:quickcheck(?MODULE:prop_movies()).
+    proper:quickcheck(?MODULE:prop_server_works_fine()).
 
 sample() ->
     proper_gen:pick(commands(?MODULE)).
 
-prop_movies() ->
+prop_server_works_fine() ->
     ?FORALL(Cmds, commands(?MODULE),
 	    ?TRAPEXIT(
 	       begin
@@ -120,10 +120,7 @@ postcondition(_S, {call,_,ask_for_popcorn,[]}, Result) ->
 
 is_available(Movie, #state{rented = Rented}) ->
     Av = proplists:get_value(Movie, ?AVAILABLE_MOVIES, -1),
-    R = count(Movie, Rented),
-    if R < Av  -> true;
-       R >= Av -> false
-    end.
+    count(Movie, Rented) < Av.
 
 count(Movie, PropList) ->
     lists:foldl(fun({_,X}, Acc) -> matches(Movie, X) + Acc end, 0, PropList).
