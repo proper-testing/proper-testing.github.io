@@ -25,7 +25,6 @@ The main text of the theses is in English.
     [[PDF]](/papers/eirini-thesis.pdf)
     [[Abstract]](/papers/eirini-thesis.txt)
     [[Bib]](/papers/eirini-thesis.bib)
-
 *   Manolis Papadakis,
     "Automatic Random Testing of Function Properties from Specifications",
     October 2010.
@@ -40,7 +39,6 @@ Talks
 *   Kostis Sagonas, "A PropEr Creation", [Erlang User
     Conference](http://www.erlang-factory.com/conference/ErlangUserConference2011), November 2011.
     [[Slides]](/talks/proper_creation@EUC-11.pdf)
-
 *   Kostis Sagonas, "A PropEr Talk", [Erlang Factory
     London](http://www.erlang-factory.com/conference/London2011), June 2011.
     [[Slides]](/talks/proper_talk@London-11.pdf)
