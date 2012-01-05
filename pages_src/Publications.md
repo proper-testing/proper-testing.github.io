@@ -39,6 +39,7 @@ Talks
 *   Kostis Sagonas, "A PropEr Creation", [Erlang User
     Conference](http://www.erlang-factory.com/conference/ErlangUserConference2011), November 2011.
     [[Slides]](/talks/proper_creation@EUC-11.pdf)
+    [[Video]](http://vimeo.com/33776857)
 *   Kostis Sagonas, "A PropEr Talk", [Erlang Factory
     London](http://www.erlang-factory.com/conference/London2011), June 2011.
     [[Slides]](/talks/proper_talk@London-11.pdf)
