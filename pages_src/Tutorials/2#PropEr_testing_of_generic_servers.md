@@ -115,7 +115,7 @@ _model state_, corresponds to the implicit internal state of the system under
 test. Now, all we have to check is whether these states ever become
 inconsistent. Such an inconsistency can be detected from the results of API
 calls. When this occurs, there is much probability that the error lies in our
-model and not in the implemetation. But then, it is quite easy to redefine our
+model and not in the implementation. But then, it is quite easy to redefine our
 model and run the test again. In this way, well hidden bugs can be revealed,
 because after e.g. 3000 random tests, PropEr will eventually try sequences of
 calls that would not have been tested by traditional unit testing methods.

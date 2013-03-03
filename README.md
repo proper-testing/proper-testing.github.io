@@ -122,6 +122,7 @@ Tutorials
 
 *   tutorial(s) on the simple use of PropEr (writing properties for testing
     purely functional code), e.g. simple lists properties
+*   tutorial on the (manual) use of symbolic datatypes
 *   tutorial(s) on the use of PropEr-specific extensions (types as generators,
     spec testing, Auto-ADT)
 *   tutorial on combining PropEr and EUnit: combine their use, go from EUnit to
@@ -197,6 +198,7 @@ Links
         http://quviq.com/
 *   link to QuickCheck talks?
 *   link to PropEr announcement?
+*   link to Mr. PropEr photo
 
 
 Code highlighting

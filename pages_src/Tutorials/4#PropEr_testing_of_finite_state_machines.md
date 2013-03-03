@@ -40,7 +40,7 @@ the creature goes shopping from time to time. Finally, every night it decides
 what to eat the next day. There is only one rule regarding this decision:
 "never eat the same food for two days in a row".
 
-Being a huge fun of Erlang, this creature has implemented a finite state
+Being a huge fan of Erlang, this creature has implemented a finite state
 machine describing its daily routine using the OTP `gen_fsm` behaviour. The
 internal state of the finite state machine is a record that represents the food
 storage. The record fields contain the quantity of food that is currently
