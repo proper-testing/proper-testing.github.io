@@ -8,7 +8,7 @@ if ! test -d proper; then
 fi
 cd proper
 git pull -q origin master
-make distclean doc
+make compile doc
 cd ..
 rm -f resources/doc/*.html
 cp proper/doc/*.html resources/doc
