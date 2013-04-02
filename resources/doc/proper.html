@@ -1,6 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Module proper</title>
 <link rel="stylesheet" type="text/css" href="stylesheet.css" title="EDoc">
 </head>
@@ -10,9 +11,9 @@
 
 <h1>Module proper</h1>
 <ul class="index"><li><a href="#description">Description</a></li><li><a href="#types">Data Types</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>This is the main PropEr module.
-<p>Copyright © 2010-2011 Manolis Papadakis, Eirini Arvaniti and Kostis Sagonas</p>
+<p>Copyright © 2010-2013 Manolis Papadakis, Eirini Arvaniti and Kostis Sagonas</p>
 
-<p><b>Version:</b> Aug 4 2011 02:00:52</p>
+<p><b>Version:</b> Apr 2 2013 10:39:19</p>
 <p><b>Authors:</b> Manolis Papadakis.</p>
 
 <h2><a name="description">Description</a></h2><p>This is the main PropEr module.</p>
@@ -239,6 +240,18 @@ section) override any conflicting settings provided as options.</p>
      integers. This is provided as a means to speed up the testing of specs,
      where <code>any()</code> is a commonly used type (see the <a href="#Spec_testing">Spec testing</a>
      section for details).</dd>
+   <dt><code>{skip_mfas, [&lt;MFA&gt;]}</code></dt>
+   <dd> When checking a module's specs, PropEr will not test the
+     specified MFAs.  Default is [].</dd>
+   <dt><code>{false_positive_mfas, fun((mfa(),[Arg::term()],{fail, Result::term()} | {error | exit | throw, Reason::term()}) -&gt; boolean()) | undefined}</code></dt>
+   <dd> When checking a module's spec(s), PropEr will treat a
+   counterexample as a false positive if the user supplied function
+   returns true.  Otherwise, PropEr will treat the counterexample as
+   it normally does.  The inputs to the user supplied function are
+   the MFA, the arguments passed to the MFA, and the result returned
+   from the MFA or an exception with it's reason.  If needed, the
+   user supplied function can call erlang:get_stacktrace/0.  Default
+   is undefined.</dd>
    </dl>
   
    <h3><a name="Spec_testing">Spec testing</a></h3><p>
@@ -347,6 +360,18 @@ the error.</p>
                | {unrecognized_option, term()}</pre></p>
 
 
+<h3 class="typedecl"><a name="type-false_positive_mfas">false_positive_mfas()</a></h3>
+<p><pre>false_positive_mfas() = fun((mfa(),
+                             Args :: [term()],
+                             {fail, Result :: term()} |
+                             {error | exit | throw,
+                              Reason :: term()}) -&gt;
+                                boolean())
+                      | undefined</pre></p>
+<p> -----------------------------------------------------------------------------
+  Options and Context types
+ -----------------------------------------------------------------------------</p>
+
 <h3 class="typedecl"><a name="type-long_module_result">long_module_result()</a></h3>
 <p><pre>long_module_result() = [{mfa(), <a href="#type-counterexample">counterexample()</a>}]
                      | {error, <a href="#type-error_reason">error_reason()</a>}</pre></p>
@@ -433,7 +458,9 @@ the error.</p>
            | {constraint_tries, pos_integer()}
            | fails
            | any_to_integer
-           | {spec_timeout, timeout()}</pre></p>
+           | {spec_timeout, timeout()}
+           | {skip_mfas, [mfa()]}
+           | {false_positive_mfas, <a href="#type-false_positive_mfas">false_positive_mfas()</a>}</pre></p>
 
 
 <h3 class="typedecl"><a name="type-user_opts">user_opts()</a></h3>
@@ -474,7 +501,7 @@ the error.</p>
 <tr><td valign="top"><a href="#fails-1">fails/1</a></td><td>Specifies that we expect the property <code>Test</code> to fail for some input.</td></tr>
 <tr><td valign="top"><a href="#measure-3">measure/3</a></td><td>A function that collects numeric statistics on the produced instances.</td></tr>
 <tr><td valign="top"><a href="#module-1">module/1</a></td><td>Tests all properties (i.e., all 0-arity functions whose name begins with
-  <code>prop_</code>)exported from module <code>Mod</code>.</td></tr>
+  <code>prop_</code>) exported from module <code>Mod</code>.</td></tr>
 <tr><td valign="top"><a href="#module-2">module/2</a></td><td>Same as <a href="#module-1"><code>module/1</code></a>, but also accepts a list of options.</td></tr>
 <tr><td valign="top"><a href="#numtests-2">numtests/2</a></td><td>Specifies the number <code>N</code> of tests to run when testing the property
   <code>Test</code>.</td></tr>
@@ -635,7 +662,7 @@ the error.</p>
 <div class="spec">
 <p><pre>module(Mod :: <a href="#type-mod_name">mod_name()</a>) -&gt; <a href="#type-module_result">module_result()</a></pre></p>
 </div><p>Tests all properties (i.e., all 0-arity functions whose name begins with
-  <code>prop_</code>)exported from module <code>Mod</code>.</p>
+  <code>prop_</code>) exported from module <code>Mod</code>.</p>
 
 <h3 class="function"><a name="module-2">module/2</a></h3>
 <div class="spec">
@@ -677,6 +704,6 @@ the error.</p>
 <hr>
 
 <div class="navbar"><a name="#navbar_bottom"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="/" target="_top"><img src="/images/proper_tiny.png" align="right" border="0" alt="PropEr logo"></a></td></tr></table></div>
-<p><i>Generated by EDoc, Aug 4 2011, 02:00:52.</i></p>
+<p><i>Generated by EDoc, Apr 2 2013, 10:39:19.</i></p>
 </body>
 </html>
