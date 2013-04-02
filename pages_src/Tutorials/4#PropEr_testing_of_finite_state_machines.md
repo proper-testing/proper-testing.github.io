@@ -195,7 +195,7 @@ out of food in the storage.
 Defining the PropEr finite state machine
 ----------------------------------------
 
-### State represenation ###
+### State representation ###
 
 Following the convention used in `gen_fsm` behaviour, the model state is
 separated into a _state name_ and some _state data_. The _state name_ is used to
