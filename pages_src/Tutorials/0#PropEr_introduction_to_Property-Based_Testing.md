@@ -431,7 +431,7 @@ and see it fail:
 So we see that PropEr has no problem in generating lists containing any Erlang
 term and then shrinking them down to a minimal list that still falsifies the
 property.  This is something that other property-based testing tools for
-Erlang can do (or consciously decide not to support).
+Erlang can _not_ do (or consciously decide not to support).
 
 You can get the complete final code of this tutorial, without this last
 modification to the `prop_same_length` property, by clicking on the following
