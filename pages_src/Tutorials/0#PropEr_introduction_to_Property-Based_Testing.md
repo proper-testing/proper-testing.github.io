@@ -30,7 +30,7 @@ compile and run some unit tests for this module in the Erlang shell:
     2> my_sort:sort([17,42]).
     [17,42]
     3> my_sort:sort([42,17]).    
-    [42,17]
+    [17,42]
     4> my_sort:sort([3,1,4,2]).
     [1,2,3,4]
 
