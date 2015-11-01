@@ -51,8 +51,7 @@ and also the following EUnit tests:
     test_zero() ->
         ?_assertEqual([], sort([])). % notice underscore 
     test_two() ->
-        [?_assertEqual([17,42], sort([17,42])),
-         ?_assertEqual([17,42], sort([42,17]))].
+        [?_assertEqual([17,42], sort([X,Y])) || {X,Y} <- [{17,42}, {42,17}]].
     test_four() ->
         [?_assertEqual([1,2,3,4], sort([3,1,4,2]))].
 
@@ -136,8 +135,8 @@ We can now test whether this property holds for our program:
     true
 
 Indeed, it holds. PropEr ran 100 tests, which is the default number of tests
-to run, generating one list of integers at a time, and checked that whether
-the property was true for them.
+to run, generating one list of integers at a time, and checked whether the
+property was true for them.
 
 We can actually test a particular property any number of times we wish:
 
@@ -147,7 +146,7 @@ We can actually test a particular property any number of times we wish:
     OK: Passed 4711 test(s).
     true
 
-This is not the only property that we want a sort function to satisfy.
+This is not the only property that we want a list sorting function to satisfy.
 Another one is that the input and output lists have the same length.
 Let's write it:
 
@@ -172,7 +171,8 @@ and test it:
 Oops!  This property does not hold for our program.  PropEr ran some tests,
 eleven in total in this case, and found the input list `[0,0,1,0]` for which
 the property is false.  Consequently, PropEr automatically _shrank_ this
-input list to a list of smaller length that also falsifies the property.
+input list to a list of smaller length, actually of a minimal length, that
+also falsifies the property.
 
 Let's test the property again:
 
@@ -195,7 +195,7 @@ a minimal input that can be derived from the original one and still falsify
 the property.
 
 What's the problem?  We can find out by manually testing the `sort/1` function
-in the Erlang shell using these inputs:
+in the Erlang shell using these inputs that PropEr discovered for us:
 
     :::erl
     13> my_sort:sort([-8,14,-1,1,-1]).
@@ -212,8 +212,8 @@ duplicate elements in the input list.  Oh dear!
 Of course, we can easily correct the problem by changing one of the `'<'` tests
 in the code of the `sort/1` function to `'=<'` and the function will now satisfy
 the `prop_same_length` property.  However, this is not a tutorial on how to
-write a correct sort function in Erlang.  Unstead, it's a tutorial on how to
-do property-based testing using PropEr.
+write a correct sorting function in Erlang.  Unstead, it's a tutorial on how
+to do property-based testing using PropEr.
 
 Let us suppose that we actually _wanted_ to write a program that only sorts
 lists without duplicates.  How would we write the same-length property then?
@@ -237,7 +237,7 @@ A possible implementation of function `no_duplicates/1` is the following:
     no_duplicates([A|T]) ->
          not lists:member(A, T) andalso no_duplicates(T).
 
-Let's test this:
+Let's test this property:
 
     :::erl
     15> c(my_sort).
@@ -251,21 +251,21 @@ Let's test this:
 
 What's happening here?  Well, for starters the property is now found to hold
 when running 100 tests, which enhances our confidence that our `sort/1`
-function satisfies this property for the intended uses of this code.
+function now satisfies this property for its intended uses.
 
 But what are the `x` symbols that are intermixed with the `.` symbols above?
 This is PropEr's way of indicating that it generated some list of integers
 for which the `no_duplicates/1` precondition is false.
 Consequently, the property was not checked for these inputs, and PropEr had
 to generate some other list(s) in order to reach one hundred randomly
-generated test cases for which the property is passed.  In fact, in this
-case, PropEr had to generate a total of 226 input lists of integers in order
-to find 100 of them that do not contain duplicates.
+generated test cases for which the property passes.  In fact, in this case,
+PropEr had to generate a total of 226 input lists of integers in order to
+find 100 of them that do not contain duplicates.
 
 This is clearly wasteful.  In situations where the precondition is more
 involved, it may take quite a while before random input generation comes
 up with a particular number of instances that satisfy the precondition.
-In such cases we may be better off generating inputs for which the precondition
+In such cases, we may be better off generating inputs for which the precondition
 holds by construction.  Let's do this for lists that do not contain duplicate
 elements.  We can do this in a really simple way: we will use PropEr's built-in
 machinery to generate random lists of integers and we will filter out any
@@ -350,8 +350,8 @@ There are various ways that this property can be specified, but this is the
 point where we can take a shortcut.  Rather than specifying a function that
 ensures this, we can employ some already defined - and presumably well-tested -
 function that is known to have the property we are interested in and check
-that the two functions are equivalent.  For our sort function that does not
-need to handle duplicate elements in the input list, an appropriate such
+that the two functions are equivalent.  For our `sort/1` function that does
+not need to handle duplicate elements in the input list, an appropriate such
 function is the `usort/1` function from the `lists` module of the standard
 library.  Specifying this property is now very easy:
 
@@ -375,7 +375,7 @@ that comes handy very often.  For example, during program development, it
 allows us to start from a quite inefficient but 'obviously correct' prototype
 implementation, and gradually refine and optimize it using the prototype
 implementation as a reference to check whether the code refactorings and
-optimizations we performed have not somehow destoyed correctness.
+optimizations we performed have not somehow jeopardized its correctness.
 
 Let us bring us one last point before we finish this tutorial.  As can be seen
 in its `spec`, our `sort/1` function is polymorphic.  In fact, in Erlang it is
@@ -384,13 +384,13 @@ some particular sort only, and certainly not only integers.  How can we be sure
 that indeed it works for all Erlang terms?  Shouldn't we have been testing that
 our properties hold for lists of any term instead of just for lists of integers?
 Well, let's do that.  Let's modify this last property to work for general lists;
-for this we need to use the built-in `list/0` generator:
+for this we just need to use the built-in `list/0` generator:
 
     :::erlang
     prop_equiv_usort() ->
         ?FORALL(L, list(), sort(L) =:= lists:usort(L)).
 
-and test it again:
+and test the property again:
 
     :::erl
     22> c(my_sort).
@@ -433,6 +433,8 @@ term and then shrinking them down to a minimal list that still falsifies the
 property.  This is something that other property-based testing tools for
 Erlang can _not_ do (or consciously decide not to support).
 
+
+**Note:**
 You can get the complete final code of this tutorial, without this last
 modification to the `prop_same_length` property, by clicking on the following
 link:
