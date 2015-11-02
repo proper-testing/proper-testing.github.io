@@ -434,6 +434,24 @@ property.  This is something that other property-based testing tools for
 Erlang can _not_ do (or consciously decide not to support).
 
 
+###Summary###
+In this introductory tutorial you've learned:
+
+*  What property-based testing is and how it differs from unit testing.
+
+*  How to use the **`FORALL`** and **`IMPLIES`** macros for writing properties.
+
+*  About some built-in generators (`integer/1`, `list/1` and `list/0`).
+   The <a href="/doc/proper_types.html">proper_types</a> module contains
+   many more and we invite you to learn about their existence.
+
+*  How to create simple _custom generators_ using **`LET`**.
+
+*  That PropEr tries to minimize the counterexamples it finds through a
+   process called _shrinking_.
+
+*  That shrinking can be applied to any Erlang term.
+
 **Note:**
 You can get the complete final code of this tutorial, without this last
 modification to the `prop_same_length` property, by clicking on the following
