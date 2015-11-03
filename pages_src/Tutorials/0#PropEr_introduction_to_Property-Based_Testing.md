@@ -171,7 +171,7 @@ and test it:
 Oops!  This property does not hold for our program.  PropEr ran some tests,
 eleven in total in this case, and found the input list `[0,0,1,0]` for which
 the property is false.  Consequently, PropEr automatically _shrank_ this
-input list to a list of smaller length, actually of a minimal length, that
+input list to a list of smaller length, actually of minimal length, that
 also falsifies the property.
 
 Let's test the property again:
@@ -212,7 +212,7 @@ duplicate elements in the input list.  Oh dear!
 Of course, we can easily correct the problem by changing one of the `'<'` tests
 in the code of the `sort/1` function to `'=<'` and the function will now satisfy
 the `prop_same_length` property.  However, this is not a tutorial on how to
-write a correct sorting function in Erlang.  Unstead, it's a tutorial on how
+write a correct sorting function in Erlang.  Instead, it's a tutorial on how
 to do property-based testing using PropEr.
 
 Let us suppose that we actually _wanted_ to write a program that only sorts
