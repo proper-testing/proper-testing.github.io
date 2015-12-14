@@ -575,7 +575,7 @@ false, the `Action` specified as the first argument will be executed.
                         ?SERVER:start_link(),
                         {History,State,Result} = run_commands(?MODULE, Cmds),
                         ?SERVER:stop(),
-                        ?WHENFAIL(io:format("History: ~w\nState: ~w\nResult: ~w\n",
+                        ?WHENFAIL(io:format("History: ~w~nState: ~w\nResult: ~w~n",
                                             [History,State,Result]),
                                   Result =:= ok)
                     end)).
@@ -840,7 +840,7 @@ to collect statistics about how often each command was executed.
                         ?SERVER:start_link(),
                         {History,State,Result} = run_commands(?MODULE, Cmds),
                         ?SERVER:stop(),
-                        ?WHENFAIL(io:format("History: ~w\nState: ~w\nResult: ~w\n",
+                        ?WHENFAIL(io:format("History: ~w~nState: ~w\nResult: ~w~n",
                                             [History,State,Result]),
                                   aggregate(command_names(Cmds), Result =:= ok))
                     end)).

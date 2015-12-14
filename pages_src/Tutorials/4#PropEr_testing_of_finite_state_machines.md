@@ -186,7 +186,7 @@ out of food in the storage.
                                        %% to initialize the model state
                     {History, State, Result} = proper_fsm:run_commands(?MODULE, Cmds),
                     stop(),
-                    ?WHENFAIL(io:format("History: ~w\nState: ~w\nResult: ~w\n",
+                    ?WHENFAIL(io:format("History: ~w~nState: ~w\nResult: ~w~n",
                                         [History, State, Result]),
                               Result =:= ok)
                 end).
@@ -437,7 +437,7 @@ have a look at the testcase distribution.
                                        %% to initialize the model state
                     {History, State, Result} = proper_fsm:run_commands(?MODULE, Cmds),
                     stop(),
-                    ?WHENFAIL(io:format("History: ~w\nState: ~w\nResult: ~w\n",
+                    ?WHENFAIL(io:format("History: ~w~nState: ~w\nResult: ~w~n",
                                         [History, State, Result]),
                               aggregate(zip(proper_fsm:state_names(History),
                                             command_names(Cmds)),

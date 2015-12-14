@@ -27,7 +27,7 @@ prop_master() ->
 	      {History,State,Result} = run_commands(?MODULE, Cmds),
 	      ?MASTER:stop(),
 	      ?WHENFAIL(
-		 io:format("History: ~w\nState: ~w\nResult: ~w\n",
+		 io:format("History: ~w~nState: ~w\nResult: ~w~n",
 			   [pretty_history(History), pretty_state(State), Result]),
 		 aggregate(command_names(Cmds), Result =:= ok))
 	  end)).
