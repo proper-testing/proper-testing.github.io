@@ -7,8 +7,9 @@ Contact information and license
 PropEr (PROPerty-based testing tool for ERlang) is a QuickCheck-inspired
 open-source property-based testing tool for Erlang, developed by Manolis
 Papadakis, Eirini Arvaniti and Kostis Sagonas. The base PropEr system was
-written mainly by Manolis Papadakis, and the stateful code testing subsystem by
-Eirini Arvaniti.
+written mainly by Manolis Papadakis, and the stateful code testing subsystem
+by Eirini Arvaniti. Kostis Sagonas has been actively maintaining its code
+base since 2012.
 
 You can reach PropEr's developers in the following ways:
 
@@ -20,7 +21,7 @@ You can reach PropEr's developers in the following ways:
 We welcome user contributions and feedback (comments, suggestions, feature
 requests, bug reports, patches etc.).
 
-Copyright 2010-2013 by Manolis Papadakis, Eirini Arvaniti and Kostis Sagonas.
+Copyright 2010-2016 by Manolis Papadakis, Eirini Arvaniti and Kostis Sagonas.
 
 This program is distributed under the [GPL](http://www.gnu.org/licenses/gpl.html),
 version 3 or later. Please see the COPYING file for details.
@@ -84,20 +85,22 @@ Quickstart guide
 
         git clone git://github.com/manopapad/proper.git
 
-*   Compile PropEr: Run `make fast` if you just want to build PropEr, optionally
-    followed by a `make tests` to also run its unit tests. (A plain `make` call
-    does a `make fast` but also runs dialyzer on PropEr's code base; this
-    requires having a dialyzer PLT. To also build PropEr's documentation issue
+*   Compile PropEr: Run `make` if you just want to build PropEr, optionally
+    followed by a `make tests` to run its unit tests and a `make dialyzer` call
+    to also run dialyzer on PropEr's code base; the latter requires having a
+    dialyzer PLT. To do the above but also build PropEr's documentation issue
     a `make all` call; in that case, you are going to need the `syntax_tools`
     application and a recent version of `EDoc`).
-    Optionally sfmt-erlang can be selected as an alternative random number
+    Optionally, sfmt-erlang can be selected as an alternative random number
     generator using `./configure --use-sfmt` before running `make`.
 *   Add PropEr's base directory to your Erlang library path, using one of the
     following methods:
+
     1.   `ERL_LIBS` environment variable: Add the following line to your shell
          startup file (`~/.bashrc` in the case of the Bash shell):
 
              export ERL_LIBS=/full/path/to/proper
+
     2.   Erlang resource file: Add the following line to your `~/.erlang` file:
 
              code:load_abs("/full/path/to/proper").
@@ -131,16 +134,16 @@ Common problems
 
 ### Using PropEr in conjunction with EUnit
 
-The main issue is that both systems define a `?LET` macro. To avoid a potential
-clash, simply include PropEr's header file before EUnit's. That way, any
-instance of `?LET` will count as a PropEr `?LET`.
+The main issue is that both systems define a `?LET` macro. To avoid a
+potential clash, simply include PropEr's header file before EUnit's. That
+way, any instance of `?LET` will count as a PropEr `?LET`.
 
 Another issue is that [EUnit captures standard output][eunit stdout],
 so normally PropEr output is not visible when `proper:quickcheck()` is
 invoked from EUnit. You can work around this by passing the option
 `{to_file, user}` to `proper:quickcheck/2`. For example:
 
-	   ?assertEqual(true, proper:quickcheck(your_mod:some_prop(), [{to_file, user}]).
+          ?assertEqual(true, proper:quickcheck(your_mod:some_prop(), [{to_file, user}])).
 
 This will make PropEr properties visible also when invoked from EUnit.
 
