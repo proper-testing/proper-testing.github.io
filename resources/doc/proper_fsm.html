@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Module proper_fsm</title>
 <link rel="stylesheet" type="text/css" href="stylesheet.css" title="EDoc">
 </head>
@@ -12,9 +12,9 @@
 <h1>Module proper_fsm</h1>
 <ul class="index"><li><a href="#description">Description</a></li><li><a href="#types">Data Types</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>This module defines the <code>proper_fsm</code> behaviour, useful for testing
    systems that can be modeled as finite state machines.
-<p>Copyright © 2010-2013 Manolis Papadakis, Eirini Arvaniti and Kostis Sagonas</p>
+<p>Copyright Â© 2010-2016 Manolis Papadakis, Eirini Arvaniti and Kostis Sagonas</p>
 
-<p><b>Version:</b> Apr 3 2013 10:43:12</p>
+<p><b>Version:</b> Jun 20 2016 16:27:12</p>
 <p><b>Authors:</b> Eirini Arvaniti.</p>
 
 <h2><a name="description">Description</a></h2><p>This module defines the <code>proper_fsm</code> behaviour, useful for testing
@@ -58,7 +58,7 @@ does not change the current state of the fsm.</p>
    The following functions must be exported from the callback module
    implementing the finite state machine:
    <ul>
-   <li> <code>initial_state() ::</code> <code><a href="#type-state_name">state_name()</a></code>
+   <li> <code>initial_state() -&gt;</code> <code><a href="#type-state_name">state_name()</a></code>
      <p>Specifies the initial state of the finite state machine. As with
      <code>proper_statem:initial_state/0</code>, its result should be deterministic.
      </p></li>
@@ -90,7 +90,7 @@ does not change the current state of the fsm.</p>
      has similar beaviour to <code>StateName/1</code>, described above.</p></li>
    <li> <code>weight(From::</code><code><a href="#type-state_name">state_name()</a></code><code>,
                 Target::</code><code><a href="#type-state_name">state_name()</a></code><code>,
-                Call::</code><code><a href="#type-symb_call">symb_call()</a></code><code>) :: integer()</code>
+                Call::</code><code><a href="#type-symbolic_call">symbolic_call()</a></code><code>) -&gt; integer()</code>
      <p>This is an optional callback. When it is not defined (or not exported),
      transitions are chosen with equal probability. When it is defined, it
      assigns an integer weight to transitions from <code>From</code> to <code>Target</code>
@@ -99,7 +99,7 @@ does not change the current state of the fsm.</p>
    <li> <code>precondition(From::</code><code><a href="#type-state_name">state_name()</a></code><code>,
                       Target::</code><code><a href="#type-state_name">state_name()</a></code><code>,
                       StateData::</code><code><a href="#type-state_data">state_data()</a></code><code>,
-                      Call::</code><code><a href="#type-symb_call">symb_call()</a></code><code>) :: boolean()</code>
+                      Call::</code><code><a href="#type-symbolic_call">symbolic_call()</a></code><code>) -&gt; boolean()</code>
      <p>Similar to <code>proper_statem:precondition/2</code>. Specifies the
      precondition that should hold about <code>StateData</code> so that <code>Call</code> can be
      included in the command sequence. In case precondition doesn't hold, a
@@ -112,16 +112,16 @@ does not change the current state of the fsm.</p>
    <li> <code>postcondition(From::</code><code><a href="#type-state_name">state_name()</a></code><code>,
                        Target::</code><code><a href="#type-state_name">state_name()</a></code><code>,
                        StateData::</code><code><a href="#type-state_data">state_data()</a></code><code>,
-                       Call::</code><code><a href="#type-symb_call">symb_call()</a></code><code>,
-                       Res::</code><code><a href="#type-result">result()</a></code><code>) :: boolean()</code>
+                       Call::</code><code><a href="#type-symbolic_call">symbolic_call()</a></code><code>,
+                       Res::</code><code><a href="#type-cmd_result">cmd_result()</a></code><code>) -&gt; boolean()</code>
      <p>Similar to <code>proper_statem:postcondition/3</code>. Specifies the
      postcondition that should hold about the result <code>Res</code> of the evaluation
      of <code>Call</code>.</p></li>
    <li> <code>next_state_data(From::</code><code><a href="#type-state_name">state_name()</a></code><code>,
                          Target::</code><code><a href="#type-state_name">state_name()</a></code><code>,
                          StateData::</code><code><a href="#type-state_data">state_data()</a></code><code>,
-                         Res::</code><code><a href="#type-result">result()</a></code><code>,
-                         Call::</code><code><a href="#type-symb_call">symb_call()</a></code><code>) ::</code>
+                         Res::</code><code><a href="#type-cmd_result">cmd_result()</a></code><code>,
+                         Call::</code><code><a href="#type-symbolic_call">symbolic_call()</a></code><code>) -&gt;</code>
           <code><a href="#type-state_data">state_data()</a></code>
      <p>Similar to <code>proper_statem:next_state/3</code>. Specifies how the
      transition from <code>FromState</code> to <code>Target</code> triggered by <code>Call</code> affects the
@@ -147,8 +147,8 @@ finite state machine specification:</p>
 
 
 <h3 class="typedecl"><a name="type-command">command()</a></h3>
-<p><pre>command() = {set, <a href="#type-symb_var">symb_var()</a>, <a href="#type-symb_call">symb_call()</a>}
-          | {init, <a href="#type-fsm_state">fsm_state()</a>}</pre></p>
+<p><pre>command() = 
+    {set, <a href="#type-symbolic_var">symbolic_var()</a>, <a href="#type-symbolic_call">symbolic_call()</a>} | {init, <a href="#type-fsm_state">fsm_state()</a>}</pre></p>
 
 
 <h3 class="typedecl"><a name="type-command_list">command_list()</a></h3>
@@ -161,10 +161,6 @@ finite state machine specification:</p>
 
 <h3 class="typedecl"><a name="type-fsm_state">fsm_state()</a></h3>
 <p><pre>fsm_state() = {<a href="#type-state_name">state_name()</a>, <a href="#type-state_data">state_data()</a>}</pre></p>
-
-
-<h3 class="typedecl"><a name="type-fun_name">fun_name()</a></h3>
-<p><pre>fun_name() = atom()</pre></p>
 
 
 <h3 class="typedecl"><a name="type-history">history()</a></h3>
@@ -183,18 +179,16 @@ finite state machine specification:</p>
 <p><pre>state_name() = atom() | tuple()</pre></p>
 
 
-<h3 class="typedecl"><a name="type-symb_call">symb_call()</a></h3>
-<p><pre>symb_call() = <a href="proper_statem.html#type-symb_call">proper_statem:symb_call()</a></pre></p>
+<h3 class="typedecl"><a name="type-symbolic_call">symbolic_call()</a></h3>
+<p><pre>symbolic_call() = <a href="proper_statem.html#type-symbolic_call">proper_statem:symbolic_call()</a></pre></p>
 
 
-<h3 class="typedecl"><a name="type-symb_var">symb_var()</a></h3>
-<p><pre>symb_var() = <a href="proper_statem.html#type-symb_var">proper_statem:symb_var()</a></pre></p>
+<h3 class="typedecl"><a name="type-symbolic_var">symbolic_var()</a></h3>
+<p><pre>symbolic_var() = <a href="proper_statem.html#type-symbolic_var">proper_statem:symbolic_var()</a></pre></p>
 
 
 <h2><a name="index">Function Index</a></h2>
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#behaviour_info-1">behaviour_info/1</a></td><td>Specifies the callback functions that should be exported from a module
-  implementing the <code>proper_fsm</code> behaviour.</td></tr>
-<tr><td valign="top"><a href="#commands-1">commands/1</a></td><td>A special PropEr type which generates random command sequences,
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#commands-1">commands/1</a></td><td>A special PropEr type which generates random command sequences,
   according to a finite state machine specification.</td></tr>
 <tr><td valign="top"><a href="#commands-2">commands/2</a></td><td>Similar to <a href="#commands-1"><code>commands/1</code></a>, but generated command sequences always
   start at a given state.</td></tr>
@@ -207,12 +201,6 @@ finite state machine specification:</p>
 </table>
 
 <h2><a name="functions">Function Details</a></h2>
-
-<h3 class="function"><a name="behaviour_info-1">behaviour_info/1</a></h3>
-<div class="spec">
-<p><pre>behaviour_info(Attribute :: callbacks) -&gt; [{<a href="#type-fun_name">fun_name()</a>, arity()}]</pre></p>
-</div><p>Specifies the callback functions that should be exported from a module
-  implementing the <code>proper_fsm</code> behaviour.</p>
 
 <h3 class="function"><a name="commands-1">commands/1</a></h3>
 <div class="spec">
@@ -262,6 +250,6 @@ finite state machine specification:</p>
 <hr>
 
 <div class="navbar"><a name="#navbar_bottom"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="/" target="_top"><img src="/images/proper_tiny.png" align="right" border="0" alt="PropEr logo"></a></td></tr></table></div>
-<p><i>Generated by EDoc, Apr 3 2013, 10:43:12.</i></p>
+<p><i>Generated by EDoc, Jun 20 2016, 16:27:12.</i></p>
 </body>
 </html>

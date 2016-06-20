@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Module proper_statem</title>
 <link rel="stylesheet" type="text/css" href="stylesheet.css" title="EDoc">
 </head>
@@ -13,9 +13,9 @@
 <ul class="index"><li><a href="#description">Description</a></li><li><a href="#types">Data Types</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>This module defines the <code>proper_statem</code> behaviour, useful for testing
    stateful reactive systems whose internal state and side-effects are
    specified via an abstract state machine.
-<p>Copyright © 2010-2013 Manolis Papadakis, Eirini Arvaniti and Kostis Sagonas</p>
+<p>Copyright Â© 2010-2016 Manolis Papadakis, Eirini Arvaniti and Kostis Sagonas</p>
 
-<p><b>Version:</b> Apr 3 2013 10:43:12</p>
+<p><b>Version:</b> Jun 20 2016 16:27:12</p>
 <p><b>Authors:</b> Eirini Arvaniti.</p>
 
 <h2><a name="description">Description</a></h2><p>This module defines the <code>proper_statem</code> behaviour, useful for testing
@@ -44,7 +44,7 @@ calls provoking the same error.</p>
      repeatable testcases, which is essential for correct shrinking.</li>
    </ul><p>
    Since the actual results of symbolic calls are not known at generation time,
-   we use symbolic variables (<code><a href="#type-symb_var">symb_var()</a></code>) to refer to them.
+   we use symbolic variables (<code><a href="#type-symbolic_var">symbolic_var()</a></code>) to refer to them.
    A command (<code><a href="#type-command">command()</a></code>) is a symbolic term, used to bind a symbolic   
 variable to the result of a symbolic call. For example:</p>
   
@@ -86,7 +86,7 @@ variable to the result of a symbolic call. For example:</p>
    The following functions must be exported from the callback module
    implementing the abstract state machine:
    <ul>
-   <li><code>initial_state() ::</code> <code><a href="#type-symbolic_state">symbolic_state()</a></code>
+   <li><code>initial_state() -&gt;</code> <code><a href="#type-symbolic_state">symbolic_state()</a></code>
      <p>Specifies the symbolic initial state of the state machine. This state
      will be evaluated at command execution time to produce the actual initial
      state. The function is not only called at command generation time, but
@@ -94,14 +94,14 @@ variable to the result of a symbolic call. For example:</p>
      run (i.e. during normal execution, while shrinking and when checking a
      counterexample). For this reason, it should be deterministic and
      self-contained.</p></li>
-   <li><code>command(S::</code><code><a href="#type-symbolic_state">symbolic_state()</a></code><code>) ::</code> <code><a href="proper_types.html#type-type">proper_types:type()</a></code>
+   <li><code>command(S::</code><code><a href="#type-symbolic_state">symbolic_state()</a></code><code>) -&gt;</code> <code><a href="proper_types.html#type-type">proper_types:type()</a></code>
      <p>Generates a symbolic call to be included in the command sequence,
      given the current state <code>S</code> of the abstract state machine. However,
      before the call is actually included, a precondition is checked. This
      function will be repeatedly called to produce the next call to be
      included in the test case.</p></li>
    <li><code>precondition(S::</code><code><a href="#type-symbolic_state">symbolic_state()</a></code><code>,
-                     Call::</code><code><a href="#type-symb_call">symb_call()</a></code><code>) :: boolean()</code>
+                     Call::</code><code><a href="#type-symbolic_call">symbolic_call()</a></code><code>) -&gt; boolean()</code>
      <p>Specifies the precondition that should hold so that <code>Call</code> can be
      included in the command sequence, given the current state <code>S</code> of the
      abstract state machine. In case precondition doesn't hold, a new call is
@@ -117,14 +117,14 @@ variable to the result of a symbolic call. For example:</p>
      different from the state it was when initially running the test.</p></li>
    <li><code>postcondition(S::</code><code><a href="#type-dynamic_state">dynamic_state()</a></code><code>,
                       Call::</code><code><a href="#type-symbolic_call">symbolic_call()</a></code><code>,
-                      Res::term()) :: boolean()</code>
+                      Res::term()) -&gt; boolean()</code>
      <p>Specifies the postcondition that should hold about the result <code>Res</code> of
      performing <code>Call</code>, given the dynamic state <code>S</code> of the abstract state
      machine prior to command execution. This function is called during
      runtime, this is why the state is dynamic.</p></li>
    <li><code>next_state(S::</code><code><a href="#type-symbolic_state">symbolic_state()</a></code> <code>|</code> <code><a href="#type-dynamic_state">dynamic_state()</a></code><code>,
                    Res::term(),
-                   Call::</code><code><a href="#type-symbolic_call">symbolic_call()</a></code><code>) ::</code>
+                   Call::</code><code><a href="#type-symbolic_call">symbolic_call()</a></code><code>) -&gt;</code>
           <code><a href="#type-symbolic_state">symbolic_state()</a></code> <code>|</code> <code><a href="#type-dynamic_state">dynamic_state()</a></code>
      <p>Specifies the next state of the abstract state machine, given the
      current state <code>S</code>, the symbolic <code>Call</code> chosen and its result <code>Res</code>. This
@@ -214,8 +214,9 @@ similar to those used for sequential testing.</p>
 <h2><a name="types">Data Types</a></h2>
 
 <h3 class="typedecl"><a name="type-command">command()</a></h3>
-<p><pre>command() = {set, <a href="#type-symb_var">symb_var()</a>, <a href="#type-symb_call">symb_call()</a>}
-          | {init, <a href="#type-symbolic_state">symbolic_state()</a>}</pre></p>
+<p><pre>command() = 
+    {set, <a href="#type-symbolic_var">symbolic_var()</a>, <a href="#type-symbolic_call">symbolic_call()</a>} |
+    {init, <a href="#type-symbolic_state">symbolic_state()</a>}</pre></p>
 
 
 <h3 class="typedecl"><a name="type-command_list">command_list()</a></h3>
@@ -224,10 +225,6 @@ similar to those used for sequential testing.</p>
 
 <h3 class="typedecl"><a name="type-dynamic_state">dynamic_state()</a></h3>
 <p><b>abstract datatype</b>: <tt>dynamic_state()</tt></p>
-
-
-<h3 class="typedecl"><a name="type-fun_name">fun_name()</a></h3>
-<p><pre>fun_name() = atom()</pre></p>
 
 
 <h3 class="typedecl"><a name="type-history">history()</a></h3>
@@ -247,33 +244,32 @@ similar to those used for sequential testing.</p>
 
 
 <h3 class="typedecl"><a name="type-statem_result">statem_result()</a></h3>
-<p><pre>statem_result() = ok
-                | initialization_error
-                | {precondition, false | <a href="proper.html#type-exception">proper:exception()</a>}
-                | {postcondition, false | <a href="proper.html#type-exception">proper:exception()</a>}
-                | <a href="proper.html#type-exception">proper:exception()</a>
-                | no_possible_interleaving</pre></p>
+<p><pre>statem_result() = 
+    ok |
+    initialization_error |
+    {precondition, false | <a href="proper.html#type-exception">proper:exception()</a>} |
+    {postcondition, false | <a href="proper.html#type-exception">proper:exception()</a>} |
+    <a href="proper.html#type-exception">proper:exception()</a> |
+    no_possible_interleaving</pre></p>
 
 
-<h3 class="typedecl"><a name="type-symb_call">symb_call()</a></h3>
-<p><pre>symb_call() = {call, <a href="#type-mod_name">mod_name()</a>, <a href="#type-fun_name">fun_name()</a>, [term()]}</pre></p>
-
-
-<h3 class="typedecl"><a name="type-symb_var">symb_var()</a></h3>
-<p><pre>symb_var() = {var, pos_integer()}</pre></p>
+<h3 class="typedecl"><a name="type-symbolic_call">symbolic_call()</a></h3>
+<p><b>abstract datatype</b>: <tt>symbolic_call()</tt></p>
 
 
 <h3 class="typedecl"><a name="type-symbolic_state">symbolic_state()</a></h3>
 <p><b>abstract datatype</b>: <tt>symbolic_state()</tt></p>
 
 
+<h3 class="typedecl"><a name="type-symbolic_var">symbolic_var()</a></h3>
+<p><pre>symbolic_var() = {var, pos_integer()}</pre></p>
+
+
 <h2><a name="index">Function Index</a></h2>
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#behaviour_info-1">behaviour_info/1</a></td><td>Specifies the callback functions that should be exported from a module
-  implementing the <code>proper_statem</code> behaviour.</td></tr>
-<tr><td valign="top"><a href="#command_names-1">command_names/1</a></td><td>Extracts the names of the commands from a given command sequence, in
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#command_names-1">command_names/1</a></td><td>Extracts the names of the commands from a given command sequence, in
   the form of MFAs.</td></tr>
 <tr><td valign="top"><a href="#commands-1">commands/1</a></td><td>A special PropEr type which generates random command sequences,
-  according to an absract state machine specification.</td></tr>
+  according to an abstract state machine specification.</td></tr>
 <tr><td valign="top"><a href="#commands-2">commands/2</a></td><td>Similar to <a href="#commands-1"><code>commands/1</code></a>, but generated command sequences always
   start at a given state.</td></tr>
 <tr><td valign="top"><a href="#more_commands-2">more_commands/2</a></td><td>Increases the expected length of command sequences generated from
@@ -299,15 +295,10 @@ similar to those used for sequential testing.</p>
 
 <h2><a name="functions">Function Details</a></h2>
 
-<h3 class="function"><a name="behaviour_info-1">behaviour_info/1</a></h3>
-<div class="spec">
-<p><pre>behaviour_info(Attribute :: callbacks) -&gt; [{<a href="#type-fun_name">fun_name()</a>, arity()}]</pre></p>
-</div><p>Specifies the callback functions that should be exported from a module
-  implementing the <code>proper_statem</code> behaviour.</p>
-
 <h3 class="function"><a name="command_names-1">command_names/1</a></h3>
 <div class="spec">
-<p><pre>command_names(Cmds :: <a href="#type-command_list">command_list()</a>) -&gt; [mfa()]</pre></p>
+<p><pre>command_names(Cmds :: <a href="#type-command_list">command_list()</a> | <a href="#type-parallel_testcase">parallel_testcase()</a>) -&gt;
+                 [mfa()]</pre></p>
 </div><p>Extracts the names of the commands from a given command sequence, in
   the form of MFAs. It is useful in combination with functions such as
   <a href="proper.html#aggregate-2"><code>proper:aggregate/2</code></a> in order to collect statistics about command
@@ -317,7 +308,7 @@ similar to those used for sequential testing.</p>
 <div class="spec">
 <p><pre>commands(Mod :: <a href="#type-mod_name">mod_name()</a>) -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
 </div><p>A special PropEr type which generates random command sequences,
-  according to an absract state machine specification. The function takes as
+  according to an abstract state machine specification. The function takes as
   input the name of a callback module, which contains the state machine
   specification. The initial state is computed by <code>Mod:initial_state/0</code>.</p>
 
@@ -443,13 +434,13 @@ similar to those used for sequential testing.</p>
 
 <h3 class="function"><a name="zip-2">zip/2</a></h3>
 <div class="spec">
-<p><pre>zip(A :: [A], B :: [B]) -&gt; [{A, B}]</pre></p>
+<p><pre>zip(X :: [A], Y :: [B]) -&gt; [{A, B}]</pre></p>
 </div><p>Behaves like <code>lists:zip/2</code>, but the input lists do no not necessarily
   have equal length. Zipping stops when the shortest list stops. This is
   useful for zipping a command sequence with its (failing) execution history.</p>
 <hr>
 
 <div class="navbar"><a name="#navbar_bottom"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="/" target="_top"><img src="/images/proper_tiny.png" align="right" border="0" alt="PropEr logo"></a></td></tr></table></div>
-<p><i>Generated by EDoc, Apr 3 2013, 10:43:12.</i></p>
+<p><i>Generated by EDoc, Jun 20 2016, 16:27:12.</i></p>
 </body>
 </html>
