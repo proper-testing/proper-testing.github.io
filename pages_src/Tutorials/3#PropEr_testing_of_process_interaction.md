@@ -175,7 +175,7 @@ system. As usual, it specifies:
         -type name() :: atom().
 
         -record(state, {players = []         :: [name()],
-                        scores  = dict:new() :: dict()}).
+                        scores  = dict:new() :: dict:dict()}).
 
         initial_state() -> #state{}.
 
@@ -328,7 +328,7 @@ output more informative debugging information.
         [{pretty_state(State),Result} || {State,Result} <- History].
 
     pretty_state(#state{scores = Scores} = S) ->
-        S#state{scores = dict:to_list(Scores)}.
+        S#state{scores = dict:to_list(Scores)}.  %% temporarily breaks the opacity
 
     prop_ping_pong_works() ->
         ?FORALL(Cmds, commands(?MODULE),

@@ -10,7 +10,7 @@
 -type name()  :: atom().
 
 -record(state, {players = []         :: [name()],
-		scores  = dict:new() :: dict()}).
+		scores  = dict:new() :: dict:dict() | [{_,_}]}).
 
 -define(PLAYER, ping_pong).
 -define(MASTER, ping_pong).
@@ -37,7 +37,7 @@ pretty_history(History) ->
     [{pretty_state(State),Result} || {State,Result} <- History].
 
 pretty_state(#state{scores = Scores} = S) ->
-    S#state{scores = dict:to_list(Scores)}.
+    S#state{scores = dict:to_list(Scores)}.  %% temporarily breaks the opacity
 
 %%% Statem Callbacks
 

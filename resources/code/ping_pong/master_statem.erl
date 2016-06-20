@@ -10,7 +10,7 @@
 -type name() :: atom().
 
 -record(state, {players = []        :: [name()],
-                scores = dict:new() :: dict()}).
+                scores = dict:new() :: dict:dict() | [{_,_}]}).
 
 -define(MASTER, ping_pong).
 -define(NAMES, [bob, alice, john, mary, ben]).
@@ -27,7 +27,7 @@ prop_master() ->
 	      {History,State,Result} = run_commands(?MODULE, Cmds),
 	      ?MASTER:stop(),
 	      ?WHENFAIL(
-		 io:format("History: ~w~nState: ~w\nResult: ~w~n",
+		 io:format("History: ~w~nState: ~w~nResult: ~w~n",
 			   [pretty_history(History), pretty_state(State), Result]),
 		 aggregate(command_names(Cmds), Result =:= ok))
 	  end)).
@@ -36,7 +36,7 @@ pretty_history(History) ->
     [{pretty_state(State),Result} || {State,Result} <- History].
 
 pretty_state(#state{scores = Scores} = S) ->
-    S#state{scores = dict:to_list(Scores)}.
+    S#state{scores = dict:to_list(Scores)}.  %% temporarily breaks the opacity
 
 initial_state() ->
     #state{}.
