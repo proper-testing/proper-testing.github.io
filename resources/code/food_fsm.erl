@@ -143,8 +143,8 @@ terminate(_Reason, _StateName, _StateData) ->
 handle_event(_Event, StateName, StateData) ->
     {next_state, StateName, StateData}.
 
-handle_info(_Info, _StateName, _StateData) ->
-    ok.
+handle_info(_Info, StateName, StateData) ->
+    {next_state, StateName, StateData}.
 
 code_change(_OldVsn, StateName, StateData, _Extra) ->
     {ok, StateName, StateData}.
