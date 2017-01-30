@@ -8,9 +8,11 @@
 	 postcondition/3]).
 
 -type name()  :: atom().
+-type score() :: non_neg_integer().
 
 -record(state, {players = []         :: [name()],
-		scores  = dict:new() :: dict:dict() | [{_,_}]}).
+		scores  = dict:new() :: dict:dict(name(), score())
+                                      | [{name(), score()}]}).
 
 -define(PLAYER, ping_pong).
 -define(MASTER, ping_pong).
