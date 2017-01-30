@@ -14,7 +14,7 @@ The ping-pong master
 
 The ping-pong master is implemented as an Erlang `gen_server`. The internal
 state of the server is a dictionary containing the scores (i.e. the number
-of ping-pong message exchanges with the master) of the ping-pong players.
+of ping-pong message exchanges with the master) of all ping-pong players.
 External clients can make the following requests:
 
 *   start and link to the ping-pong master
@@ -172,10 +172,11 @@ system. As usual, it specifies:
 *   The _initial state_ of the model:
 
         :::erlang
-        -type name() :: atom().
+        -type name()  :: atom().
+        -type score() :: non_neg_integer().
 
         -record(state, {players = []         :: [name()],
-                        scores  = dict:new() :: dict:dict()}).
+                        scores  = dict:new() :: dict:dict(name(), score())}).
 
         initial_state() -> #state{}.
 
