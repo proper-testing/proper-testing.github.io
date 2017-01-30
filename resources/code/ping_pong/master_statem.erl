@@ -7,10 +7,12 @@
 -export([initial_state/0, command/1, precondition/2, next_state/3,
 	 postcondition/3]).
 
--type name() :: atom().
+-type name()  :: atom().
+-type score() :: non_neg_integer().
 
 -record(state, {players = []        :: [name()],
-                scores = dict:new() :: dict:dict() | [{_,_}]}).
+                scores = dict:new() :: dict:dict(name(), score())
+                                     | [{name(), score()}]}).
 
 -define(MASTER, ping_pong).
 -define(NAMES, [bob, alice, john, mary, ben]).
