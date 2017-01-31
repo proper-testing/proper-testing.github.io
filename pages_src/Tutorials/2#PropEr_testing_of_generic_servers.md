@@ -848,8 +848,8 @@ to collect statistics about how often each command was executed.
 If we run the test now:
 
     :::erl
-    41> proper:quickcheck(movie_statem:prop_server_works_fine(), 1000).
-    <...1000 dots....>
+    41> proper:quickcheck(movie_statem:prop_server_works_fine(), 3000).
+    <...3000 dots....>
     OK: Passed 3000 test(s).
 
     30% {movie_server,ask_for_popcorn,0}
