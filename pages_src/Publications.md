@@ -1,7 +1,27 @@
 Summary: Papers and talks about PropEr
 kate: replace-tabs-save on; replace-tabs on; tab-width 8;
 
-*   Manolis Papadakis and Konstantinos Sagonas,
+*   Andreas Löscher and Konstantinos Sagonas.
+    "Targeted Property-Based Testing",
+    In Proceedings of the
+    [26th International Symposium on Software Testing and Analysis](http://conf.researchr.org/home/issta-2017),
+    pages ??-??, Santa Barbara, CA, USA, July 2017.
+    [[PDF]](/papers/issta2017.pdf)
+    [[Abstract]](/papers/issta2017.txt)
+    [[Slides]]
+    [[Bib]](/papers/issta2017.bib)
+
+*   Andreas Löscher, Konstantinos Sagonas, and Thiemo Voigt.
+    "Property-based Testing of Sensor Networks",
+    In Proceedings of the
+    [12th Annual IEEE International Conference on Sensing, Communication, and Networking](http://secon2015.ieee-secon.org/)
+    pages 100-108, Seattle, WA, USA, June 2015,
+    [[PDF]](/papers/secon2015.pdf)
+    [[Abstract]](/papers/secon2015.txt)
+    [[Slides]]
+    [[Bib]](/papers/secon2015.bib)
+
+*   Manolis Papadakis and Konstantinos Sagonas.
     "A PropEr Integration of Types and Function Specifications with
     Property-Based Testing",
     In Proceedings of the
