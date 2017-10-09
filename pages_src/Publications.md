@@ -4,8 +4,8 @@ kate: replace-tabs-save on; replace-tabs on; tab-width 8;
 *   Andreas Löscher and Konstantinos Sagonas.
     "Targeted Property-Based Testing",
     In Proceedings of the
-    [26th International Symposium on Software Testing and Analysis](http://conf.researchr.org/home/issta-2017),
-    pages ??-??, Santa Barbara, CA, USA, July 2017.
+    [26th ACM SIGSOFT International Symposium on Software Testing and Analysis](http://conf.researchr.org/home/issta-2017),
+    pages 46-56, Santa Barbara, CA, USA, July 2017.
     [[PDF]](/papers/issta2017.pdf)
     [[Abstract]](/papers/issta2017.txt)
     [[Slides]]
@@ -20,6 +20,16 @@ kate: replace-tabs-save on; replace-tabs on; tab-width 8;
     [[Abstract]](/papers/secon2015.txt)
     [[Slides]]
     [[Bib]](/papers/secon2015.bib)
+
+*   Leonidas Lampropoulos and Konstantinos Sagonas.
+    "Automatic WSDL-guided Test Case Generation for PropEr Testing of Web Services",
+    In Proceedings of the
+    [8th International Workshop on Automated Specification and Verification of Web Systems](http://users.dsic.upv.es/~jsilva/wwv2012/),
+    pages 3-16, Stockholm, Sweden, July 2012.
+    [[PDF]](https://arxiv.org/pdf/1210.6110v1)
+    [[Abstract]](/papers/proper_ws.txt)
+    [[Slides]]
+    [[Bib]](/papers/proper_ws.bib)
 
 *   Manolis Papadakis and Konstantinos Sagonas.
     "A PropEr Integration of Types and Function Specifications with
@@ -39,12 +49,20 @@ Diploma Theses
 Do not be put off by the first few pages which are in Greek.
 The main text of the theses is in English.
 
+*   Leonidas Lampropoulos,
+    "Property-Based Testing of Web Services",
+    July 2012.
+    [[PDF]](/papers/leonidas-thesis.pdf)
+    [[Abstract]](/papers/leonidas-thesis.txt)
+    [[Bib]](/papers/leonidas-thesis.bib)
+
 *   Eirini Arvaniti,
     "Automated Random Model-Based Testing of Stateful Systems",
     July 2011.
     [[PDF]](/papers/eirini-thesis.pdf)
     [[Abstract]](/papers/eirini-thesis.txt)
     [[Bib]](/papers/eirini-thesis.bib)
+
 *   Manolis Papadakis,
     "Automatic Random Testing of Function Properties from Specifications",
     October 2010.
@@ -60,6 +78,7 @@ Talks
     Conference](http://www.erlang-factory.com/conference/ErlangUserConference2011), November 2011.
     [[Slides]](/talks/proper_creation@EUC-11.pdf)
     [[Video]](http://vimeo.com/33776857)
+
 *   Kostis Sagonas, "A PropEr Talk", [Erlang Factory
     London](http://www.erlang-factory.com/conference/London2011), June 2011.
     [[Slides]](/talks/proper_talk@London-11.pdf)
