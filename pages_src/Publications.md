@@ -18,7 +18,7 @@ kate: replace-tabs-save on; replace-tabs on; tab-width 8;
     pages 100-108, Seattle, WA, USA, June 2015,
     [[PDF]](/papers/secon2015.pdf)
     [[Abstract]](/papers/secon2015.txt)
-    [[Slides]]
+    [[Slides]](/papers/secon2015@SECON-15.pdf)
     [[Bib]](/papers/secon2015.bib)
 
 *   Leonidas Lampropoulos and Konstantinos Sagonas.
