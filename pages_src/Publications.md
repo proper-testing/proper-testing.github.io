@@ -8,7 +8,7 @@ kate: replace-tabs-save on; replace-tabs on; tab-width 8;
     pages 46-56, Santa Barbara, CA, USA, July 2017.
     [[PDF]](/papers/issta2017.pdf)
     [[Abstract]](/papers/issta2017.txt)
-    [[Slides]]
+    [[Slides]](/papers/issta2017@ISSTA-17.pdf)
     [[Bib]](/papers/issta2017.bib)
 
 *   Andreas Löscher, Konstantinos Sagonas, and Thiemo Voigt.
