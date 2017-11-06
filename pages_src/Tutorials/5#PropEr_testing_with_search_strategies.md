@@ -1,4 +1,4 @@
-Summary: Tutorial for targeted property-based testing
+Summary: a PropEr targeted tutorial
 Author: Andreas Löscher and Kostis Sagonas
 
 # Targeted Property-Based Testing
