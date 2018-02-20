@@ -2,6 +2,18 @@ Summary: Papers and talks about PropEr
 kate: replace-tabs-save on; replace-tabs on; tab-width 8;
 
 *   Andreas Löscher and Konstantinos Sagonas.
+    "Automating Targeted Property-Based Testing",
+    In Proceedings of the
+    [11th IEEE Conference on Software Testing, Validation and Verification](http://www.es.mdh.se/icst2018/),
+    Västerås, Sweden, April 2018.
+    [[PDF]](/papers/icst2018.pdf)
+    [[Abstract]](/papers/icst2018.txt)
+    [[Slides]]
+    [[Bib]](/papers/icst2018.bib)
+
+*   Andreas Löscher, Konstantinos Sagonas, and Thiemo Voigt.
+    "Property-based Testing of Sensor Networks",
+*   Andreas Löscher and Konstantinos Sagonas.
     "Targeted Property-Based Testing",
     In Proceedings of the
     [26th ACM SIGSOFT International Symposium on Software Testing and Analysis](http://conf.researchr.org/home/issta-2017),

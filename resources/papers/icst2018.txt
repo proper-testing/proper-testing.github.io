@@ -1,0 +1,15 @@
+Targeted property-based testing is an enhanced form of property-based testing
+(PBT) where the input generation is guided by a search strategy instead of being
+random, thereby combining the strengths of QuickCheck-like and search-based
+testing techniques.
+To use it, however, the user currently needs to specify a search
+strategy and also supply all ingredients that the search strategy requires.
+This is often a laborious process and makes targeted PBT less attractive
+than its random counterpart.
+In this paper, we focus on simulated annealing, the default search strategy
+of our tool, and present a technique that automatically creates all the
+ingredients that targeted PBT requires starting from only a random generator.
+Our experiments, comparing the automatically generated ingredients to fine-tuned
+manually written ones, show that the performance that one obtains
+is sufficient and quite competitive in practice.
+
