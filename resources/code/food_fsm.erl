@@ -255,7 +255,7 @@ prop_doesnt_run_out_of_supplies() ->
 		    proper_fsm:run_commands(?MODULE, Cmds),
 		stop(),
 		?WHENFAIL(
-		   io:format("History: ~w~nState: ~w\nResult: ~w~n",
+		   io:format("History: ~w~nState: ~w~nResult: ~w~n",
 			     [History, State, Result]),
 		   aggregate(zip(proper_fsm:state_names(History),
 				 command_names(Cmds)),
