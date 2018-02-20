@@ -11,8 +11,6 @@ kate: replace-tabs-save on; replace-tabs on; tab-width 8;
     [[Slides]]
     [[Bib]](/papers/icst2018.bib)
 
-*   Andreas Löscher, Konstantinos Sagonas, and Thiemo Voigt.
-    "Property-based Testing of Sensor Networks",
 *   Andreas Löscher and Konstantinos Sagonas.
     "Targeted Property-Based Testing",
     In Proceedings of the
