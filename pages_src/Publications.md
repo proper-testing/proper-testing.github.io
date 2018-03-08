@@ -10,6 +10,8 @@ kate: replace-tabs-save on; replace-tabs on; tab-width 8;
     [[Abstract]](/papers/icst2018.txt)
     [[Slides]]
     [[Bib]](/papers/icst2018.bib)
+    [[Artifact]](/papers/icst2018_artifact.pdf)
+    [[Assignment Used as User Study]](/papers/icst2018_assignment.pdf)
 
 *   Andreas Löscher and Konstantinos Sagonas.
     "Targeted Property-Based Testing",
