@@ -86,6 +86,11 @@ The main text of the theses is in English.
 Talks
 =====
 
+*   Kostis Sagonas, "Two Testing Tools for the Erlang Ecosystem", [CODE BEAM
+    SF](https://www.codesync.global/conferences/code-beam-sf-2018/), March 2018.
+    [[Slides]](/talks/TestingTools@SF-18.pdf)
+    [[Video]](https://www.youtube.com/watch?v=35VlRBRFWFE)
+
 *   Kostis Sagonas, "A PropEr Creation", [Erlang User
     Conference](http://www.erlang-factory.com/conference/ErlangUserConference2011), November 2011.
     [[Slides]](/talks/proper_creation@EUC-11.pdf)
