@@ -89,7 +89,7 @@ Talks
 *   Kostis Sagonas, "Two Testing Tools for the Erlang Ecosystem", [CODE BEAM
     SF](https://www.codesync.global/conferences/code-beam-sf-2018/), March 2018.
     [[Slides]](/talks/TestingTools@SF-18.pdf)
-    [[Video]](https://www.youtube.com/watch?v=35VlRBRFWFE)
+    [[Video]](https://www.youtube.com/watch?v=4-vJeCmkCZE)
 
 *   Kostis Sagonas, "A PropEr Creation", [Erlang User
     Conference](http://www.erlang-factory.com/conference/ErlangUserConference2011), November 2011.
