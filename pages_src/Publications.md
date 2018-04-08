@@ -5,7 +5,7 @@ kate: replace-tabs-save on; replace-tabs on; tab-width 8;
     "Automating Targeted Property-Based Testing",
     In Proceedings of the
     [11th IEEE Conference on Software Testing, Validation and Verification](http://www.es.mdh.se/icst2018/),
-    Västerås, Sweden, April 2018.
+    pages 70-80, Västerås, Sweden, April 2018.
     [[PDF]](/papers/icst2018.pdf)
     [[Abstract]](/papers/icst2018.txt)
     [[Slides]]
