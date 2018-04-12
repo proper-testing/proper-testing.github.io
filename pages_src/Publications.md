@@ -8,7 +8,7 @@ kate: replace-tabs-save on; replace-tabs on; tab-width 8;
     pages 70-80, Västerås, Sweden, April 2018.
     [[PDF]](/papers/icst2018.pdf)
     [[Abstract]](/papers/icst2018.txt)
-    [[Slides]]
+    [[Slides]](/papers/icst2018@ICST-18.pdf)
     [[Bib]](/papers/icst2018.bib)
     [[Artifact]](/papers/icst2018_artifact.pdf)
     [[Assignment Used as User Study]](/papers/icst2018_assignment.pdf)
