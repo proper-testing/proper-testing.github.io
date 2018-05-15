@@ -915,6 +915,6 @@ true
 
 You can get the complete final code of this tutorial by clicking on
 the following links:
-  [movie_server](code/movies/movie_server.erl)
+  [movie_server](/code/movies/movie_server.erl)
 and
-  [movie_statem](code/movies/movie_statem.erl).
+  [movie_statem](/code/movies/movie_statem.erl).

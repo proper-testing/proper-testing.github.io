@@ -19,4 +19,5 @@ done
 # sed --in-place -e "s|</body>|$MAIN_PAGE_LINK</body>|" resources/doc/modules-frame.html
 echo $USER_GUIDE_META_DATA > userguide.md
 cat proper/README.md >> userguide.md
+sed --in-place -e 's|./COPYING|https://github.com/proper-testing/proper/blob/master/COPYING|' userguide.md
 rm -rf proper/

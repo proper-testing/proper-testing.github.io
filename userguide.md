@@ -181,7 +181,7 @@ incompatibilities between the two tools by now.
 
 <!-- Links -->
 [eunit stdout]: http://erlang.org/doc/apps/eunit/chapter.html#Running_EUnit
-[license]: ./COPYING
+[license]: https://github.com/proper-testing/proper/blob/master/COPYING
 [travis]: https://travis-ci.org/manopapad/proper
 [erlang]: http://www.erlang.org
 

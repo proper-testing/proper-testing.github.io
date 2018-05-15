@@ -119,7 +119,7 @@ the first is an Erlang term containing _variables_ that will get values which
 are produced by the _generators_ in the second argument. In this particular
 case, there is only one variable whose values will be (semi-random) lists
 of integers. Both `list/1` and `integer/0` are built-in generators defined
-in the [proper_types](apidoc/proper_types.html) module. However,
+in the [proper_types](/apidocs/proper_types.html) module. However,
 one does not need to specify the module name, as PropEr knows where to find
 them when used in PropEr macros. The third argument is a Boolean expression
 that specifies the property we are interested in. In this case the property
@@ -472,7 +472,7 @@ In this introductory tutorial you've learned:
 *  How to use the **`FORALL`** and **`IMPLIES`** macros for writing properties.
 
 *  About some built-in generators (`integer/1`, `list/1` and `list/0`).
-   The [proper_types](apidoc/proper_types.html) module contains
+   The [proper_types](/apidocs/proper_types.html) module contains
    many more and we invite you to learn about their existence.
 
 *  How to create simple _custom generators_ using **`LET`**.
@@ -486,4 +486,4 @@ In this introductory tutorial you've learned:
 You can get the complete final code of this tutorial, without this last
 modification to the `prop_same_length` property, by clicking on the following
 link:
-  [my_sort.erl](code/my_sort.erl)
+  [my_sort.erl](/code/my_sort.erl)

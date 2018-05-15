@@ -32,10 +32,10 @@ Outside of academia, he is a FOSS enthusiast, die-hard KDE fanboy and former gam
 [ece-ntua]: http://www.ece.ntua.gr/
 [ntua]: http://www.ntua.gr/
 [mpla]: http://mpla.math.uoa.gr/
-[cs-sf]: http://cs.stanford.edu/
+[cs-sf]: https://cs.stanford.edu/
 [sf]: http://www.stanford.edu/
 [ntua]: http://www.ntua.gr/
-[eth]: http://www.ethz.ch/index_EN
+[eth]: https://www.ethz.ch/en.html
 [mail]: mailto:proper@softlab.ntua.gr
 [kostis]: /img/devs-kostis.jpg
 [eirini]: /img/devs-eirini.jpg
