@@ -1,0 +1,9 @@
+We present a tight integration of the language of types and function
+specifications of Erlang with property-based testing. To achieve this
+integration we have developed from scratch PropEr, an open-source
+QuickCheck-inspired property-based testing tool. We present technical
+details of this integration, most notably how the conversion of
+recursive types into appropriate generators takes place and how
+function specifications can be turned automatically into simple
+properties in order to exercise the code of these functions. Finally,
+we present experiences and advice for the proper use of PropEr.

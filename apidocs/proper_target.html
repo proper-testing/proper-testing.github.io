@@ -1,0 +1,113 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Module proper_target</title>
+<link rel="stylesheet" type="text/css" href="stylesheet.css" title="EDoc">
+</head>
+<body bgcolor="white">
+<div class="navbar"><a name="#navbar_top"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="/" target="_top"><img src="/images/proper_tiny.png" align="right" border="0" alt="PropEr logo"></a></td></tr></table></div>
+<hr>
+
+<h1>Module proper_target</h1>
+<ul class="index"><li><a href="#description">Description</a></li><li><a href="#types">Data Types</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>This module defines the top-level behaviour for targeted   
+property-based testing (TPBT).
+<p>Copyright © 2017 Andreas Löscher and Kostis Sagonas</p>
+
+<p><b>Version:</b> May 15 2018 11:40:41</p>
+<p><b>Authors:</b> Andreas Löscher.</p>
+
+<h2><a name="description">Description</a></h2><p>This module defines the top-level behaviour for targeted   
+property-based testing (TPBT). Using TPBT the input generation   
+is no longer random, but guided by a search strategy to increase   
+the probability of finding failing input. For this to work the user   
+has to specify a search strategy and also needs to extract   
+utility-values from the system under test that the search strategy   
+then tries to maximize.</p>
+  
+   <p>To use TPBT the test specification macros <code>?FORALL_TARGETED`, `?EXISTS</code>,
+   and <code>?NOT_EXISTS</code> are used. The typical structure for a targeted   
+property looks as follows:</p>
+  
+   <pre>      prop_target() -&gt;                 % Try to check that
+        ?EXISTS(Input, Params,         % some input exists
+                begin                  % that fullfills the property.
+                  UV = SUT:run(Input), % Do so by running SUT with Input
+                  ?MAXIMIZE(UV),       % and maximize its Utility Value
+                  UV &lt; Threshold       % up to some Threshold.
+                end)).</pre>
+  
+   <h3><a name="Macros">Macros</a></h3>
+  
+   <dl>
+     <dt><code>?MAXIMIZE(UV)</code></dt>
+     <dd>This tells the search strategy to maximize the value <code>UV</code>.</dd>
+     <dt><code>?MINIMIZE(UV)</code></dt>
+     <dd>equivalent to <code>?MAXIMIZE(-UV)</code></dd>
+     <dt><code>?USERNF(Gen, Nf)</code></dt>
+     <dd>This uses the neighborhood function <code>Nf</code> instead of PropEr's
+       constructed neighborhood function for this generator. The neighborhood
+       function <code>Fun</code> should be of type <code>proper_gen_next:nf()</code></dd>
+     <dt><code>?USERMATCHER(Gen, Matcher)</code></dt>
+     <dd>This overwrites the structural matching of PropEr with the user provided
+       <code>Matcher</code> function. the matcher should be of type <code>proper_gen_next:matcher()</code></dd>
+   </dl>
+<h2><a name="types">Data Types</a></h2>
+
+<h3 class="typedecl"><a name="type-fitness">fitness()</a></h3>
+<p><pre>fitness() = number()</pre></p>
+
+
+<h3 class="typedecl"><a name="type-fitness_func">fitness_func()</a></h3>
+<p><pre>fitness_func() = 
+    fun((<a href="#type-target_state">target_state()</a>, <a href="#type-fitness">fitness()</a>) -&gt; <a href="#type-target_state">target_state()</a>)</pre></p>
+
+
+<h3 class="typedecl"><a name="type-key">key()</a></h3>
+<p><pre>key() = nonempty_string() | reference()</pre></p>
+
+
+<h3 class="typedecl"><a name="type-next_func">next_func()</a></h3>
+<p><pre>next_func() = fun((<a href="#type-target_state">target_state()</a>) -&gt; {<a href="#type-target_state">target_state()</a>, any()})</pre></p>
+
+
+<h3 class="typedecl"><a name="type-strategy">strategy()</a></h3>
+<p><pre>strategy() = module()</pre></p>
+<p>  -----------------------------------------------------------------------------
+  proper_target callback functions for defining strategies
+  ----------------------------------------------------------------------------</p>
+
+<h3 class="typedecl"><a name="type-target">target()</a></h3>
+<p><pre>target() = {<a href="#type-target_state">target_state()</a>, <a href="#type-next_func">next_func()</a>, <a href="#type-fitness_func">fitness_func()</a>}</pre></p>
+
+
+<h3 class="typedecl"><a name="type-target_state">target_state()</a></h3>
+<p><pre>target_state() = term()</pre></p>
+
+
+<h3 class="typedecl"><a name="type-tmap">tmap()</a></h3>
+<p><pre>tmap() = #{atom() =&gt; term()}</pre></p>
+
+
+<h2><a name="index">Function Index</a></h2>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#init_strategy-1">init_strategy/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#strategy-0">strategy/0</a></td><td></td></tr>
+</table>
+
+<h2><a name="functions">Function Details</a></h2>
+
+<h3 class="function"><a name="init_strategy-1">init_strategy/1</a></h3>
+<div class="spec">
+<p><pre>init_strategy(Strat :: <a href="#type-strategy">strategy()</a>) -&gt; ok</pre></p>
+</div>
+
+<h3 class="function"><a name="strategy-0">strategy/0</a></h3>
+<div class="spec">
+<p><pre>strategy() -&gt; <a href="#type-strategy">strategy()</a></pre></p>
+</div>
+<hr>
+
+<div class="navbar"><a name="#navbar_bottom"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="/" target="_top"><img src="/images/proper_tiny.png" align="right" border="0" alt="PropEr logo"></a></td></tr></table></div>
+<p><i>Generated by EDoc</i></p>
+</body>
+</html>

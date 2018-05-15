@@ -1,0 +1,6 @@
+%% encoding: UTF-8
+{application,proper}.
+{modules,[proper,proper_fsm,proper_gen,proper_gen_next,proper_sa,
+          proper_statem,proper_symb,proper_target,proper_transformer,
+          proper_types,proper_typeserver,proper_unicode,
+          proper_unused_imports_remover]}.

@@ -1,0 +1,90 @@
+/* standard EDoc style sheet, edited to fit with PropEr's color scheme */
+
+body {
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    margin-left: .25in;
+    margin-right: .2in;
+    margin-top: 0.2in;
+    margin-bottom: 0.2in;
+    color: #000000;
+    background-color: #ffffff;
+}
+
+/* Link styles */
+
+a {
+    color: #b22222;
+}
+
+a.module, a.package {
+    text-decoration: none;
+}
+
+a.module:hover, a.package:hover {
+    background-color: #eeeeee;
+}
+
+a.module:active, a.package:active {
+    color: purple;
+}
+
+.navbar a {
+    color: white;
+}
+
+h2 a, h3 a, h4 a {
+    color: black;
+}
+
+/* Header styles */
+
+h1, h2 {
+    margin-left: -0.2in;
+}
+
+h2.indextitle {
+    padding: 0.4em;
+    background-color: #b22222;
+    color: white;
+}
+
+h3.function, h3.typedecl {
+    background-color: #eeeeee;
+    padding-left: 1em;
+}
+
+/* Div styles */
+
+div.navbar {
+    background-color: #b22222;
+    padding: 0.2em;
+    color: white;
+}
+
+div.spec {
+    margin-left: 2em;
+    background-color: #ffffff;
+}
+
+ul.definitions {
+    list-style-type: none;
+}
+
+ul.index {
+    list-style-type: none;
+    background-color: #eeeeee;
+}
+
+/* Minor style tweaks */
+
+ul {
+    list-style-type: square;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+td {
+    padding: 3
+}
