@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Papers and talks about PropEr
+title: Papers, theses, and talks about PropEr
 sitemap:
     priority: 1.0
 ---
@@ -60,6 +60,14 @@ sitemap:
     [[Slides]](/papers/proper_types@Erlang-11.pdf)
     [[Bib]](/papers/proper_types.bib)
 
+
+## Ph.D. Theses
+
+*   Andreas Löscher,
+    "Targeted Property-Based Testing with Applications in Sensor Networks".
+    PhD dissertation. Uppsala Dissertations from the Faculty of Science
+    and Technology 133, Uppsala University, Sweden, May 2018.
+    [[PDF]](http://uu.diva-portal.org/smash/get/diva2:1195475/FULLTEXT01.pdf)
 
 ## Diploma Theses
 
