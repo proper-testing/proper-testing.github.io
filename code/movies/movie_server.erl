@@ -31,7 +31,7 @@ start_link() ->
     gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).
 
 stop() -> 
-    gen_server:call(?MODULE, stop).
+    gen_server:stop(?MODULE).
 
 -spec create_account(name()) -> password().
 create_account(Name) ->
@@ -128,9 +128,7 @@ handle_call({return,Pass,Movie}, _From, S) ->
 	end,
     {reply, Reply, S};
 handle_call(popcorn, _From, S) ->
-    {reply, bon_appetit, S};
-handle_call(stop, _From, S) ->
-    {stop, normal, stopped, S}.
+    {reply, bon_appetit, S}.
 
 terminate(_Reason, #state{users = Tab1, movies = Tab2}) ->
     ets:delete(Tab1),
