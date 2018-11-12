@@ -3,6 +3,7 @@ layout: page
 title: User Guide
 ---
 [![Travis][travis badge]][travis]
+[![CodeCov][codecov badge]][codecov]
 [![Erlang Versions][erlang versions badge]][erlang]
 [![License][license badge]][license]
 
@@ -19,10 +20,10 @@ base since 2012.
 
 You can reach PropEr's developers in the following ways:
 
-*   on the web: at [the project's home page](http://proper.softlab.ntua.gr) or
-    [the project's github page](https://github.com/manopapad/proper)
-*   by email: take the project's home page URL, remove the `http://` prefix and
-    replace the first dot with a @
+*   on the web: at [the project's home page](http://proper-testing.github.io)
+    or [the project's github page](https://github.com/proper-testing/proper)
+*   by email: take the tool's name (all lowercase), add a @ followed by
+    softlab dot ntua dot gr
 
 We welcome user contributions and feedback (comments, suggestions, feature
 requests, bug reports, patches, etc.).
@@ -90,7 +91,7 @@ Quickstart guide
     base:
 
     ```shell
-        git clone git://github.com/manopapad/proper.git
+        git clone git://github.com/proper-testing/proper.git
     ```
 *   Compile PropEr: Run `make` if you just want to build PropEr, optionally
     followed by a `make tests` to run its unit tests and a `make dialyzer` call
@@ -134,7 +135,7 @@ Where to go from here
 ---------------------
 
 To get started on using PropEr, see the tutorials and testing tips provided on
-[PropEr's home page](http://proper.softlab.ntua.gr). On the same site you can
+[PropEr's home page](http://proper-testing.github.io). On the same site you can
 find a copy of PropEr's API documentation (you can also build this from source
 if you prefer, by running `make doc`), as well as links to more resources on
 property-based testing.
@@ -179,13 +180,15 @@ All the above are from circa 2010. Most likely, there exist many more
 incompatibilities between the two tools by now.
 
 
-<!-- Links -->
+<!-- Links (alphabetically) -->
+[codecov]: https://codecov.io/gh/proper-testing/proper
+[erlang]: http://www.erlang.org
 [eunit stdout]: http://erlang.org/doc/apps/eunit/chapter.html#Running_EUnit
 [license]: https://github.com/proper-testing/proper/blob/master/COPYING
-[travis]: https://travis-ci.org/manopapad/proper
-[erlang]: http://www.erlang.org
+[travis]: https://travis-ci.org/proper-testing/proper
 
-<!-- Badges -->
+<!-- Badges (alphabetically) -->
+[codecov badge]: https://codecov.io/gh/proper-testing/proper/branch/master/graph/badge.svg
 [erlang versions badge]: https://img.shields.io/badge/erlang-17.0%20to%2020.3-blue.svg?style=flat-square
-[license badge]: https://img.shields.io/github/license/manopapad/proper.svg?style=flat-square
-[travis badge]: https://img.shields.io/travis/manopapad/proper/master.svg?style=flat-square
+[license badge]: https://img.shields.io/github/license/proper-testing/proper.svg?style=flat-square
+[travis badge]: https://img.shields.io/travis/proper-testing/proper/master.svg?style=flat-square
