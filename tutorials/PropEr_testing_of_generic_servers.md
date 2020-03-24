@@ -287,7 +287,7 @@ Being interested only in valid passwords, we define:
 
 {% highlight erlang %}
 password(#state{users = Passwords}) ->
-            elements(Passwords).
+    elements(Passwords).
 {% endhighlight %}
 
 An issue with this generator is that it will raise an exception if no passwords
@@ -297,12 +297,12 @@ but in a rather unusual way:
 
 {% highlight erlang %}
 command(S) ->
-    Users = (S#state.users =/= []),
-    oneof([{call, ?SERVER, create_account, [name()]},
-           {call, ?SERVER, ask_for_popcorn, []}] ++
-          [{call, ?SERVER, delete_account, [password(S)]} || Users] ++
-          [{call, ?SERVER, rent_dvd, [password(S), movie()]} || Users] ++
-          [{call, ?SERVER, return_dvd, [password(S), movie()]} || Users]).
+    HasUsers = (S#state.users =/= []),
+    oneof([{call,?SERVER,create_account,[name()]},
+           {call,?SERVER,ask_for_popcorn,[]}] ++
+          [{call,?SERVER,delete_account,[password(S)]} || HasUsers] ++
+          [{call,?SERVER,rent_dvd,[password(S), movie()]} || HasUsers] ++
+          [{call,?SERVER,return_dvd,[password(S), movie()]} || HasUsers]).
 {% endhighlight %}
 
 So, that's it! Our command generator is ready. In the next section we will talk
@@ -873,11 +873,11 @@ If we run the test now:
 <...3000 dots....>
 OK: Passed 3000 test(s).
 
-30% {movie_server,ask_for_popcorn,0}
-30% {movie_server,create_account,1}
-19% {movie_server,delete_account,1}
-18% {movie_server,rent_dvd,2}
- 1% {movie_server,return_dvd,2}
+31.20% {movie_server,ask_for_popcorn,0}
+30.84% {movie_server,create_account,1}
+18.92% {movie_server,delete_account,1}
+17.72% {movie_server,rent_dvd,2}
+ 1.32% {movie_server,return_dvd,2}
 true
 {% endhighlight%}
 
@@ -888,14 +888,14 @@ generator so that `return_dvd/2` calls can be selected more frequently.
 
 {% highlight erlang %}
 command(S) ->
-    Users = (S#state.users =/= []),
-    Rented = (S#state.rented =/= []),
+    HasUsers = (S#state.users =/= []),
+    IsRented = (S#state.rented =/= []),
     frequency([{1, {call,?SERVER,create_account,[name()]}},
                {1, {call,?SERVER,ask_for_popcorn,[]}}] ++
-              [{1, {call,?SERVER,delete_account,[password(S)]}} || Users] ++
-              [{5, {call,?SERVER,rent_dvd,[password(S), movie()]}} || Users] ++
+              [{1, {call,?SERVER,delete_account,[password(S)]}} || HasUsers] ++
+              [{5, {call,?SERVER,rent_dvd,[password(S), movie()]}} || HasUsers] ++
               [{5, ?LET({Password,Movie}, elements(S#state.rented),
-                        {call,?SERVER,return_dvd,[Password, Movie]})} || Rented]).
+                        {call,?SERVER,return_dvd,[Password, Movie]})} || IsRented]).
 {% endhighlight%}
 
 The resulting distribution is:
@@ -905,11 +905,11 @@ The resulting distribution is:
 <...3000 dots....>
 OK: Passed 3000 test(s).
 
-36% {movie_server,rent_dvd,2}
-19% {movie_server,return_dvd,2}
-18% {movie_server,ask_for_popcorn,0}
-17% {movie_server,create_account,1}
- 8% {movie_server,delete_account,1}
+36.69% {movie_server,rent_dvd,2}
+18.84% {movie_server,return_dvd,2}
+18.53% {movie_server,ask_for_popcorn,0}
+18.03% {movie_server,create_account,1}
+ 7.91% {movie_server,delete_account,1}
 true
 {% endhighlight %}
 

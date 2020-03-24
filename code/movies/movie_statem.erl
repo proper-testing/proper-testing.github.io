@@ -48,14 +48,14 @@ initial_state() ->
 	   rented = []}.
 
 command(S) ->
-    Users  = (S#state.users =/= []),
-    Rented = (S#state.rented =/= []),
+    HasUsers = (S#state.users =/= []),
+    IsRented = (S#state.rented =/= []),
     frequency([{1, {call,?SERVER,create_account,[name()]}},
 	       {1, {call,?SERVER,ask_for_popcorn,[]}}] ++
-	      [{1, {call,?SERVER,delete_account,[password(S)]}} || Users] ++
-	      [{5, {call,?SERVER,rent_dvd,[password(S), movie()]}} || Users] ++
+	      [{1, {call,?SERVER,delete_account,[password(S)]}} || HasUsers] ++
+	      [{5, {call,?SERVER,rent_dvd,[password(S), movie()]}} || HasUsers] ++
 	      [{5, ?LET({Password,Movie}, elements(S#state.rented),
-	      		{call,?SERVER,return_dvd,[Password, Movie]})} || Rented]).
+			{call,?SERVER,return_dvd,[Password, Movie]})} || IsRented]).
 
 name() ->
     elements(?NAMES).
