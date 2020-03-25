@@ -360,7 +360,7 @@ next_state_data(_From, _Target, StateData, _Result, {call,_,_,_}) ->
 Let us run the first test on our property. It states that the creature never
 runs out of food in the storage.
 
-{% highlight plaintext %}
+{% highlight erl %}
 5> proper:quickcheck(food_fsm:prop_doesnt_run_out_of_supplies()).
 
 Error: The transition from "cheese_day" state triggered by
@@ -404,7 +404,7 @@ precondition(_, _, _, {call,_,_,_}) ->
 
 We run the test one more time:
 
-{% highlight plaintext %}
+{% highlight erl %}
 8> proper:quickcheck(food_fsm:prop_doesnt_run_out_of_supplies()).
 .................................................
 Error: Couldn't produce an instance that satisfies all strict constraints after 50 tries.
@@ -417,8 +417,8 @@ the default value of 'constraint_tries'. At this point there are two options.
 We can either increase the `constraint_tries` limit to e.g. 100 tries by
 running
 
-{% highlight plaintext %}
-proper:quickcheck(food_fsm:prop_never_run_out_of_supplies(), {constraint_tries,100})
+{% highlight erl %}
+proper:quickcheck(food_fsm:prop_doesnt_run_out_of_supplies(), {constraint_tries,100})
 {% endhighlight %}
 
 or we can modify the generator that is responsible for this error.
@@ -435,10 +435,9 @@ quantity() ->
 
 And again we run the test:
 
-{% highlight plaintext %}
+{% highlight erl %}
 10> proper:quickcheck(food_fsm:prop_doesnt_run_out_of_supplies()).
-.........................................................................
-...........................
+....................................................................................................
 OK: Passed 100 test(s).
 {% endhighlight %}
 
@@ -447,29 +446,28 @@ But... wait a minute! We cannot be sure of what was tested unless we
 have a look at the testcase distribution.
 
 {% highlight erlang %}
-    prop_doesnt_run_out_of_supplies() ->
-        ?FORALL(Cmds, proper_fsm:commands(?MODULE),
-                begin
-                    start(cheese_day), %% could also be grapes_day or lettuce_day,
-                                       %% but the same kind of day should be used
-                                       %% to initialize the model state
-                    {History, State, Result} = proper_fsm:run_commands(?MODULE, Cmds),
-                    stop(),
-                    ?WHENFAIL(io:format("History: ~w~nState: ~w\nResult: ~w~n",
-                                        [History, State, Result]),
-                              aggregate(zip(proper_fsm:state_names(History),
-                                            command_names(Cmds)),
-                              Result =:= ok))
-                end).
+prop_doesnt_run_out_of_supplies() ->
+    ?FORALL(Cmds, proper_fsm:commands(?MODULE),
+            begin
+                start(cheese_day), %% could also be grapes_day or lettuce_day,
+                                   %% but the same kind of day should be used
+                                   %% to initialize the model state
+                {History, State, Result} = proper_fsm:run_commands(?MODULE, Cmds),
+                stop(),
+                ?WHENFAIL(io:format("History: ~w~nState: ~w\nResult: ~w~n",
+                                    [History, State, Result]),
+                          aggregate(zip(proper_fsm:state_names(History),
+                                        command_names(Cmds)),
+                          Result =:= ok))
+            end).
 {% endhighlight %}
 
 The property is now instrumented to collect statistics about how often
 each transition was tested. Let's try it:
 
-{% highlight plaintext %}
+{% highlight erl %}
 12> proper:quickcheck(food_fsm:prop_doesnt_run_out_of_supplies()).
-.........................................................................
-...........................
+....................................................................................................
 OK: Passed 100 test(s).
 
 20% {cheese_day,{food_fsm,new_day,1}}
@@ -502,7 +500,7 @@ weight(_Today, _Today, {call,_,buy,_}) -> 2.
 
 Running the test with weighted transitions:
 
-{% highlight plaintext %}
+{% highlight erl %}
 {% raw %}
 15> proper:quickcheck(food_fsm:prop_doesnt_run_out_of_supplies()).
 ..........................!
@@ -630,9 +628,9 @@ eat_transition(Food_left) ->
 
 The property now successfully passes 1000 tests.
 
-{% highlight plaintext %}
-18> proper:quickcheck(food_fsm:prop_never_run_out_of_supplies(), 1000).
-<...1000 dots...>
+{% highlight erl %}
+17> proper:quickcheck(food_fsm:prop_doesnt_run_out_of_supplies(), 1000).
+...........1000 dots.............
 OK: Passed 1000 test(s).
 
 19% {cheese_day,{food_fsm,hungry,0}}

@@ -268,9 +268,9 @@ prop_ping_pong_works() ->
 
 But...
 
-{% highlight plaintext %}
-5> proper:quickcheck(ping_pong_statem:prop_ping_pong_works()).
+{% highlight erl %}
 {% raw %}
+5> proper:quickcheck(ping_pong_statem:prop_ping_pong_works()).
 ...............
 =ERROR REPORT==== 30-May-2011::01:50:11 ===
 ** Generic server ping_pong terminating
@@ -344,14 +344,14 @@ prop_ping_pong_works() ->
                     {History,State,Result} = run_commands(?MODULE, Cmds),
                     ?MASTER:stop(),
                     ?WHENFAIL(io:format("History: ~w~nState: ~w\nRes: ~w~n",
-                                       [pretty_history(History), pretty_state(State), Result]),
+                                        [pretty_history(History), pretty_state(State), Result]),
                               aggregate(command_names(Cmds), Result =:= ok))
                 end)).
 {% endhighlight %}
 
 And run the test once more:
 
-{% highlight plaintext %}
+{% highlight erl %}
 {% raw %}
 7> proper:quickcheck(ping_pong_statem:prop_ping_pong_works()).
 .............
@@ -452,25 +452,25 @@ can easily fix it:
 {% highlight erlang %}
 handle_call({ping, FromName}, _From, Dict) ->
     case dict:is_key(FromName, Dict) of
-	    true ->
+       true ->
             {reply, pong, dict:update_counter(FromName, 1, Dict)};
-	    false ->
-	        {reply, {removed, FromName}, Dict}
+       false ->
+            {reply, {removed, FromName}, Dict}
     end;
 {% endhighlight %}
 
-And now the property successfully passes the tests:
+And now the property successfully passes many tests:
 
-{% highlight plaintext %}
-11> proper:quickcheck(ping_pong_statem:prop_ping_pong_works()).
-<...3000 dots...>
+{% highlight erl %}
+11> proper:quickcheck(ping_pong_statem:prop_ping_pong_works(), 3000).
+...........3000 dots.............
 OK: Passed 3000 test(s).
 
-34% {ping_pong,add_player,1}
-16% {ping_pong,remove_player,1}
-16% {ping_pong,play_ping_pong,1}
-16% {ping_pong,play_tennis,1}
-16% {ping_pong,get_score,1}
+34.16% {ping_pong,add_player,1}
+16.61% {ping_pong,get_score,1}
+16.59% {ping_pong,play_ping_pong,1}
+16.45% {ping_pong,remove_player,1}
+16.18% {ping_pong,play_tennis,1}
 true
 {% endhighlight %}
 

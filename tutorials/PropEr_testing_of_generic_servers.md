@@ -455,7 +455,7 @@ postcondition(_S, {call,_,ask_for_popcorn,[]}, Result) ->
 Having specified the abstract state machine, it's high time to test the
 property:
 
-{% highlight plaintext %}
+{% highlight erl %}
 2> proper:quickcheck(movie_statem:prop_server_works_fine()).
 ....
 =ERROR REPORT==== 29-May-2011::22:28:16 ===
@@ -500,7 +500,7 @@ prop_server_works_fine() ->
 
 Let's try it again:
 
-{% highlight plaintext %}
+{% highlight erl %}
 4> proper:quickcheck(movie_statem:prop_server_works_fine()).
 ....................!
 Failed: After 21 test(s).
@@ -548,7 +548,7 @@ precondition(S, {call,_,return_dvd,[Password,Movie]}) ->
 
 And run the property once more:
 
-{% highlight plaintext %}
+{% highlight erl %}
 6> proper:quickcheck(movie_statem:prop_server_works_fine()).
 ..............!
 Failed: After 15 test(s).
@@ -602,7 +602,7 @@ prop_server_works_fine() ->
 Running the test for the new property, we get more explicit information
 about command execution and the cause of failure.
 
-{% highlight plaintext %}
+{% highlight erl %}
 {% raw %}
 8> proper:quickcheck(movie_statem:prop_server_works_fine()).
 .............................!
@@ -670,7 +670,7 @@ postcondition(S, {call, _, delete_account, [Password]}, Result) ->
 
 And again we try:
 
-{% highlight plaintext %}
+{% highlight erl %}
 {% raw %}
 12> proper:quickcheck(movie_statem:prop_server_works_fine()).
 ............................................................................
@@ -725,7 +725,7 @@ precondition(_, _) ->
 
 And test the property once more:
 
-{% highlight plaintext %}
+{% highlight erl %}
 {% raw %}
 15> proper:quickcheck(movie_statem:prop_server_works_fine()).
 ...................!
@@ -778,10 +778,9 @@ precondition(S, {call,_,rent_dvd,[Password,Movie]}) ->
 
 Eventually:
 
-{% highlight plaintext %}
+{% highlight erl %}
 18>  proper:quickcheck(movie_statem:prop_server_works_fine()).
-...........................................................................
-..........................
+.....................................................................................................
 OK: Passed 100 test(s).
 true
 {% endhighlight%}
@@ -841,7 +840,7 @@ handle_call({return,Password,Movie}, _From, S) ->
 
 and check that the counterexample now passes the test:
 
-{% highlight plaintext %}
+{% highlight erl %}
 41> proper:check(movie_statem:prop_server_works_fine(), proper:counterexample()).
 OK: The input passed the test.
 true
@@ -868,9 +867,9 @@ prop_server_works_fine() ->
 
 If we run the test now:
 
-{% highlight plaintext %}
+{% highlight erl %}
 41> proper:quickcheck(movie_statem:prop_server_works_fine(), 3000).
-<...3000 dots....>
+...........3000 dots.............
 OK: Passed 3000 test(s).
 
 31.20% {movie_server,ask_for_popcorn,0}
@@ -900,9 +899,9 @@ command(S) ->
 
 The resulting distribution is:
 
-{% highlight plaintext %}
+{% highlight erl %}
 42> proper:quickcheck(movie_statem:prop_server_works_fine(), 3000).
-<...3000 dots....>
+...........3000 dots.............
 OK: Passed 3000 test(s).
 
 36.69% {movie_server,rent_dvd,2}
