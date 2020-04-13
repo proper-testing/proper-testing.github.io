@@ -40,7 +40,7 @@ a map with the function `build_level()`. For each position of the level that
 contains something interesting we store in the map the type, e.g. `wall` or
 `exit`. We additionally store for the exit and entry their locations:
 
-{% highlight plaintext %}
+{% highlight erl %}
 1> level:build_level(level:level0()).
 #{entrance => {1,7},
   exit => {1,1},
@@ -88,7 +88,7 @@ and not the final position of the player, we ignore the returned position from
 `follow_path()`. Note that we expect this property to fail if the levels are
 created correctly:
 
-{% highlight plaintext %}
+{% highlight erl %}
 18> proper:quickcheck(level:prop_exit(level:level0())).
 .......................................................!
 Failed: After 56 test(s).
@@ -134,7 +134,7 @@ level1() ->
 Since this level is quite a bit larger, we increase the amount of tests to lets
 say one million:
 
-{% highlight plaintext %}
+{% highlight erl %}
 23> proper:quickcheck(level:prop_exit(level:level1()), 1000000).
 .................... 1.000.000 dots ....................
 OK: Passed 1000000 test(s).
@@ -186,8 +186,8 @@ prop_Target() ->                            % Try to check a property
 
 We can specify the search strategy PropEr is supposed in the options given to `proper:quickcheck(Prop, Options)`. For example, to use [simulated annealing](https://en.wikipedia.org/wiki/Simulated_annealing), the default search strategy of PropEr we test a property with the following call:
 
-{% highlight plaintext %}
-1> 15> proper:quickcheck(prop_Target(), [{search_strategy, simulated_annealing}, {search_steps, 1000}]).
+{% highlight erl %}
+15> proper:quickcheck(prop_Target(), [{search_strategy, simulated_annealing}, {search_steps, 1000}]).
 {% endhighlight %}
 
 The `search_steps` options specifies how many search steps PropEr uses. This option is independent from the `numtest` option that PropEr uses for random testing. The default values for `search_strategy` is `simulated_annealing` and the default value for `search_steps` is `1000`, like in the example above (we could for example omit the `search_strategy` option if we use simulated annealing).
@@ -249,7 +249,7 @@ path_next() ->
 
 If we test this property now it will fail after just a few hundred search steps:
 
-{% highlight plaintext %}
+{% highlight erl %}
 33> proper:quickcheck(level:prop_exit_targeted(level:level1()), [{search_steps, 10000}]).
 [.......... 390 dots ..........!]!
 Failed: After 1 test(s).
@@ -283,7 +283,7 @@ path_next() ->
 
 Now the property usually fails less than a few 100 search steps:
 
-{% highlight plaintext %}
+{% highlight erl %}
 36> proper:quickcheck(level:prop_exit_targeted(level:level1()), [{search_steps, 5000}]).
 [..........................................................!]!
 Failed: After 1 test(s).
@@ -375,7 +375,7 @@ The function `proper_sa:reset()` discards the current state of the search and
 starts from the beginning initial input. If we test the property now it will
 fail after a few thousand tests:
 
-{% highlight plaintext %}
+{% highlight erl %}
 36> proper:quickcheck(level:prop_exit_targeted(level:level2()), [{search_steps, 5000}]).
 [................... 2339 dots ...................!]!
 Failed: After 1 test(s).
