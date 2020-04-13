@@ -136,7 +136,7 @@ say one million:
 
 {% highlight erl %}
 23> proper:quickcheck(level:prop_exit(level:level1()), 1000000).
-.................... 1.000.000 dots ....................
+.................... <1.000.000 dots> ....................
 OK: Passed 1000000 test(s).
 true
 {% endhighlight %}
@@ -158,39 +158,39 @@ Each step in the list is generated randomly and independently from the other
 steps. This means that for long paths the steps in it mostly cancel each other
 out (one step left and one step right is equivalent with taking no steps at
 all). Another issue is that the input for each test is generated independently
-from all other tests. That means that already explored areas are covered again,
-even if they lead away from the exit are explored again. Ideally we want to
-learn from the paths that we took before and use them to construct one that
-leads the player to the exit.
+from all other tests. That means that already explored areas are covered again;
+even if they lead away from the exit are explored again. Ideally, we want to
+learn from the paths that we already explored and use them to construct ones
+that lead the player to the exit.
 
 ## Targeted Property-Based Testing
 PropEr provides an enhanced form of random property-based testing (PBT) called
-targeted PBT where the input generation is not completely random anymore but
-guided by a search strategy. Instead of generating inputs independent from
-each other the search strategy uses information gathered by previous
-tests in form of utility values, to generate the next input. The user can then
-instruct the search strategy to either maximize or minimize these utility
-values.
+_targeted property-based testing_ where the input generation is not completely
+random anymore but guided by a search strategy. Instead of generating inputs
+which are independent from each other, the search strategy uses information
+gathered by previous tests in form of _utility values_, to generate the next
+input. The user can then instruct the search strategy to either maximize or
+minimize these utility values.
 
 The general structure of a property that can be tested with targeted PBT looks as follow:
 
 {% highlight erlang %}
-prop_Target() ->                            % Try to check a property
-  ?FORALL_TARGETED(Input, Generator,        % by using a search strategy
-                   begin                    % for the input generation.
-                     UV = SUT:run(Input),   % Do so by running SUT with Input
-                     ?MAXIMIZE(UV),         % and maximize its Utility Value
-                     UV < Threshold         % up to some Threshold.
-                   end)).
+    prop_Target() ->                           % Try to check a property
+      ?FORALL_TARGETED(Input, Generator,       % by using a search strategy
+                       begin                   % for the input generation.
+                         UV = SUT:run(Input),  % Do so by running SUT with Input
+                         ?MAXIMIZE(UV),        % and maximize its Utility Value
+                         UV < Threshold        % up to some Threshold.
+                       end)).
 {% endhighlight %}
 
 We can specify the search strategy PropEr is supposed in the options given to `proper:quickcheck(Prop, Options)`. For example, to use [simulated annealing](https://en.wikipedia.org/wiki/Simulated_annealing), the default search strategy of PropEr we test a property with the following call:
 
 {% highlight erl %}
-15> proper:quickcheck(prop_Target(), [{search_strategy, simulated_annealing}, {search_steps, 1000}]).
+    proper:quickcheck(prop_Target(), [{search_strategy, simulated_annealing}, {search_steps, 1000}]).
 {% endhighlight %}
 
-The `search_steps` options specifies how many search steps PropEr uses. This option is independent from the `numtest` option that PropEr uses for random testing. The default values for `search_strategy` is `simulated_annealing` and the default value for `search_steps` is `1000`, like in the example above (we could for example omit the `search_strategy` option if we use simulated annealing).
+The `search_steps` option specifies how many search steps PropEr uses. This option is independent from the `numtest` option that PropEr uses for random testing. The default values for `search_strategy` is `simulated_annealing` and the default value for `search_steps` is `1000`, like in the example above (we could for example omit the `search_strategy` option if we use simulated annealing).
 
 PropEr constructs all definitions that the search strategy requires automatically. In the case of simulated annealing this means that a neighborhood function is constructed, a function that produces a random instance of the input that is similar (in the neighborhood) to a given input instance.
 
@@ -214,7 +214,7 @@ distance({X1, Y1}, {X2, Y2}) ->
   math:sqrt(math:pow(X1 - X2, 2) + math:pow(Y1 - Y2, 2)).
 {% endhighlight %}
 
-Now we can write `prop_exit_targeted()`:
+Now we can write `prop_exit_user_targeted()`:
 
 * We exchange `?FORALL` with `FORALL_SA` to use simulated annealing as search
 strategy.
@@ -223,20 +223,20 @@ and tell PropEr minimize this distance with `?MINIMIZE(D)`
 * Finally we tag the `path()` generator with the `USERNF()` macro and
 add the neighborhood function `path_next()`:
 
-      {% highlight erlang %}
-      prop_exit_targeted(LevelData) ->
-        Level = build_level(LevelData),
-        #{entrance := Entrance} = Level,
-        #{exit := Exit} = Level,
-        ?FORALL_TARGETED(Path, ?USERNF(path(), path_next()),
-                         case follow_path(Entrance, Path, Level) of
-                           {exited, _Pos} -> false;
-                           Pos ->
-                              UV = distance(Pos, Exit),
-                              ?MINIMIZE(UV),
-                              true
-                         end).
-      {% endhighlight %}
+    {% highlight erlang %}
+    prop_exit_user_targeted(LevelData) ->
+      Level = build_level(LevelData),
+      #{entrance := Entrance} = Level,
+      #{exit := Exit} = Level,
+      ?FORALL_TARGETED(Path, ?USERNF(path(), path_next()),
+                       case follow_path(Entrance, Path, Level) of
+                         {exited, _Pos} -> false;
+                         Pos ->
+                           UV = distance(Pos, Exit),
+                           ?MINIMIZE(UV),
+                           true
+                       end).
+    {% endhighlight %}
 
 The neighborhood function `path_next()` should produce a random input that is in the neighborhood of the base input, that is a similar input to the base input. For our path we can just add an extra step:
 
@@ -250,13 +250,13 @@ path_next() ->
 If we test this property now it will fail after just a few hundred search steps:
 
 {% highlight erl %}
-33> proper:quickcheck(level:prop_exit_targeted(level:level1()), [{search_steps, 10000}]).
-[.......... 390 dots ..........!]!
-Failed: After 1 test(s).
-[up,left,up,down,down,left,up, ...]
+33> proper:quickcheck(level:prop_exit_user_targeted(level:level1()), 10000).
+.................. <572 dots> .....................!
+Failed: After 572 test(s).
+[up,right,right,down,right,up,up,right,down,left,down,down, ..., down]
 
-Shrinking .......................................................................(71 time(s))
-[right,right,right,right,right, ...]
+Shrinking ................................................................................................(96 time(s))
+[right,right,right,right,right, ..., down]
 false
 {% endhighlight %}
 
@@ -284,13 +284,13 @@ path_next() ->
 Now the property usually fails less than a few 100 search steps:
 
 {% highlight erl %}
-36> proper:quickcheck(level:prop_exit_targeted(level:level1()), [{search_steps, 5000}]).
-[..........................................................!]!
-Failed: After 1 test(s).
+36> proper:quickcheck(level:prop_exit_user_targeted(level:level1()), [10000, {search_steps, 5000}]).
+.................. <285 dots> ........................................!
+Failed: After 285 test(s).
 [left,up,right, ...]
 
 Shrinking .......... ... ..........(100 time(s))
-[right,right,right, ...]
+[right,right,right, ..., right]
 false
 {% endhighlight %}
 
@@ -326,7 +326,7 @@ level2() ->
    "######################################################################"].
 {% endhighlight %}
 
-When we test `prop_exit_targeted()` with level 2 we see that sometimes
+When we test `prop_exit_user_targeted()` with level 2 we see that sometimes
 the property fails very fast. In other cases however, the property takes many
 tests to fail. We can also see that the tests become really slow after a while.
 The reason is that we add more and more steps and the path becomes longer with
@@ -353,7 +353,7 @@ these areas. We can also see that there are quite a few runs that find the
 exit. Resetting the search should be sufficient to solve our problem:
 
 {% highlight erlang %}
-prop_exit_targeted(LevelData) ->
+prop_exit_user_targeted(LevelData) ->
   Level = build_level(LevelData),
   #{entrance := Entrance} = Level,
   #{exit := Exit} = Level,
@@ -362,7 +362,9 @@ prop_exit_targeted(LevelData) ->
                      {exited, _Pos} -> false;
                      Pos ->
                        case length(Path) > 2000 of
-                         true -> proper_sa:reset(), true;
+                         true ->
+                           proper_sa:reset(),
+                           true;
                          _ ->
                            UV = distance(Pos, Exit),
                            ?MINIMIZE(UV),
@@ -376,13 +378,13 @@ starts from the beginning initial input. If we test the property now it will
 fail after a few thousand tests:
 
 {% highlight erl %}
-36> proper:quickcheck(level:prop_exit_targeted(level:level2()), [{search_steps, 5000}]).
-[................... 2339 dots ...................!]!
-Failed: After 1 test(s).
-[down,left,up, ...]
+36> proper:quickcheck(level:prop_exit_user_targeted(level:level2()), [10000, {search_steps, 5000}]).
+.................. <2339 dots> ........................!
+Failed: After 2339 test(s).
+[down,left,up, ..., down]
 
 Shrinking ...................................................................(67 time(s))
-[left,left,up, ...]
+[left,left,up, ..., left]
 false
 {% endhighlight %}
 
@@ -393,16 +395,21 @@ false
 PropEr can construct neighborhood function automatically from the random generator. In order to use such a constructed NF we just need to remove the `?USERNF` macro from the property:
 
 {% highlight erlang %}
-prop_exit_targeted(LevelData) ->
+prop_exit_auto_targeted(LevelData) ->
   Level = build_level(LevelData),
   #{entrance := Entrance} = Level,
   #{exit := Exit} = Level,
   ?FORALL_TARGETED(Path, path(),
-                   ...
+                   case follow_path(Entrance, Path, Level) of
+                     {exited, _Pos} -> false;
+                     Pos ->
+                       UV = distance(Pos, Exit),
+                       ?MINIMIZE(UV),
+                       true
                    end).
 {% endhighlight %}
 
-This property will fail consistently for all examples, even if we don't reset bad runs. The PropEr provided neighborhood function works usually reasonable well for simple generators (and in this case very well). When dealing with more complex generators, some manual work is required. The next tutorial will cover how we can adjust the automatically constructed neighborhood functions to avoid writing them by hand. 
+This property will fail consistently for all examples, even if we don't reset bad runs. The neighborhood function that PropEr automatically generates usually works reasonably well for simple generators such as `path/0`. (In this particular case, it works very well.) When dealing with more complex generators, some manual work is required. The next tutorial will cover how we can adjust the automatically constructed neighborhood functions to avoid writing them by hand. 
 
 You can get the complete final code of this tutorial by clicking on
 the following link: [level.erl](/code/level.erl).
