@@ -15,7 +15,7 @@ The programming task that this tutorial is based on is really simple.
 Let us assume that we want to write and test a program that sorts lists.
 Our first attempt, inspired by quicksort, is the following Erlang code:
 
-{% highlight erlang%}
+{% highlight erlang %}
 -module(my_sort).
 -export([sort/1]).
 
@@ -28,7 +28,7 @@ sort([P|Xs]) ->
 To get some confidence that this module is correct, we can of course
 compile and run some unit tests for this module in the Erlang shell:
 
-{% highlight plaintext %}
+{% highlight erl %}
 1> c(my_sort).
 {ok,my_sort}
 2> my_sort:sort([17,42]).
@@ -44,7 +44,7 @@ as <a href="http://erlang.org/doc/man/eunit.html">EUnit</a> tests in the
 module.  This involves adding an appropriate `include_lib` directive below
 the export declaration:
 
-{% highlight erlang%}
+{% highlight erlang %}
 -include_lib("eunit/include/eunit.hrl").
 {% endhighlight %}
 
@@ -65,7 +65,7 @@ test_four() ->
 At this point, we can recompile the module and run all the unit tests with
 a single command:
 
-{% highlight plaintext %}
+{% highlight erl %}
 5> c(my_sort).
 {ok,my_sort}
 6> eunit:test(my_sort).
@@ -96,7 +96,7 @@ elements in this case, the result of applying the `sort/1` function to
 some list gives us back a list whose elements are ordered.  Let us write
 this property using the language of PropEr:
 
-{% highlight erlang%}
+{% highlight erlang %}
 prop_ordered() ->
     ?FORALL(L, list(integer()), ordered(sort(L))).
 {% endhighlight %}
@@ -109,7 +109,7 @@ corresponding `include_lib` directive for EUnit. (We need to put the PropEr
 include before the EUnit one, because both tools define some macro with the
 same name, as we will soon see.)  The two directives should look as follows:
 
-{% highlight erlang%}
+{% highlight erlang %}
 -include_lib("proper/include/proper.hrl").
 -include_lib("eunit/include/eunit.hrl").
 {% endhighlight %}
@@ -129,7 +129,7 @@ return a list which is ordered.
 To use this, we also need to define the `ordered/1` function.  But this is
 simple enough:
 
-{% highlight erlang%}
+{% highlight erlang %}
 ordered([]) -> true;
 ordered([_]) -> true;
 ordered([A,B|T]) -> A =< B andalso ordered([B|T]).
@@ -137,7 +137,7 @@ ordered([A,B|T]) -> A =< B andalso ordered([B|T]).
 
 We can now test whether this property holds for our program:
 
-{% highlight plaintext %}
+{% highlight erl %}
 7> c(my_sort).
 {ok,my_sort}
 8> proper:quickcheck(my_sort:prop_ordered()).
@@ -152,7 +152,7 @@ property was true for them.
 
 We can actually test a particular property any number of times we wish:
 
-{% highlight plaintext %}
+{% highlight erl %}
 9> proper:quickcheck(my_sort:prop_ordered(), 4711).
 ...................... <4711 dots> ..................................................................
 OK: Passed 4711 test(s).
@@ -163,14 +163,14 @@ This is not the only property that we want a list sorting function to satisfy.
 Another one is that the input and output lists have the same length.
 Let's write it:
 
-{% highlight erlang%}
+{% highlight erlang %}
 prop_same_length() ->
     ?FORALL(L, list(integer()), length(L) =:= length(sort(L))).
 {% endhighlight %}
 
 and test it:
 
-{% highlight plaintext %}
+{% highlight erl %}
 10> c(my_sort).
 {ok,my_sort}
 11> proper:quickcheck(my_sort:prop_same_length()).
@@ -191,7 +191,7 @@ also falsifies the property.
 
 Let's test the property again:
 
-{% highlight plaintext%}
+{% highlight erl %}
 12> proper:quickcheck(my_sort:prop_same_length()).
 ..................!
 Failed: After 19 test(s).
@@ -213,7 +213,7 @@ the property.
 What's the problem?  We can find out by manually testing the `sort/1` function
 in the Erlang shell using these inputs that PropEr discovered for us:
 
-{% highlight plaintext %}
+{% highlight erl %}
 13> my_sort:sort([-8,14,-1,1,-1]).
 [-8,-1,1,14]
 14> my_sort:sort([0,0]).
@@ -240,7 +240,7 @@ only test its validity if this precondition is satisfied.  The **`IMPLIES`**
 macro of PropEr allows us to write the property in a way that the property is
 checked only in this case:
 
-{% highlight erlang%}
+{% highlight erlang %}
 prop_same_length_conditional_check() ->
     ?FORALL(L, list(integer()),
             ?IMPLIES(no_duplicates(L), length(L) =:= length(sort(L)))).
@@ -249,7 +249,7 @@ prop_same_length_conditional_check() ->
 that is, only check the property if the list `L` contains no duplicates.
 A possible implementation of function `no_duplicates/1` is the following:
 
-{% highlight erlang%}
+{% highlight erlang %}
 %% better implementations of no_duplicates/1 exist ...
 no_duplicates([]) -> true;
 no_duplicates([A|T]) ->
@@ -258,7 +258,7 @@ no_duplicates([A|T]) ->
 
 Let's test this property:
 
-{% highlight plaintext%}
+{% highlight erl %}
 15> c(my_sort).
 {ok,my_sort}
 16> proper:quickcheck(my_sort:prop_same_length_conditional_check()).
@@ -307,14 +307,14 @@ remove_duplicates([A|T]) ->
 This provides a _custom generator_ (for lists of some type `T` that contain no
 duplicates).  We can now use this generator for our same-length property:
 
-{% highlight erlang%}
+{% highlight erlang %}
 prop_same_length_no_dupls() ->
     ?FORALL(L, list_no_dupls(integer()), length(L) =:= length(sort(L))).
 {% endhighlight %}
 
 which we can include in the module and test:
 
-{% highlight erl%}
+{% highlight erl %}
 17> c(my_sort).
 {ok,my_sort}
 18> proper:quickcheck(my_sort:prop_same_length_no_dupls()).
@@ -331,7 +331,7 @@ In EUnit it was possible to run all tests of a module by calling
 `eunit:test(ModuleName).`  Is there something analogous for PropEr?
 Indeed there is:
 
-{% highlight plaintext %}
+{% highlight erl %}
 19> proper:module(my_sort).
 Testing my_sort:prop_same_length_no_dupls/0
 ....................................................................................................
@@ -379,14 +379,14 @@ not need to handle duplicate elements in the input list, an appropriate such
 function is the `usort/1` function from the `lists` module of the standard
 library.  Specifying this property is now very easy:
 
-{% highlight erlang%}
+{% highlight erlang %}
 prop_equiv_usort() ->
     ?FORALL(L, list(integer()), sort(L) =:= lists:usort(L)).
 {% endhighlight %}
 
 So is testing it:
 
-{% highlight plaintext %}
+{% highlight erl %}
 20> c(my_sort).
 {ok,my_sort}
 21> proper:quickcheck(my_sort:prop_equiv_usort()).
@@ -412,14 +412,14 @@ our properties hold for lists of any term instead of just for lists of integers?
 Well, let's do that.  Let's modify this last property to work for general lists;
 for this we just need to use the built-in `list/0` generator:
 
-{% highlight erlang%}
+{% highlight erlang %}
 prop_equiv_usort() ->
     ?FORALL(L, list(), sort(L) =:= lists:usort(L)).
 {% endhighlight %}
 
 and test the property again:
 
-{% highlight plaintext%}
+{% highlight erl %}
 22> c(my_sort).
 {ok,my_sort}
 23> proper:quickcheck(my_sort:prop_equiv_usort()).
@@ -435,14 +435,14 @@ lists?  We can see this by using the `list/0` generator in the
 `prop_same_length` property which is false for our `sort/1` function.  Let's do
 that:
 
-{% highlight erlang%}
+{% highlight erlang %}
 prop_same_length() ->
     ?FORALL(L, list(), length(L) =:= length(sort(L))).
 {% endhighlight %}
 
 and see it fail:
 
-{% highlight plaintext %}
+{% highlight erl %}
 24> c(my_sort).
 {ok,my_sort}
 25> proper:quickcheck(my_sort:prop_same_length()).
@@ -465,7 +465,7 @@ Erlang can _not_ do (or consciously decide not to support).
 
 
 # Summary
-In this introductory tutorial you've learned:
+In this introductory tutorial you have learned:
 
 *  What property-based testing is and how it differs from unit testing.
 
