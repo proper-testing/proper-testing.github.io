@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Advanced tutorial for TPBT
+title: Advanced tutorial for targeted property-based testing
 author: Andreas Löscher and Kostis Sagonas
 sitemap:
 priority: 1.0

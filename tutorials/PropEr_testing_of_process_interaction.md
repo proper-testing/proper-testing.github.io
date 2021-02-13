@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Yet another PropEr statem tutorial
+title: Yet another PropEr state machine tutorial
 author: Eirini Arvaniti and Kostis Sagonas
 sitemap:
     priority: 1.0

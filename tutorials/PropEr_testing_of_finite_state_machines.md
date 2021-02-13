@@ -1,6 +1,6 @@
 ---
 layout: page
-title: A PropEr fsm tutorial
+title: A PropEr finite state machine tutorial
 author: Eirini Arvaniti and Kostis Sagonas
 sitemap:
     priority: 1.0
