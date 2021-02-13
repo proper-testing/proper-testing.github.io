@@ -9,10 +9,10 @@ priority: 1.0
 ## Neighborhood Functions
 This task is about writing a neighborhood function, a component needed for
 the search strategy simulated annealing. The neighborhood function is
-critical for the performance of simulated annealing
+critical for the performance of simulated annealing.
 
 ### Magic
-Lets say we want to design an role-play game (RPG) where our character has some
+Let's say we want to design a role-play game (RPG) where our character has some
 attributes like strength and intelligence
 (see [Wikipedia](https://en.wikipedia.org/wiki/Attribute_(role-playing_games)))
 that effect how good actions are performed. A strong character will typically
