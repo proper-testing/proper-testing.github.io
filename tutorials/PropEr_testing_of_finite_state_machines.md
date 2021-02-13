@@ -1,5 +1,5 @@
 ---
-layout: page
+layout: tutorial
 title: A PropEr finite state machine tutorial
 author: Eirini Arvaniti and Kostis Sagonas
 sitemap:

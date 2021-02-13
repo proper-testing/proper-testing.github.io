@@ -1,5 +1,5 @@
 ---
-layout: page
+layout: tutorial
 title: A really basic tutorial for PropEr beginners
 author: Kostis Sagonas
 sitemap:

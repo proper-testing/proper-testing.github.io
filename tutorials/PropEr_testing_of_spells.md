@@ -1,5 +1,5 @@
 ---
-layout: page
+layout: tutorial
 title: Advanced tutorial for targeted property-based testing
 author: Andreas Löscher and Kostis Sagonas
 sitemap:

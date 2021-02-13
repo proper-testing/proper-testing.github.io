@@ -1,5 +1,5 @@
 ---
-layout: page
+layout: tutorial
 title: Yet another PropEr state machine tutorial
 author: Eirini Arvaniti and Kostis Sagonas
 sitemap:

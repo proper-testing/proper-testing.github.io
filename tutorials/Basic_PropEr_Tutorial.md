@@ -1,5 +1,5 @@
 ---
-layout: page
+layout: tutorial
 title: A basic PropEr tutorial
 sitemap:
     priority: 1.0
