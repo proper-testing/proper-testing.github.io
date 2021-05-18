@@ -10,15 +10,16 @@
 <hr>
 
 <h1>Module proper_target</h1>
-<ul class="index"><li><a href="#description">Description</a></li><li><a href="#types">Data Types</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>This module defines the top-level behaviour for targeted   
-property-based testing (TPBT).
-<p>Copyright © 2017 Andreas Löscher and Kostis Sagonas</p>
+<ul class="index"><li><a href="#description">Description</a></li><li><a href="#types">Data Types</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>This module defines the top-level behaviour for Targeted   
+Property-Based Testing (TPBT).
+<p>Copyright © 2017-2021 Andreas Löscher and Kostis Sagonas</p>
 
-<p><b>Version:</b> Jul 13 2018 11:31:15</p>
+<p><b>Version:</b> May 18 2021 22:41:22</p>
+<p><b>Behaviours:</b> <a href="gen_server.html"><tt>gen_server</tt></a>.</p>
 <p><b>Authors:</b> Andreas Löscher.</p>
 
-<h2><a name="description">Description</a></h2><p>This module defines the top-level behaviour for targeted   
-property-based testing (TPBT). Using TPBT the input generation   
+<h2><a name="description">Description</a></h2><p>This module defines the top-level behaviour for Targeted   
+Property-Based Testing (TPBT). Using TPBT the input generation   
 is no longer random, but guided by a search strategy to increase   
 the probability of finding failing input. For this to work the user   
 has to specify a search strategy and also needs to extract   
@@ -47,7 +48,8 @@ property looks as follows:</p>
      <dt><code>?USERNF(Gen, Nf)</code></dt>
      <dd>This uses the neighborhood function <code>Nf</code> instead of PropEr's
        constructed neighborhood function for this generator. The neighborhood
-       function <code>Fun</code> should be of type <code>proper_gen_next:nf()</code></dd>
+       function <code>Fun</code> should be of type
+      <code>fun(term(), {Depth :: pos_integer(), Temperature::float()} -&gt; term()</code></dd>
      <dt><code>?USERMATCHER(Gen, Matcher)</code></dt>
      <dd>This overwrites the structural matching of PropEr with the user provided
        <code>Matcher</code> function. the matcher should be of type <code>proper_gen_next:matcher()</code></dd>
@@ -58,53 +60,83 @@ property looks as follows:</p>
 <p><pre>fitness() = number()</pre></p>
 
 
-<h3 class="typedecl"><a name="type-fitness_func">fitness_func()</a></h3>
-<p><pre>fitness_func() = 
+<h3 class="typedecl"><a name="type-fitness_fun">fitness_fun()</a></h3>
+<p><pre>fitness_fun() = 
     fun((<a href="#type-target_state">target_state()</a>, <a href="#type-fitness">fitness()</a>) -&gt; <a href="#type-target_state">target_state()</a>) | none</pre></p>
 
 
-<h3 class="typedecl"><a name="type-key">key()</a></h3>
-<p><pre>key() = nonempty_string() | reference()</pre></p>
+<h3 class="typedecl"><a name="type-mod_name">mod_name()</a></h3>
+<p><pre>mod_name() = atom()</pre></p>
 
 
-<h3 class="typedecl"><a name="type-next_func">next_func()</a></h3>
-<p><pre>next_func() = fun((<a href="#type-target_state">target_state()</a>) -&gt; {<a href="#type-target_state">target_state()</a>, any()})</pre></p>
+<h3 class="typedecl"><a name="type-next_fun">next_fun()</a></h3>
+<p><pre>next_fun() = fun((...) -&gt; <a href="#type-next_fun_ret">next_fun_ret()</a>)</pre></p>
+
+
+<h3 class="typedecl"><a name="type-next_fun_ret">next_fun_ret()</a></h3>
+<p><pre>next_fun_ret() = <a href="proper_types.html#type-type">proper_types:type()</a> | <a href="proper_gen.html#type-instance">proper_gen:instance()</a></pre></p>
+
+
+<h3 class="typedecl"><a name="type-opts">opts()</a></h3>
+<p><pre>opts() = 
+    #{search_steps := <a href="#type-search_steps">search_steps()</a>,
+      search_strategy := <a href="#type-strategy">strategy()</a>,
+      atom() =&gt; term()}</pre></p>
+
+
+<h3 class="typedecl"><a name="type-search_steps">search_steps()</a></h3>
+<p><pre>search_steps() = pos_integer()</pre></p>
 
 
 <h3 class="typedecl"><a name="type-strategy">strategy()</a></h3>
-<p><pre>strategy() = module()</pre></p>
-<p>  -----------------------------------------------------------------------------
-  proper_target callback functions for defining strategies
-  ----------------------------------------------------------------------------</p>
+<p><pre>strategy() = <a href="#type-mod_name">mod_name()</a></pre></p>
 
-<h3 class="typedecl"><a name="type-target">target()</a></h3>
-<p><pre>target() = {<a href="#type-target_state">target_state()</a>, <a href="#type-next_func">next_func()</a>, <a href="#type-fitness_func">fitness_func()</a>}</pre></p>
+
+<h3 class="typedecl"><a name="type-strategy_data">strategy_data()</a></h3>
+<p><pre>strategy_data() = term()</pre></p>
 
 
 <h3 class="typedecl"><a name="type-target_state">target_state()</a></h3>
 <p><pre>target_state() = term()</pre></p>
 
 
-<h3 class="typedecl"><a name="type-tmap">tmap()</a></h3>
-<p><pre>tmap() = #{atom() =&gt; term()}</pre></p>
-
-
 <h2><a name="index">Function Index</a></h2>
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#init_strategy-1">init_strategy/1</a></td><td></td></tr>
-<tr><td valign="top"><a href="#strategy-0">strategy/0</a></td><td></td></tr>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#cleanup_strategy-0">cleanup_strategy/0</a></td><td>Cleans up proper_gen_next as well as stopping the gen_server.</td></tr>
+<tr><td valign="top"><a href="#get_shrinker-1">get_shrinker/1</a></td><td>Get the shrinker for a Type.</td></tr>
+<tr><td valign="top"><a href="#init_strategy-1">init_strategy/1</a></td><td>Initializes targeted gen server based on a search strategy.</td></tr>
+<tr><td valign="top"><a href="#init_target-1">init_target/1</a></td><td>Initialize the target of the strategy.</td></tr>
+<tr><td valign="top"><a href="#reset-0">reset/0</a></td><td>Reset the strategy target and data to a random
+  initial value.</td></tr>
 </table>
 
 <h2><a name="functions">Function Details</a></h2>
 
+<h3 class="function"><a name="cleanup_strategy-0">cleanup_strategy/0</a></h3>
+<div class="spec">
+<p><pre>cleanup_strategy() -&gt; ok</pre></p>
+</div><p>Cleans up proper_gen_next as well as stopping the gen_server.</p>
+
+<h3 class="function"><a name="get_shrinker-1">get_shrinker/1</a></h3>
+<div class="spec">
+<p><pre>get_shrinker(Type :: <a href="proper_types.html#type-type">proper_types:type()</a>) -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div><p>Get the shrinker for a Type.</p>
+
 <h3 class="function"><a name="init_strategy-1">init_strategy/1</a></h3>
 <div class="spec">
-<p><pre>init_strategy(Strat :: <a href="#type-strategy">strategy()</a>) -&gt; ok</pre></p>
-</div>
+<p><pre>init_strategy(X1 :: <a href="#type-opts">opts()</a>) -&gt; ok</pre></p>
+</div><p>Initializes targeted gen server based on a search strategy.</p>
 
-<h3 class="function"><a name="strategy-0">strategy/0</a></h3>
+<h3 class="function"><a name="init_target-1">init_target/1</a></h3>
 <div class="spec">
-<p><pre>strategy() -&gt; <a href="#type-strategy">strategy()</a></pre></p>
-</div>
+<p><pre>init_target(RawType :: <a href="proper_types.html#type-type">proper_types:type()</a>) -&gt; ok</pre></p>
+</div><p>Initialize the target of the strategy.</p>
+
+<h3 class="function"><a name="reset-0">reset/0</a></h3>
+<div class="spec">
+<p><pre>reset() -&gt; ok</pre></p>
+</div><p>Reset the strategy target and data to a random
+  initial value. Useful when the generated instances
+  differ from the target, depending on the problem.</p>
 <hr>
 
 <div class="navbar"><a name="#navbar_bottom"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="/" target="_top"><img src="/img/proper_tiny.png" align="right" border="0" alt="PropEr logo"></a></td></tr></table></div>

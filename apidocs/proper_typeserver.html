@@ -11,9 +11,9 @@
 
 <h1>Module proper_typeserver</h1>
 <ul class="index"><li><a href="#description">Description</a></li><li><a href="#types">Data Types</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>Erlang type system - PropEr type system integration module.
-<p>Copyright © 2010-2018 Manolis Papadakis, Eirini Arvaniti and Kostis Sagonas</p>
+<p>Copyright © 2010-2021 Manolis Papadakis, Eirini Arvaniti, and Kostis Sagonas</p>
 
-<p><b>Version:</b> Jul 13 2018 11:31:15</p>
+<p><b>Version:</b> May 18 2021 22:41:23</p>
 <p><b>Behaviours:</b> <a href="gen_server.html"><tt>gen_server</tt></a>.</p>
 <p><b>Authors:</b> Manolis Papadakis.</p>
 
@@ -74,7 +74,8 @@ automatic exporting of properties.</p>
      <code>#rec_name{}</code> syntax. To use a typed record in a <code>?FORALL</code>, enclose the
      record in a custom type like so:
      <pre>         -type rec_name() :: #rec_name{}.</pre>
-     and use the custom type instead.</li>
+     and use the custom type instead. (Note that it is a good idea in general
+     to do the above, i.e., give a name to all record types.)</li>
    <li><code>?FORALL</code>s may contain references to self-recursive or mutually
      recursive native types, so long as each type in the hierarchy has a clear
      base case.

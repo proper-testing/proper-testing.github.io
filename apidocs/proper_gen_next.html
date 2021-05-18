@@ -11,12 +11,16 @@
 
 <h1>Module proper_gen_next</h1>
 <ul class="index"><li><a href="#types">Data Types</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>
-<p>Copyright © 2017-2018 Andreas Löscher and Kostis Sagonas</p>
+<p>Copyright © 2017-2020 Andreas Löscher and Kostis Sagonas</p>
 
-<p><b>Version:</b> Jul 13 2018 11:31:15</p>
+<p><b>Version:</b> May 18 2021 22:41:23</p>
 <p><b>Authors:</b> Andreas Löscher.</p>
 
 <h2><a name="types">Data Types</a></h2>
+
+<h3 class="typedecl"><a name="type-depth">depth()</a></h3>
+<p><pre>depth() = pos_integer()</pre></p>
+
 
 <h3 class="typedecl"><a name="type-matcher">matcher()</a></h3>
 <p><pre>matcher() = 
@@ -24,7 +28,11 @@
 
 
 <h3 class="typedecl"><a name="type-nf">nf()</a></h3>
-<p><pre>nf() = fun((term(), <a href="#type-temperature">temperature()</a>) -&gt; term())</pre></p>
+<p><pre>nf() = fun((term(), <a href="#type-nf_temp">nf_temp()</a>) -&gt; <a href="proper_types.html#type-type">proper_types:type()</a>)</pre></p>
+
+
+<h3 class="typedecl"><a name="type-nf_temp">nf_temp()</a></h3>
+<p><pre>nf_temp() = <a href="#type-temperature">temperature()</a> | {<a href="#type-depth">depth()</a>, <a href="#type-temperature">temperature()</a>} | null</pre></p>
 
 
 <h3 class="typedecl"><a name="type-temperature">temperature()</a></h3>
@@ -33,16 +41,11 @@
 
 <h2><a name="index">Function Index</a></h2>
 <table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#cleanup-0">cleanup/0</a></td><td></td></tr>
-<tr><td valign="top"><a href="#construct_improper-2">construct_improper/2</a></td><td></td></tr>
-<tr><td valign="top"><a href="#extract_outer_safe-1">extract_outer_safe/1</a></td><td></td></tr>
 <tr><td valign="top"><a href="#from_proper_generator-1">from_proper_generator/1</a></td><td></td></tr>
-<tr><td valign="top"><a href="#get_neighborhood_function-1">get_neighborhood_function/1</a></td><td>constructs a neighborhood function <code>Fun(Base, Temp)</code> from <code>Type</code></td></tr>
 <tr><td valign="top"><a href="#init-0">init/0</a></td><td></td></tr>
 <tr><td valign="top"><a href="#match-3">match/3</a></td><td></td></tr>
 <tr><td valign="top"><a href="#set_matcher-2">set_matcher/2</a></td><td></td></tr>
-<tr><td valign="top"><a href="#set_temperature_scaling-1">set_temperature_scaling/1</a></td><td></td></tr>
 <tr><td valign="top"><a href="#set_user_nf-2">set_user_nf/2</a></td><td></td></tr>
-<tr><td valign="top"><a href="#structural_match-3">structural_match/3</a></td><td></td></tr>
 <tr><td valign="top"><a href="#update_caches-1">update_caches/1</a></td><td></td></tr>
 </table>
 
@@ -53,28 +56,11 @@
 <p><pre>cleanup() -&gt; ok</pre></p>
 </div>
 
-<h3 class="function"><a name="construct_improper-2">construct_improper/2</a></h3>
-<div class="spec">
-<p><pre>construct_improper(T :: list(), IT :: term()) -&gt; term()</pre></p>
-</div>
-
-<h3 class="function"><a name="extract_outer_safe-1">extract_outer_safe/1</a></h3>
-<div class="spec">
-<p><pre>extract_outer_safe(X1 :: <a href="proper_gen.html#type-imm_instance">proper_gen:imm_instance()</a>) -&gt;
-                      {ok, <a href="proper_gen.html#type-imm_instance">proper_gen:imm_instance()</a>} | fail</pre></p>
-</div>
-
 <h3 class="function"><a name="from_proper_generator-1">from_proper_generator/1</a></h3>
 <div class="spec">
 <p><pre>from_proper_generator(RawGenerator :: <a href="proper_types.html#type-type">proper_types:type()</a>) -&gt;
-                         <a href="proper_target.html#type-tmap">proper_target:tmap()</a></pre></p>
+                         <a href="proper_target.html#type-next_fun">proper_target:next_fun()</a></pre></p>
 </div>
-
-<h3 class="function"><a name="get_neighborhood_function-1">get_neighborhood_function/1</a></h3>
-<div class="spec">
-<p><pre>get_neighborhood_function(Type :: <a href="proper_types.html#type-type">proper_types:type()</a>) -&gt;
-                             <a href="proper_gen_next.html#type-nf">proper_gen_next:nf()</a></pre></p>
-</div><p>constructs a neighborhood function <code>Fun(Base, Temp)</code> from <code>Type</code></p>
 
 <h3 class="function"><a name="init-0">init/0</a></h3>
 <div class="spec">
@@ -95,23 +81,10 @@
                <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
 </div>
 
-<h3 class="function"><a name="set_temperature_scaling-1">set_temperature_scaling/1</a></h3>
-<div class="spec">
-<p><pre>set_temperature_scaling(Enabled :: boolean) -&gt; ok</pre></p>
-</div>
-
 <h3 class="function"><a name="set_user_nf-2">set_user_nf/2</a></h3>
 <div class="spec">
 <p><pre>set_user_nf(Type :: <a href="proper_types.html#type-type">proper_types:type()</a>, NF :: <a href="#type-nf">nf()</a>) -&gt;
                <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
-</div>
-
-<h3 class="function"><a name="structural_match-3">structural_match/3</a></h3>
-<div class="spec">
-<p><pre>structural_match(UncleanBase :: term(),
-                 UncleanRawType :: <a href="proper_types.html#type-raw_type">proper_types:raw_type()</a>,
-                 Temp :: <a href="#type-temperature">temperature()</a>) -&gt;
-                    term()</pre></p>
 </div>
 
 <h3 class="function"><a name="update_caches-1">update_caches/1</a></h3>

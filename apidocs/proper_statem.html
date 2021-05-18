@@ -13,9 +13,9 @@
 <ul class="index"><li><a href="#description">Description</a></li><li><a href="#types">Data Types</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>This module defines the <code>proper_statem</code> behaviour, useful for testing
    stateful reactive systems whose internal state and side-effects are
    specified via an abstract state machine.
-<p>Copyright © 2010-2018 Manolis Papadakis, Eirini Arvaniti and Kostis Sagonas</p>
+<p>Copyright © 2010-2021 Manolis Papadakis, Eirini Arvaniti, and Kostis Sagonas</p>
 
-<p><b>Version:</b> Jul 13 2018 11:31:15</p>
+<p><b>Version:</b> May 18 2021 22:41:22</p>
 <p><b>Authors:</b> Eirini Arvaniti.</p>
 
 <h2><a name="description">Description</a></h2><p>This module defines the <code>proper_statem</code> behaviour, useful for testing
@@ -107,8 +107,10 @@ variable to the result of a symbolic call. For example:</p>
      abstract state machine. In case precondition doesn't hold, a new call is
      chosen using the <code>command/1</code> generator. If preconditions are very strict,
      it will take a lot of tries for PropEr to randomly choose a valid command.
-     Testing will be stopped in case the <code>constraint_tries</code> limit is reached
-     (see the 'Options' section in the <a href="proper.html"><code>proper</code></a> module documentation).
+     Testing will be stopped if the <code>constraint_tries</code> limit is reached
+     (see the 'Options' section in the <a href="proper.html"><code>proper</code></a> module documentation) and
+     a <code>{cant_generate,[{proper_statem,commands,4}]}</code> error will be produced in
+     that case.
      Preconditions are also important for correct shrinking of failing
      testcases. When shrinking command sequences, we try to eliminate commands
      that do not contribute to failure, ensuring that all preconditions still
@@ -206,11 +208,31 @@ similar to those used for sequential testing.</p>
                       Result =:= ok
                   end).</pre>
   
-   Please note that the actual interleaving of commands of the parallel
+   <p>Please note that the actual interleaving of commands of the parallel
    component depends on the Erlang scheduler, which is too deterministic.
    For PropEr to be able to detect race conditions, the code of the system
-   under test should be instrumented with <code>erlang:yield/0</code> calls to the
-   scheduler.
+   under test should be instrumented with <code>erlang:yield/0</code> calls to the   
+scheduler.</p>
+  
+   <h3><a name="Stateful_Targeted_Testing">Stateful Targeted Testing</a></h3><p>   
+During testing of the system's behavior, there may be some failing command   
+sequences that the random property based testing does not find with ease,   
+or at all. In these cases, stateful targeted property based testing can help   
+find such edge cases, provided a utility value.</p>
+  
+   <pre>      prop_targeted_testing() -&gt;
+          ?FORALL_TARGETED(Cmds, proper_statem:commands(?MODULE),
+                           begin
+                               {History, State, Result} = proper_statem:run_commands(?MODULE, Cmds),
+                               UV = uv(History, State, Result),
+                               ?MAXIMIZE(UV),
+                               cleanup(),
+                               Result =:= ok
+                           end).</pre>
+  
+   Νote that the <code>UV</code> value can be computed in any way fit, depending on the
+   use case. <code>uv/3</code> is used here as a dummy function which computes the
+   utility value.
 <h2><a name="types">Data Types</a></h2>
 
 <h3 class="typedecl"><a name="type-command">command()</a></h3>
@@ -224,7 +246,11 @@ similar to those used for sequential testing.</p>
 
 
 <h3 class="typedecl"><a name="type-dynamic_state">dynamic_state()</a></h3>
-<p><b>abstract datatype</b>: <tt>dynamic_state()</tt></p>
+<p><pre>dynamic_state() = term()</pre></p>
+
+
+<h3 class="typedecl"><a name="type-fun_name">fun_name()</a></h3>
+<p><pre>fun_name() = atom()</pre></p>
 
 
 <h3 class="typedecl"><a name="type-history">history()</a></h3>
@@ -254,11 +280,11 @@ similar to those used for sequential testing.</p>
 
 
 <h3 class="typedecl"><a name="type-symbolic_call">symbolic_call()</a></h3>
-<p><b>abstract datatype</b>: <tt>symbolic_call()</tt></p>
+<p><pre>symbolic_call() = {call, <a href="#type-mod_name">mod_name()</a>, <a href="#type-fun_name">fun_name()</a>, [term()]}</pre></p>
 
 
 <h3 class="typedecl"><a name="type-symbolic_state">symbolic_state()</a></h3>
-<p><b>abstract datatype</b>: <tt>symbolic_state()</tt></p>
+<p><pre>symbolic_state() = term()</pre></p>
 
 
 <h3 class="typedecl"><a name="type-symbolic_var">symbolic_var()</a></h3>
@@ -272,6 +298,8 @@ similar to those used for sequential testing.</p>
   according to an abstract state machine specification.</td></tr>
 <tr><td valign="top"><a href="#commands-2">commands/2</a></td><td>Similar to <a href="#commands-1"><code>commands/1</code></a>, but generated command sequences always
   start at a given state.</td></tr>
+<tr><td valign="top"><a href="#commands_gen-1">commands_gen/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#commands_gen-2">commands_gen/2</a></td><td></td></tr>
 <tr><td valign="top"><a href="#more_commands-2">more_commands/2</a></td><td>Increases the expected length of command sequences generated from
   <code>CmdType</code> by a factor <code>N</code>.</td></tr>
 <tr><td valign="top"><a href="#parallel_commands-1">parallel_commands/1</a></td><td>A special PropEr type which generates parallel testcases,
@@ -322,6 +350,17 @@ similar to those used for sequential testing.</p>
   every time the command sequence is run (i.e. during normal execution,
   while shrinking and when checking a counterexample). In this case,
   <code>Mod:initial_state/0</code> is never called.</p>
+
+<h3 class="function"><a name="commands_gen-1">commands_gen/1</a></h3>
+<div class="spec">
+<p><pre>commands_gen(Mod :: <a href="#type-mod_name">mod_name()</a>) -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
+
+<h3 class="function"><a name="commands_gen-2">commands_gen/2</a></h3>
+<div class="spec">
+<p><pre>commands_gen(Mod :: <a href="#type-mod_name">mod_name()</a>, InitialState :: <a href="#type-symbolic_state">symbolic_state()</a>) -&gt;
+                <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div>
 
 <h3 class="function"><a name="more_commands-2">more_commands/2</a></h3>
 <div class="spec">
@@ -408,8 +447,9 @@ similar to those used for sequential testing.</p>
   <li><code>Parallel_history</code> contains the execution history of each of the
     concurrent tasks.</li>
   <li><code>Result</code> specifies the outcome of the attemp to serialize command
-    execution, based on the results observed. It can be one of the following:
-    <ul><li> <code>ok</code> </li><li> <code>no_possible_interleaving</code> </li></ul> </li>
+    execution, based on the results observed. In addition to results
+    returned by <a href="#run_commands-2"><code>run_commands/2</code></a>, it can also be the atom
+    <code>no_possible_interleaving</code>.</li>
   </ul></p>
 
 <h3 class="function"><a name="run_parallel_commands-3">run_parallel_commands/3</a></h3>

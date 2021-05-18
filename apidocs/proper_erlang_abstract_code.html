@@ -1,0 +1,309 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Module proper_erlang_abstract_code</title>
+<link rel="stylesheet" type="text/css" href="stylesheet.css" title="EDoc">
+</head>
+<body bgcolor="white">
+<div class="navbar"><a name="#navbar_top"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="/" target="_top"><img src="/img/proper_tiny.png" align="right" border="0" alt="PropEr logo"></a></td></tr></table></div>
+<hr>
+
+<h1>Module proper_erlang_abstract_code</h1>
+<ul class="index"><li><a href="#description">Description</a></li><li><a href="#types">Data Types</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>PropEr generator of abstract code.
+
+
+<h2><a name="description">Description</a></h2><p>PropEr generator of abstract code</p>
+  
+   <p>This module is a PropEr generator for abstract code. It
+   generates guards, expressions, programs (modules), and terms. It
+   does not generate macros or other attributes than <code>function</code>,
+   <code>record</code>, <code>spec</code>, and <code>type</code>. The generated programs (guards,
+   expressions) can be used for testing the Compiler or other modules
+   traversing programs as abstract forms. Typical examples of the
+   latter are <code>erl_eval</code>, <code>erl_pp</code>,
+   <code>erl_prettypr</code> (Syntax Tools), and parse transforms.
+   Created modules should compile without errors, but will most likely
+   crash immediately when invoked.</p>
+  
+   <p>This is an example how to test the Compiler:</p>
+  
+   <pre>   test() -&gt;
+       ?FORALL(Abstr, proper_erlang_abstract_code:module(),
+               ?WHENFAIL(
+                  begin
+                      io:format("~ts\n", [[erl_pp:form(F) || F &lt;- Abstr]]),
+                      compile(Abstr, [report_errors])
+                  end,
+                  case compile(Abstr, []) of
+                      {error, _Es, _Ws} -&gt; false;
+                      _ -&gt; true
+                  end)).
+  
+   compile(Abstr, Opts) -&gt;
+       compile:noenv_forms(Abstr, Opts).</pre>
+<h2><a name="types">Data Types</a></h2>
+
+<h3 class="typedecl"><a name="type-atom_fun">atom_fun()</a></h3>
+<p><pre>atom_fun() = fun(() -&gt; <a href="proper_types.html#type-type">proper_types:type()</a>)</pre></p>
+<p>   A function that generates atoms. The default function chooses
+   from 100 common English words.</p>
+
+<h3 class="typedecl"><a name="type-char_fun">char_fun()</a></h3>
+<p><pre>char_fun() = fun(() -&gt; <a href="proper_types.html#type-type">proper_types:type()</a>)</pre></p>
+<p>   A function that generates characters. The default function
+   chooses from <code>$a..$z | $A..$Z</code>.</p>
+
+<h3 class="typedecl"><a name="type-limit">limit()</a></h3>
+<p><pre>limit() = non_neg_integer()</pre></p>
+
+
+<h3 class="typedecl"><a name="type-option">option()</a></h3>
+<p><pre>option() = 
+    {variables, [atom()]} |
+    {weight, {Key :: atom(), Weight :: <a href="#type-weight">weight()</a>}} |
+    {function, [{FunctionName :: atom(), Arity :: arity()}]} |
+    {types, [{TypeName :: atom(), NumOfParms :: arity()}]} |
+    {records, [{RecordName :: atom(), [FieldName :: atom()]}]} |
+    {limit, [{Name :: atom(), Limit :: <a href="#type-limit">limit()</a>}]} |
+    {char, <a href="#type-char_fun">char_fun()</a>} |
+    {atom, <a href="#type-atom_fun">atom_fun()</a>} |
+    {set_all_weights, <a href="#type-weight">weight()</a>}</pre></p>
+<p>   See description below.</p>
+
+<h3 class="typedecl"><a name="type-weight">weight()</a></h3>
+<p><pre>weight() = non_neg_integer()</pre></p>
+
+
+<h2><a name="index">Function Index</a></h2>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#expr-0">expr/0</a></td><td>Returns abstract code of an expression.</td></tr>
+<tr><td valign="top"><a href="#expr-1">expr/1</a></td><td>Same as <a href="#expr-0"><code>expr/0</code></a>, but accepts a list of options.</td></tr>
+<tr><td valign="top"><a href="#guard-0">guard/0</a></td><td>Returns abstract code of a guard.</td></tr>
+<tr><td valign="top"><a href="#guard-1">guard/1</a></td><td>Same as <a href="#guard-0"><code>guard/0</code></a>, but accepts a list of options.</td></tr>
+<tr><td valign="top"><a href="#module-0">module/0</a></td><td>Returns abstract code of a module.</td></tr>
+<tr><td valign="top"><a href="#module-1">module/1</a></td><td>Same as <a href="#module-0"><code>module/0</code></a>, but accepts a list of options.</td></tr>
+<tr><td valign="top"><a href="#term-0">term/0</a></td><td>Returns abstract code of a term that can be handled by
+   <code>erl_parse:normalise/0</code>.</td></tr>
+<tr><td valign="top"><a href="#term-1">term/1</a></td><td>Same as <a href="#term-0"><code>term/0</code></a>, but accepts a list of options.</td></tr>
+</table>
+
+<h2><a name="functions">Function Details</a></h2>
+
+<h3 class="function"><a name="expr-0">expr/0</a></h3>
+<div class="spec">
+<p><pre>expr() -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div><p>Returns abstract code of an expression.</p>
+
+<h3 class="function"><a name="expr-1">expr/1</a></h3>
+<div class="spec">
+<p><pre>expr(Options :: list()) -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div><p>Same as <a href="#expr-0"><code>expr/0</code></a>, but accepts a list of options. See
+   <a href="#module-1"><code>module/1</code></a> for a description of the options.</p>
+
+<h3 class="function"><a name="guard-0">guard/0</a></h3>
+<div class="spec">
+<p><pre>guard() -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div><p>Returns abstract code of a guard. A guard is a sequence
+   of guard tests.</p>
+
+<h3 class="function"><a name="guard-1">guard/1</a></h3>
+<div class="spec">
+<p><pre>guard(Options :: [<a href="#type-option">option()</a>]) -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div><p>Same as <a href="#guard-0"><code>guard/0</code></a>, but accepts a list of options. See
+   <a href="#module-1"><code>module/1</code></a> for a description of the options.</p>
+
+<h3 class="function"><a name="module-0">module/0</a></h3>
+<div class="spec">
+<p><pre>module() -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div><p>Returns abstract code of a module.
+   The module has type declarations, functions, function specifications,
+   and record declarations.</p>
+
+<h3 class="function"><a name="module-1">module/1</a></h3>
+<div class="spec">
+<p><pre>module(Options :: [<a href="#type-option">option()</a>]) -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div><p>Same as <a href="#module-0"><code>module/0</code></a>, but accepts a list of options.
+   <h4><a name="Options">Options</a></h4>
+  
+   <ul>
+   <li><code>{atom, <a href="#type-atom_fun"><code>atom_fun()</code></a>}</code> - A atom generating
+      function to replace the default.</li>
+   <li><code>{char, <a href="#type-char_fun"><code>char_fun()</code></a>}</code> - A character generating
+      function to replace the default. The function is used when
+      generating strings and characters.</li>
+   <li><code>{functions, [{Name, Arity}]}</code> - A list of FAs to
+      be used as names of generated functions. The default is a small
+      number of functions with a small number of arguments.</li>
+   <li><code>{limit, [{Name, Limit}]}</code> - Set the limit of
+      <code>Name</code> to <code>Limit</code>. The limit names are:
+     <ul>
+       <li><code>bin_elements</code> - Number of segments of a bitstring.</li>
+       <li><code>list</code> - Number of elements of a plain list.</li>
+       <li><code>map</code> - Number of associations of a map.</li>
+       <li><code>string</code> - Number of characters of a string.</li>
+       <li><code>tuple</code> - Number of elements of a tuple.</li>
+       <li><code>body</code> - Number of clauses of a body.</li>
+       <li><code>call_args</code> - Number of arguments of function call.</li>
+       <li><code>catch_clauses</code> - Number of clauses of the
+         <code>catch</code> part of a <code>try/catch</code>.</li>
+       <li><code>clauses</code> - Number of clauses of <code>case</code>,
+         the <code>of</code> part of <code>try/catch</code>, and
+         <code>receive</code>.</li>
+       <li><code>function_clauses</code> - Number of clauses of
+         a function.</li>
+       <li><code>function_constraints</code> - Number of constraints of
+         a function specification.</li>
+       <li><code>function_constraints</code> - Number of constraints of
+         a function specification.</li>
+       <li><code>function_types</code> - Number of types of
+         an overloaded function specification.</li>
+       <li><code>guard</code> - Number of guards of a clause.</li>
+       <li><code>guard_tests</code> - Number of guard tests of a guard.</li>
+       <li><code>if_clauses</code> - Number of clauses of
+         <code>if</code>.</li>
+       <li><code>tuple_types</code> - Number of types (elements)
+         of tuple types.</li>
+       <li><code>qualifiers</code> - Number of qualifiers
+         of comprehensions.</li>
+       <li><code>record_fields</code> - Number of fields of record
+         declarations.</li>
+       <li><code>tsl</code> - Number of elements of
+         type specifier lists (of segments of bit syntax expressions).</li>
+       <li><code>union_types</code> - Number of types of type
+         union.s</li>
+     </ul>
+   </li>
+   <li><code>{records, [{Name, [Field]}]}</code> - A list
+      of record names with field names  to be used as names of
+      generated records. The default is a small number of records
+      with a small number of fields.</li>
+   <li><code>{types, [{Name, NumOfParameters}]}</code> - A list
+      of TAs to be used as names of generated types. The default
+      is a small number of types.</li>
+   <li><code>{resize, boolean()}</code> - Use <code>?SIZED</code>
+      to limit the size of the generated abstract code. With this
+      option set to <code>false</code> (the default) big code
+      may be generated among the first instances.</li>
+   <li><code>{set_all_weights, Weight}</code> - Set the weight of
+      all keys to <code>Weight</code>.</li>
+   <li><code>{weight, {Key, Weight}}</code> - Set the weight of
+      <code>Key</code> to weight <code>Weight</code>. A weight of zero
+      means that a construct is not generated. Higher weights means that
+      a construct i generated relatively often. Groups of weight keys
+      follow. Notice that the weight of a key is relative to other
+      keys of the same group. Also notice that some keys occur in
+      more than one group, which makes it all more complicated. The
+      weight of <code>small</code> needs to be quite high to avoid
+      generating too deeply nested abstract code.</li>
+      <ul>
+        <li>Declarations: <code>record_decl, type_decl, function_decl,
+          function_spec</code> (<code>type_decl</code> and
+          <code>function_spec</code> are off by default)</li>
+        <li>Atomic expressions (<code>small</code>): <code>atom, boolean,
+          integer, string, char, float, nil, pat_var, var</code></li>
+        <li>Compound expressions: <code>small, bitstring, list, tuple,
+          map, match, binop, unop, record, 'case', block, 'if', 'fun',
+          'receive', 'try', 'catch', try_of, termcall, varcall, localcall,
+          extcall</code> (<code>termcall</code> is off by default)</li>
+        <li>Map expressions (<code>map</code>): <code>build_map,
+          update_map</code></li>
+        <li>List expressions (<code>list</code>): <code>plain_list, cons,
+          lc</code></li>
+        <li>Qualifiers (of <code>lc</code>): <code>lc_gen, blc_gen,
+          lc_any_filter, lc_guard_filter</code></li>
+        <li>Bitstrings (<code>bitstring</code>): <code>bits, blc,
+          literal_bits</code></li>
+        <li>Try after (<code>'try', try_of</code>): <code>no_try_after,
+          try_after</code></li>
+        <li>Catch clause exception types (<code>'catch'</code>):
+          <code>no_eclass, any_eclass, lit_eclass, var_eclass,
+           bad_eclass</code></li>
+        <li>Receive timouts (<code>'receive'</code>): <code>
+           lit_timeout, inf_timeout, var_timeout</code></li>
+        <li>Function expressions (<code>'fun'</code>): <code>
+           lambda, rec_lambda, local_mfa, ext_mfa, any_mfa</code></li>
+        <li>Guards: <code>no_guard, yes_guard</code></li>
+        <li>Guard test: <code>small, tuple, map, cons, plain_list, bits,
+           binop, unop, record, guard_call, remote_guard_call</code></li>
+        <li>Pattern: <code>small, match, tuple, cons, plain_list, bits,
+           unop, binop, record, map_pattern, string_prefix</code></li>
+        <li>Pattern variables (<code>pat_var</code>):
+           <code>fresh_var, bound_var</code></li>
+        <li>Record field initialization (the <code>_ = V</code> syntax):
+           <code>yes_multi_field_init, no_multi_field_init</code></li>
+        <li>String prefix (<code>string_prefix</code>): <code>
+           nil, string, string_prefix_list</code></li>
+        <li>Types: <code>annotated_type, atom, bitstring, 'fun',
+           integer_range_type, nil, map, predefined_type, record,
+           remote_type, singleton_integer_type, tuple, type_union,
+           type_variable, user_defined_type</code></li>
+        <li>Function specifications: <code>yes_constrained_function_type,
+           no_constrained_function_type</code></li>
+        <li>Overloaded function specifications: <code>
+           no_overloaded, yes_overloaded</code></li>
+        <li>Singleton integer type (<code>singleton_integer_type</code>):
+           <code>integer, char, unop, binop</code></li>
+      </ul>
+   </ul></p>
+
+<h3 class="function"><a name="term-0">term/0</a></h3>
+<div class="spec">
+<p><pre>term() -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div><p>Returns abstract code of a term that can be handled by
+   <code>erl_parse:normalise/0</code>.</p>
+
+<h3 class="function"><a name="term-1">term/1</a></h3>
+<div class="spec">
+<p><pre>term(Options :: [<a href="#type-option">option()</a>]) -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div><p>Same as <a href="#term-0"><code>term/0</code></a>, but accepts a list of options.
+   <h4><a name="Options">Options</a></h4>
+  
+   Many options are the same as the ones for <a href="#module-1"><code>module/1</code></a>.
+   <ul>
+   <li><code>{atom, <a href="#type-atom_fun"><code>atom_fun()</code></a>}</code> - A atom generating
+      function to replace the default.</li>
+   <li><code>{char, <a href="#type-char_fun"><code>char_fun()</code></a>}</code> - A character generating
+      function to replace the default. The function is used when
+      generating strings and characters.</li>
+   <li><code>{limit, [{Name, Limit}]}</code> - Set the limit of
+      <code>Name</code> to <code>Limit</code>. The limit names are:
+     <ul>
+       <li><code>bin_elements</code> - Number of segments of a bitstring.</li>
+       <li><code>list</code> - Number of elements of a plain list.</li>
+       <li><code>map</code> - Number of associations of a map.</li>
+       <li><code>string</code> - Number of characters of a string.</li>
+       <li><code>tuple</code> - Number of elements of a tuple.</li>
+     </ul>
+   </li>
+   <li><code>{resize, boolean()}</code> - Use <code>?SIZED</code>
+      to limit the size of the generated abstract code. With this
+      option set to <code>false</code> (the default) big code
+      may be generated among the first instances.</li>
+   <li><code>{set_all_weights, Weight}</code> - Set the weight of
+      all keys to <code>Weight</code>.</li>
+   <li><code>{weight, {Key, Weight}}</code> - Set the weight of
+      <code>Key</code> to weight <code>Weight</code>. A weight of zero
+      means that a construct is not generated. Higher weights means that
+      a construct i generated relatively often. Groups of weight keys
+      follow. Notice that the weight of a key is relative to other
+      keys of the same group. The weight of <code>small</code> needs
+      to quite high to avoid generating too deeply nested abstract
+      code.</li> <ul>
+        <li>Atomic expressions (<code>small</code>): <code>atom, boolean,
+          integer, string, char, float, nil</code></li>
+        <li>Compound terms: <code>small, bitstring, list, tuple,
+          map, 'fun'</code></li>
+        <li>Map expressions (<code>map</code>): <code>build_map</code></li>
+        <li>List expressions (<code>list</code>): <code>plain_list,
+          cons</code></li>
+        <li>Bitstrings (<code>bitstring</code>): <code>bits, bytes</code></li>
+        <li>Function expressions (<code>'fun'</code>):
+          <code>ext_mfa</code></li>
+      </ul>
+   </ul></p>
+<hr>
+
+<div class="navbar"><a name="#navbar_bottom"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="/" target="_top"><img src="/img/proper_tiny.png" align="right" border="0" alt="PropEr logo"></a></td></tr></table></div>
+<p><i>Generated by EDoc</i></p>
+</body>
+</html>

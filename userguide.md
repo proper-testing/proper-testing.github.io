@@ -2,18 +2,20 @@
 layout: page
 title: User Guide
 ---
-[![Travis][travis badge]][travis]
+[![Github Actions][github badge]][github]
 [![CodeCov][codecov badge]][codecov]
 [![Erlang Versions][erlang versions badge]][erlang]
 [![License][license badge]][license]
-
+[![Latest Release][release badge]][release]
+[![Hex PM][hex pm badge]][hex]
+[![Last Commit][commit badge]][commit]
 
 Contact information and license
 -------------------------------
 
 PropEr (PROPerty-based testing tool for ERlang) is a QuickCheck-inspired
 open-source property-based testing tool for Erlang, developed by Manolis
-Papadakis, Eirini Arvaniti and Kostis Sagonas. The base PropEr system was
+Papadakis, Eirini Arvaniti, and Kostis Sagonas. The base PropEr system was
 written mainly by Manolis Papadakis, and the stateful code testing subsystem
 by Eirini Arvaniti. Kostis Sagonas has been actively maintaining its code
 base since 2012.
@@ -28,7 +30,7 @@ You can reach PropEr's developers in the following ways:
 We welcome user contributions and feedback (comments, suggestions, feature
 requests, bug reports, patches, etc.).
 
-Copyright 2010-2018 by Manolis Papadakis, Eirini Arvaniti and Kostis Sagonas.
+Copyright 2010-2021 by Manolis Papadakis, Eirini Arvaniti, and Kostis Sagonas.
 
 This program is distributed under the [GPL](http://www.gnu.org/licenses/gpl.html),
 version 3 or later. Please see the [COPYING][license] file for details.
@@ -91,20 +93,19 @@ Quickstart guide
     base:
 
     ```shell
-        git clone git://github.com/proper-testing/proper.git
+    git clone git://github.com/proper-testing/proper.git
     ```
-*   Compile PropEr: Run `make` if you just want to build PropEr, optionally
-    followed by a `make tests` to run its unit tests and a `make dialyzer` call
-    to also run dialyzer on PropEr's code base; the latter requires having a
-    dialyzer PLT. To do the above but also build PropEr's documentation issue
-    a `make all` call; in that case, you are going to need the `syntax_tools`
-    application and a recent version of `EDoc`).
-    Optionally, sfmt-erlang can be selected as an alternative random number
-    generator using `./configure --use-sfmt` before running `make`.
+*   Compile PropEr: Simply run `make` if you just want to build PropEr.
+    If you want to do some changes to PropEr or submit some pull request you
+    most likely will want to issue a `make test` to run its unit tests and
+    a `make dialyzer` call to also run dialyzer on PropEr's code base.
+    To do the above but also build PropEr's documentation issue a `make all`
+    call; in that case, you are going to need the `syntax_tools` application
+    and a recent version of `EDoc`).
 *   If you are using [Homebrew](https://brew.sh), you can simply:
 
     ```shell
-        brew install proper
+    brew install proper
     ```
     and continue following the instructions below.
 *   Add PropEr's base directory to your Erlang library path, using one of the
@@ -113,14 +114,13 @@ Quickstart guide
          startup file (`~/.bashrc` in the case of the Bash shell):
 
          ```shell
-             export ERL_LIBS=/full/path/to/proper
+         export ERL_LIBS=/full/path/to/proper
          ```
     2.   Erlang resource file: Add the following line to your `~/.erlang` file:
 
          ```erlang
-             code:load_abs("/full/path/to/proper").
+         code:load_abs("/full/path/to/proper").
          ```
-    If using the sfmt RNG be sure to add /full/path/to/proper/deps/sfmt too.
 *   Add the following include line to all source files that contain properties:
 
     ```erlang
@@ -188,13 +188,19 @@ incompatibilities between the two tools by now.
 
 <!-- Links (alphabetically) -->
 [codecov]: https://codecov.io/gh/proper-testing/proper
+[commit]: https://github.com/proper-testing/proper/commit/HEAD
 [erlang]: http://www.erlang.org
 [eunit stdout]: http://erlang.org/doc/apps/eunit/chapter.html#Running_EUnit
+[hex]: https://hex.pm/packages/proper
 [license]: https://github.com/proper-testing/proper/blob/master/COPYING
-[travis]: https://travis-ci.org/proper-testing/proper
+[release]: https://github.com/proper-testing/proper/releases/latest
+[github]: https://github.com/proper-testing/proper/actions
 
 <!-- Badges (alphabetically) -->
 [codecov badge]: https://codecov.io/gh/proper-testing/proper/branch/master/graph/badge.svg
-[erlang versions badge]: https://img.shields.io/badge/erlang-17.0%20to%2020.3-blue.svg?style=flat-square
+[commit badge]: https://img.shields.io/github/last-commit/proper-testing/proper.svg?style=flat-square
+[erlang versions badge]: https://img.shields.io/badge/erlang-20.0%20to%2024.0-blue.svg?style=flat-square
+[hex pm badge]: https://img.shields.io/hexpm/v/proper.svg?style=flat
 [license badge]: https://img.shields.io/github/license/proper-testing/proper.svg?style=flat-square
-[travis badge]: https://img.shields.io/travis/proper-testing/proper/master.svg?style=flat-square
+[release badge]: https://img.shields.io/github/release/proper-testing/proper.svg?style=flat-square
+[github badge]: https://github.com/proper-testing/proper/workflows/CI/badge.svg

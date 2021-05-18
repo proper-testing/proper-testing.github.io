@@ -12,9 +12,9 @@
 <h1>Module proper_fsm</h1>
 <ul class="index"><li><a href="#description">Description</a></li><li><a href="#types">Data Types</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>This module defines the <code>proper_fsm</code> behaviour, useful for testing
    systems that can be modeled as finite state machines.
-<p>Copyright © 2010-2016 Manolis Papadakis, Eirini Arvaniti and Kostis Sagonas</p>
+<p>Copyright © 2010-2021 Manolis Papadakis, Eirini Arvaniti, and Kostis Sagonas</p>
 
-<p><b>Version:</b> Jul 13 2018 11:31:15</p>
+<p><b>Version:</b> May 18 2021 22:41:23</p>
 <p><b>Authors:</b> Eirini Arvaniti.</p>
 
 <h2><a name="description">Description</a></h2><p>This module defines the <code>proper_fsm</code> behaviour, useful for testing
@@ -62,10 +62,10 @@ does not change the current state of the fsm.</p>
      <p>Specifies the initial state of the finite state machine. As with
      <code>proper_statem:initial_state/0</code>, its result should be deterministic.
      </p></li>
-   <li> <code>initial_state_data() ::</code> <code><a href="#type-state_data">state_data()</a></code>
+   <li> <code>initial_state_data() -&gt;</code> <code><a href="#type-state_data">state_data()</a></code>
      <p>Specifies what the state data should initially contain. Its result
      should be deterministic</p></li>
-   <li> <code>StateName(S::</code><code><a href="#type-state_data">state_data()</a></code><code>) ::</code>
+   <li> <code>StateName(S::</code><code><a href="#type-state_data">state_data()</a></code><code>) -&gt;</code>
           <code>[</code><code><a href="#type-transition">transition()</a></code><code>]</code>
      <p>There should be one instance of this function for each reachable
      state <code>StateName</code> of the finite state machine. In case <code>StateName</code> is a
@@ -83,17 +83,17 @@ does not change the current state of the fsm.</p>
      them. This feature can be used to include conditional transitions that
      depend on the <code>StateData</code>.</p></li>
    <li> <code>StateName(Attr1::term(), ..., AttrN::term(),
-                   S::</code><code><a href="#type-state_data">state_data()</a></code><code>) ::</code>
+                   S::</code><code><a href="#type-state_data">state_data()</a></code><code>) -&gt;</code>
           <code>[</code><code><a href="#type-transition">transition()</a></code><code>]</code>
      <p>There should be one instance of this function for each reachable state
      <code>{StateName,Attr1,...,AttrN}</code> of the finite state machine. The function
      has similar beaviour to <code>StateName/1</code>, described above.</p></li>
    <li> <code>weight(From::</code><code><a href="#type-state_name">state_name()</a></code><code>,
                 Target::</code><code><a href="#type-state_name">state_name()</a></code><code>,
-                Call::</code><code><a href="#type-symbolic_call">symbolic_call()</a></code><code>) -&gt; integer()</code>
+                Call::</code><code><a href="#type-symbolic_call">symbolic_call()</a></code><code>) -&gt; non_neg_integer()</code>
      <p>This is an optional callback. When it is not defined (or not exported),
      transitions are chosen with equal probability. When it is defined, it
-     assigns an integer weight to transitions from <code>From</code> to <code>Target</code>
+     assigns a non-negative integer weight to transitions from <code>From</code> to <code>Target</code>
      triggered by symbolic call <code>Call</code>. In this case, each transition is chosen
      with probability proportional to the weight assigned.</p></li>
    <li> <code>precondition(From::</code><code><a href="#type-state_name">state_name()</a></code><code>,
@@ -140,10 +140,30 @@ finite state machine specification:</p>
                       cleanup(),
                       Result =:= ok
                   end).</pre>
+  
+   <h3><a name="Stateful_Targeted_Testing">Stateful Targeted Testing</a></h3><p>   
+During testing of the system's behavior, there may be some failing command   
+sequences that the random property based testing does not find with ease,   
+or at all. In these cases, stateful targeted property based testing can help   
+find such edge cases, provided a utility value.</p>
+  
+   <pre>      prop_targeted_testing() -&gt;
+          ?FORALL_TARGETED(Cmds, proper_fsm:commands(?MODULE),
+                           begin
+                               {History, State, Result} = proper_fsm:run_commands(?MODULE, Cmds),
+                               UV = uv(History, State, Result),
+                               ?MAXIMIZE(UV),
+                               cleanup(),
+                               Result =:= ok
+                           end).</pre>
+  
+   Νote that the <code>UV</code> value can be computed in any way fit, depending on the
+   use case. <code>uv/3</code> is used here as a dummy function which computes the
+   utility value.
 <h2><a name="types">Data Types</a></h2>
 
 <h3 class="typedecl"><a name="type-cmd_result">cmd_result()</a></h3>
-<p><b>abstract datatype</b>: <tt>cmd_result()</tt></p>
+<p><pre>cmd_result() = term()</pre></p>
 
 
 <h3 class="typedecl"><a name="type-command">command()</a></h3>
@@ -172,7 +192,7 @@ finite state machine specification:</p>
 
 
 <h3 class="typedecl"><a name="type-state_data">state_data()</a></h3>
-<p><b>abstract datatype</b>: <tt>state_data()</tt></p>
+<p><pre>state_data() = term()</pre></p>
 
 
 <h3 class="typedecl"><a name="type-state_name">state_name()</a></h3>

@@ -11,9 +11,9 @@
 
 <h1>Module proper_types</h1>
 <ul class="index"><li><a href="#description">Description</a></li><li><a href="#types">Data Types</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>Type manipulation functions and predefined types.
-<p>Copyright © 2010-2017 Manolis Papadakis, Eirini Arvaniti and Kostis Sagonas</p>
+<p>Copyright © 2010-2021 Manolis Papadakis, Eirini Arvaniti, and Kostis Sagonas</p>
 
-<p><b>Version:</b> Jul 13 2018 11:31:15</p>
+<p><b>Version:</b> May 18 2021 22:41:22</p>
 <p><b>Authors:</b> Manolis Papadakis.</p>
 
 <h2><a name="description">Description</a></h2><p>Type manipulation functions and predefined types.</p>
@@ -139,20 +139,33 @@ grows automatically during testing.</p>
 
 
 <h3 class="typedecl"><a name="type-frequency">frequency()</a></h3>
-<p><pre>frequency() = pos_integer()</pre></p>
+<p><pre>frequency() = non_neg_integer()</pre></p>
 
 
 <h3 class="typedecl"><a name="type-length">length()</a></h3>
 <p><pre>length() = non_neg_integer()</pre></p>
 
 
+<h3 class="typedecl"><a name="type-loose_tuple">loose_tuple()</a></h3>
+<p><pre>loose_tuple(T) = 
+    {} |
+    {T} |
+    {T, T} |
+    {T, T, T} |
+    {T, T, T, T} |
+    {T, T, T, T, T} |
+    {T, T, T, T, T, T} |
+    {T, T, T, T, T, T, T} |
+    {T, T, T, T, T, T, T, T} |
+    {T, T, T, T, T, T, T, T, T} |
+    {T, T, T, T, T, T, T, T, T, T} |
+    tuple()</pre></p>
+<p>  Internal types</p>
+
 <h3 class="typedecl"><a name="type-raw_type">raw_type()</a></h3>
-<p><b>abstract datatype</b>: <tt>raw_type()</tt></p>
-<p>You can consider this as an equivalent of <code><a href="#type-type">type()</a></code>.</p>
-
-<h3 class="typedecl"><a name="type-size">size()</a></h3>
-<p><pre>size() = non_neg_integer()</pre></p>
-
+<p><pre>raw_type() = 
+    <a href="#type-type">type()</a> | [<a href="#type-raw_type">raw_type()</a>] | <a href="#type-loose_tuple">loose_tuple</a>(<a href="#type-raw_type">raw_type()</a>) | term()</pre></p>
+<p>  You can consider this as an equivalent of <code><a href="#type-type">type()</a></code>.</p>
 
 <h3 class="typedecl"><a name="type-type">type()</a></h3>
 <p><b>abstract datatype</b>: <tt>type()</tt></p>
@@ -184,7 +197,9 @@ grows automatically during testing.</p>
     parameters |
     env |
     subenv |
-    user_nf</pre></p>
+    user_nf |
+    is_user_nf |
+    matcher</pre></p>
 
 
 <h3 class="typedecl"><a name="type-type_prop_value">type_prop_value()</a></h3>
@@ -247,11 +262,14 @@ grows automatically during testing.</p>
 </td></tr>
 <tr><td valign="top"><a href="#list-1">list/1</a></td><td>All lists containing elements of type <code>ElemType</code>.</td></tr>
 <tr><td valign="top"><a href="#loose_tuple-1">loose_tuple/1</a></td><td>Tuples whose elements are all of type <code>ElemType</code>.</td></tr>
+<tr><td valign="top"><a href="#map-0">map/0</a></td><td>A map associating keys and values of unspecified types (of any term()).</td></tr>
 <tr><td valign="top"><a href="#map-2">map/2</a></td><td>A map whose keys are defined by the generator <code>K</code> and values
   by the generator <code>V</code>.</td></tr>
 <tr><td valign="top"><a href="#nat-0">nat/0</a></td><td>Small non-negative integers (bound by the current value of the <code>size</code>
   parameter).</td></tr>
 <tr><td valign="top"><a href="#neg_integer-0">neg_integer/0</a></td><td>Equivalent to <a href="#integer-2"><tt>integer(inf, -1)</tt></a>.
+</td></tr>
+<tr><td valign="top"><a href="#nil-0">nil/0</a></td><td>Equivalent to <a href="#exactly-1"><tt>exactly([])</tt></a>.
 </td></tr>
 <tr><td valign="top"><a href="#non_empty-1">non_empty/1</a></td><td>This is a predefined constraint that can be applied to random-length  
 list and binary types to ensure that the produced values are never empty.</td></tr>
@@ -526,6 +544,11 @@ list and binary types to ensure that the produced values are never empty.</td></
 </div><p>Tuples whose elements are all of type <code>ElemType</code>.
   Instances shrink towards the 0-size tuple, <code>{}</code>.</p>
 
+<h3 class="function"><a name="map-0">map/0</a></h3>
+<div class="spec">
+<p><pre>map() -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div><p>A map associating keys and values of unspecified types (of any term()).</p>
+
 <h3 class="function"><a name="map-2">map/2</a></h3>
 <div class="spec">
 <p><pre>map(K :: <a href="#type-raw_type">raw_type()</a>, V :: <a href="#type-raw_type">raw_type()</a>) -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
@@ -542,6 +565,12 @@ list and binary types to ensure that the produced values are never empty.</td></
 <div class="spec">
 <p><pre>neg_integer() -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
 </div><p>Equivalent to <a href="#integer-2"><tt>integer(inf, -1)</tt></a>.</p>
+
+
+<h3 class="function"><a name="nil-0">nil/0</a></h3>
+<div class="spec">
+<p><pre>nil() -&gt; <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
+</div><p>Equivalent to <a href="#exactly-1"><tt>exactly([])</tt></a>.</p>
 
 
 <h3 class="function"><a name="non_empty-1">non_empty/1</a></h3>
@@ -620,7 +649,7 @@ list and binary types to ensure that the produced values are never empty.</p>
 
 <h3 class="function"><a name="resize-2">resize/2</a></h3>
 <div class="spec">
-<p><pre>resize(NewSize :: <a href="#type-size">size()</a>, Type :: <a href="#type-raw_type">raw_type()</a>) -&gt;
+<p><pre>resize(NewSize :: <a href="proper_gen.html#type-size">proper_gen:size()</a>, Type :: <a href="#type-raw_type">raw_type()</a>) -&gt;
           <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
 </div><p>Overrides the <code>size</code> parameter used when generating instances of
   <code>Type</code> with <code>NewSize</code>. Has no effect on size-less types, such as unions.
@@ -705,9 +734,10 @@ list and binary types to ensure that the produced values are never empty.</p>
                   <a href="proper_types.html#type-type">proper_types:type()</a></pre></p>
 </div><p>A specialization of <a href="#union-1"><code>union/1</code></a>, where each type in <code>ListOfTypes</code> is
   assigned a frequency. Frequencies must be Erlang expressions that evaluate to
-  positive integers. Types with larger frequencies are more likely to be chosen
-  by the random instance generator. The shrinking subsystem will ignore the
-  frequencies and try to shrink towards the first type in the list.</p>
+  non-negative integers. Types with larger frequencies are more likely to be
+  chosen by the random instance generator. The shrinking subsystem will ignore
+  the frequencies and try to shrink towards the first type in the list with a
+  non-zero frequency.</p>
 
 <h3 class="function"><a name="with_parameter-3">with_parameter/3</a></h3>
 <div class="spec">
