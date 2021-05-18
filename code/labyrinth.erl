@@ -1,8 +1,7 @@
-%%% -*- coding: utf-8 -*-
-%%% -*- erlang-indent-level: 2 -*-
+%%% -*- coding: utf-8; erlang-indent-level: 2 -*-
 %%% -------------------------------------------------------------------
-%%% Copyright (c) 2017-2020, Andreas Löscher <andreas.loscher@it.uu.se>
-%%%                     and  Kostis Sagonas <kostis@it.uu.se>
+%%% Copyright (c) 2017-2021 Andreas Löscher <andreas.loscher@it.uu.se>
+%%%                     and Kostis Sagonas <kostis@it.uu.se>
 %%%
 %%% This file is part of PropEr.
 %%%
@@ -19,13 +18,15 @@
 %%% You should have received a copy of the GNU General Public License
 %%% along with PropEr.  If not, see <http://www.gnu.org/licenses/>.
 
-%%% @copyright 2017-2020 Andreas Löscher and Kostis Sagonas
+%%% @copyright 2017-2021 Andreas Löscher and Kostis Sagonas
 %%% @version {@version}
 %%% @author Andreas Löscher and Kostis Sagonas
 
 -module(labyrinth).
 -export([maze/1]).
--export([prop_exit/1, prop_exit_user_targeted/1, prop_exit_auto_targeted/1]).
+-export([prop_exit_random/1,
+	 prop_exit_targeted_user/1,
+	 prop_exit_targeted_auto/1]).
 
 -include_lib("proper/include/proper.hrl").
 
@@ -165,7 +166,7 @@ path_next() ->
 %% Properties
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-prop_exit(Maze) ->
+prop_exit_random(Maze) ->
   MazeMap = draw_map(Maze),
   #{entrance := Entrance} = MazeMap,
   ?FORALL(Path, path(),
@@ -174,7 +175,7 @@ prop_exit(Maze) ->
             _ -> true
           end).
 
-prop_exit_user_targeted(Maze) ->
+prop_exit_targeted_user(Maze) ->
   MazeMap = draw_map(Maze),
   #{entrance := Entrance, exit := Exit} = MazeMap,
   ?FORALL_TARGETED(Path, ?USERNF(path(), path_next()),
@@ -192,7 +193,7 @@ prop_exit_user_targeted(Maze) ->
                        end
                    end).
 
-prop_exit_auto_targeted(Maze) ->
+prop_exit_targeted_auto(Maze) ->
   MazeMap = draw_map(Maze),
   #{entrance := Entrance, exit := Exit} = MazeMap,
   ?FORALL_TARGETED(Path, path(),
