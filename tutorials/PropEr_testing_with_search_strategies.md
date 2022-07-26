@@ -72,7 +72,7 @@ path is ignored. If a step would lead into a wall this step is also ignored.
 We can now implement our property to test:
 
 {% highlight erlang %}
-prop_exit(Maze) ->
+prop_exit_random(Maze) ->
   MazeMap = draw_map(Maze),
   #{entrance := Entrance} = MazeMap,
   ?FORALL(Path, path(),
@@ -89,7 +89,7 @@ and not the final position of the player, we ignore the returned position from
 a path from the entrance to their exit:
 
 {% highlight erl %}
-18> proper:quickcheck(labyrinth:prop_exit(labyrinth:maze(0))).
+18> proper:quickcheck(labyrinth:prop_exit_random(labyrinth:maze(0))).
 .......................................................!
 Failed: After 56 test(s).
 [up,left,left,down,up,left,down,left,down,left,down,up,left,up,down,down,right,left,right]
@@ -135,7 +135,7 @@ Since this labyrinth is both bigger and more involved, we increase the
 amount of tests to lets say one million:
 
 {% highlight erl %}
-23> proper:quickcheck(labyrinth:prop_exit(labyrinth:maze(1)), 1000000).
+23> proper:quickcheck(labyrinth:prop_exit_random(labyrinth:maze(1)), 1000000).
 .................... <1.000.000 dots> ....................
 OK: Passed 1000000 test(s).
 true
@@ -216,7 +216,7 @@ distance({X1, Y1}, {X2, Y2}) ->
   math:sqrt(math:pow(X1 - X2, 2) + math:pow(Y1 - Y2, 2)).
 {% endhighlight %}
 
-Now we can write `prop_exit_user_targeted()`:
+Now we can write `prop_exit_targeted_user()`:
 
 * We exchange `?FORALL` with `FORALL_TARGETED` to use simulated annealing as
   search strategy.
@@ -226,7 +226,7 @@ Now we can write `prop_exit_user_targeted()`:
   add the neighborhood function `path_next()`:
 
     {% highlight erlang %}
-    prop_exit_user_targeted(Maze) ->
+    prop_exit_targeted_user(Maze) ->
       MazeMap = draw_map(Maze),
       #{entrance := Entrance, exit := Exit} = MazeMap,
       ?FORALL_TARGETED(Path, ?USERNF(path(), path_next()),
@@ -253,7 +253,7 @@ path_next() ->
 If we test this property, now it typically fails after just a few hundred tests:
 
 {% highlight erl %}
-33> proper:quickcheck(labyrinth:prop_exit_user_targeted(labyrinth:maze(1)), 10000).
+33> proper:quickcheck(labyrinth:prop_exit_targeted_user(labyrinth:maze(1)), 10000).
 .................. <572 dots> .....................!
 Failed: After 572 test(s).
 [up,right,right,down,right,up,up,right,down,left,down,down, ..., down]
@@ -287,7 +287,7 @@ path_next() ->
 Now the property usually fails less than a few 100 search steps:
 
 {% highlight erl %}
-36> proper:quickcheck(labyrinth:prop_exit_user_targeted(labyrinth:maze(1)), [10000, {search_steps, 5000}]).
+36> proper:quickcheck(labyrinth:prop_exit_targeted_user(labyrinth:maze(1)), [10000, {search_steps, 5000}]).
 .................. <285 dots> ........................................!
 Failed: After 285 test(s).
 [left,up,right, ...]
@@ -330,7 +330,7 @@ maze(2) ->
    "######################################################################"].
 {% endhighlight %}
 
-When we test `prop_exit_user_targeted()` with maze 2 we see that sometimes
+When we test `prop_exit_targeted_user()` with maze 2 we see that sometimes
 the property fails very fast. In other cases however, the property takes many
 tests to fail. We can also see that the tests become really slow after a while.
 The reason is that we add more and more steps and the path becomes longer with
@@ -357,7 +357,7 @@ these areas. We can also see that there are quite a few runs that find the
 exit. Resetting the search should be sufficient to solve our problem:
 
 {% highlight erlang %}
-prop_exit_user_targeted(Maze) ->
+prop_exit_targeted_user(Maze) ->
   MazeMap = draw_map(Maze),
   #{entrance := Entrance, exit := Exit} = MazeMap,
   ?FORALL_TARGETED(Path, ?USERNF(path(), path_next()),
@@ -381,7 +381,7 @@ starts from the beginning initial input. If we test the property now it will
 fail after a few thousand tests:
 
 {% highlight erl %}
-36> proper:quickcheck(labyrinth:prop_exit_user_targeted(labyrinth:maze(2)), [10000, {search_steps, 5000}]).
+36> proper:quickcheck(labyrinth:prop_exit_targeted_user(labyrinth:maze(2)), [10000, {search_steps, 5000}]).
 .................. <2339 dots> ........................!
 Failed: After 2339 test(s).
 [down,left,up, ..., down]
@@ -398,7 +398,7 @@ false
 PropEr can construct neighborhood function automatically from the random generator. In order to use such a constructed NF we just need to remove the `?USERNF` macro from the property:
 
 {% highlight erlang %}
-prop_exit_auto_targeted(Maze) ->
+prop_exit_targeted_auto(Maze) ->
   MazeMap = draw_map(Maze),
   #{entrance := Entrance, exit := Exit} = MazeMap,
   ?FORALL_TARGETED(Path, path(),
